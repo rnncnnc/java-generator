@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 需要映射的接口的全类名 -->
+<mapper namespace="$(MapperClassName)">
+
+    <sql id="$(TableName)">
+        $(Fields)
+    </sql>
+
+    <!-- 批量查询数据 -->
+    <select id="select" resultType="$(PojoClassName)">
+        select <include refid="$(TableName)" />
+		from $(TableName)
+        <if test="pojo != null">
+            <where>
+                <if test="pojo.$(Index) != null">
+                    and $(Column) = #{pojo.$(Index)}
+                </if>
+            </where>
+        </if>
+        <if test="page != null">
+            limit #{page.pageSize} offset #{page.pageNum}
+        </if>
+        <if test="sort != null">
+            order by #{sort.index} #{sort.order}
+        </if>
+    </select>
+
+    <!-- 插入数据 -->
+    <insert id="insert" parameterType="$(PojoClassName)">
+        insert into $(TableName)
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.$(Field) != null">
+                $(Column),
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.$(Field) != null">
+                #{pojo.$(Field)},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 删除数据 -->
+    <delete id="delete" parameterType="$(PojoClassName)">
+        delete from $(TableName)
+        <where>
+            <if test="pojo.$(Index) != null">
+                $(Column) = #{pojo.$(Index)}
+            </if>
+        </where>
+    </delete>
+
+    <!-- 更新数据 -->
+    <update id="update" parameterType="$(PojoClassName)">
+        update $(TableName)
+        <set>
+            <if test="np.$(Field) != null">
+                $(Column) = #{np.$(Field)},
+            </if>
+        </set>
+        <where>
+            <if test="query.pojo.$(Field) != null">
+                $(Column) = #{query.pojo.$(Field)}
+            </if>
+        </where>
+    </update>
+</mapper>

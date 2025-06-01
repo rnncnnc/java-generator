@@ -1,0 +1,22 @@
+@Entity
+@Table(name = "$(TableName)")
+@Schema(name = "$(TableName)", description = "$(TableComment)")
+public class $(TableName) {
+
+	/**
+	 * $(FieldComment)
+	 */
+    @Column(name = "$(FieldName)")
+    @Schema(description = "$(FieldComment)")
+    private $(DataType) $(FieldName);
+
+    [FOR key in Field]
+    public $(DataType) get$(FieldName)() {
+        return $(FieldName);
+    }
+
+    public void set$(FieldName)($(DataType) $(FieldName)) {
+        this.$(FieldName) = $(FieldName);
+    }
+    [/FOR]
+}
