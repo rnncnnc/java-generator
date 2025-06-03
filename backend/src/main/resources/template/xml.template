@@ -4,7 +4,9 @@
 <mapper namespace="$(MapperClassName)">
 
     <sql id="$(TableName)">
-        $(Fields)
+<#List "Field">
+        $(FieldColumn),
+</#List>
     </sql>
 
     <!-- 批量查询数据 -->
@@ -13,9 +15,11 @@
 		from $(TableName)
         <if test="pojo != null">
             <where>
-                <if test="pojo.$(Index) != null">
-                    and $(Column) = #{pojo.$(Index)}
+<#List "Index">
+                <if test="pojo.$(IndexField) != null">
+                    and $(IndexColumn) = #{pojo.$(IndexField)}
                 </if>
+</#List>
             </where>
         </if>
         <if test="page != null">
@@ -30,15 +34,19 @@
     <insert id="insert" parameterType="$(PojoClassName)">
         insert into $(TableName)
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.$(Field) != null">
-                $(Column),
+<#List "Field">
+            <if test="pojo.$(FieldName) != null">
+                $(FieldColumn),
             </if>
+</#List>
         </trim>
         values
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.$(Field) != null">
-                #{pojo.$(Field)},
+<#List "Field">
+            <if test="pojo.$(FieldName) != null">
+                #{pojo.$(FieldName)},
             </if>
+</#List>
         </trim>
     </insert>
 
@@ -46,9 +54,11 @@
     <delete id="delete" parameterType="$(PojoClassName)">
         delete from $(TableName)
         <where>
-            <if test="pojo.$(Index) != null">
-                $(Column) = #{pojo.$(Index)}
+<#List "Index">
+            <if test="pojo.$(IndexName) != null">
+                $(IndexColumn) = #{pojo.$(IndexName)}
             </if>
+</#List>
         </where>
     </delete>
 
@@ -56,14 +66,18 @@
     <update id="update" parameterType="$(PojoClassName)">
         update $(TableName)
         <set>
-            <if test="np.$(Field) != null">
-                $(Column) = #{np.$(Field)},
+<#List "Field">
+            <if test="np.$(FieldName) != null">
+                $(FieldColumn) = #{np.$(FieldName)},
             </if>
+</#List>
         </set>
         <where>
-            <if test="query.pojo.$(Field) != null">
-                $(Column) = #{query.pojo.$(Field)}
+<#List "Field">
+            <if test="query.pojo.$(FieldName) != null">
+                $(FieldColumn) = #{query.pojo.$(FieldName)}
             </if>
+</#List>
         </where>
     </update>
 </mapper>

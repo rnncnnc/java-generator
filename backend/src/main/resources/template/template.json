@@ -1,0 +1,210 @@
+{
+
+  "fileType": "java",
+
+
+  "classObj": {
+
+    "packageName": "controller",
+    "parents": [
+      {
+        "type": "extend",
+        "name": "BaseController",
+        "package": "controller",
+        "generics": ["FictionPojo"]
+      },
+      {
+        "type": "implements",
+        "name": "BaseMapper",
+        "packageName": "mapper",
+        "generics": ["FictionPojo"]
+
+      }
+    ],
+
+    "name": "FictionController",
+
+
+    "type": "class",
+
+
+    "permission": "public",
+
+    "generics": ["T", "E"],
+
+
+
+    "comment": [
+      "/**",
+      "* @Data: 2025/5/26 22:38",
+      " * @Author: Lc",
+      " * @Description:",
+      " */"
+    ],
+
+
+    "annotations": [
+      {
+
+        "name": "Entity",
+
+
+        "params": [
+          {
+            "key": "name",
+            "value": "Fiction"
+          }
+        ]
+      },
+      {
+        "name": "Table",
+        "params": [
+          {
+            "key": "name",
+            "value": "Fiction"
+          }
+        ]
+      },
+      {
+        "name": "Schema",
+        "params": [
+          {
+            "key": "name",
+            "value": "Fiction"
+          },
+          {
+            "key": "description",
+            "value": "小说"
+          }
+        ]
+      }
+    ],
+
+    "variables": {
+
+
+      "forList": "",
+
+
+      "contexts": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "permission": "private",
+          "comment": [
+            "/**",
+            " * 会话id",
+            " */"
+          ],
+          "annotations": [
+            {
+              "name": "Column",
+              "params": [
+                {
+                  "key": "name",
+                  "value": "id"
+                }
+              ]
+            },
+            {
+              "name": "Schema",
+              "params": [
+                {
+                  "key": "description",
+                  "value": "小说id"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "novel",
+          "type": "String",
+          "permission": "private",
+          "annotations": [
+            {
+              "name": "Column",
+              "params": [
+                {
+                  "key": "name",
+                  "value": "novel"
+                }
+              ]
+            },
+            {
+              "name": "Schema",
+              "params": [
+                {
+                  "key": "description",
+                  "value": "小说名称"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    "methods": {
+      "forList": "field",
+      "contexts": [
+        {
+          "name": "delete",
+          "returnValue": "Result",
+          "permission": "public",
+          "comment": [
+            "/**",
+            " * 查找符合类型的所有数据",
+            " * @param query",
+            " * @return",
+            "*/"
+          ],
+          "annotations": [
+            {
+              "name": "Operation",
+              "params": [
+                {
+                  "key": "summary",
+                  "value": "删除数据"
+                },
+                {
+                  "key": "description",
+                  "value": "根据条件删除数据"
+                }
+              ]
+            },
+            {
+              "name": "DeleteMapping",
+              "params": [
+                {
+                  "key": "value",
+                  "value": "/delete"
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "pojo",
+              "type": "FunctionPojo",
+              "annotations": [
+                {
+                  "name": "RequestBody",
+                  "params": []
+                }
+              ]
+            }
+          ],
+          "body": [
+            "Query<FictionPojo> query = new Query<>();",
+            "query.setPojo(pojo);",
+            "testService.delete(query);",
+            "return Result.success();"
+          ]
+        }
+      ]
+    },
+    "getAndSet": true,
+    "construct": true
+  }
+}

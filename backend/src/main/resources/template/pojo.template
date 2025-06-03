@@ -3,20 +3,22 @@
 @Schema(name = "$(TableName)", description = "$(TableComment)")
 public class $(TableName) {
 
+<#List "Field">
 	/**
 	 * $(FieldComment)
 	 */
     @Column(name = "$(FieldName)")
     @Schema(description = "$(FieldComment)")
-    private $(DataType) $(FieldName);
+    private $(FieldDataType) $(FieldName);
+</#List>
 
-    [FOR key in Field]
-    public $(DataType) get$(FieldName)() {
+<#List "Field">
+    public $(FieldDataType) get$(FieldName)() {
         return $(FieldName);
     }
 
-    public void set$(FieldName)($(DataType) $(FieldName)) {
+    public void set$(FieldName)($(FieldDataType) $(FieldName)) {
         this.$(FieldName) = $(FieldName);
     }
-    [/FOR]
+</#List>
 }

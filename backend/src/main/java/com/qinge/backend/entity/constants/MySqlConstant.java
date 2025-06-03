@@ -9,8 +9,6 @@ package com.qinge.backend.entity.constants;
 
 public class MySqlConstant extends DBConstant {
 
-    public static final String PRIMARY_KEY = "PRI";
-
     public static final String[] SQL_DATE_TIME_TYPE = new String[]{"datetime", "timestamp"};
 
     public static final String[] SQL_DATE_TYPE = new String[]{"date"};
@@ -22,4 +20,8 @@ public class MySqlConstant extends DBConstant {
     public static final String[] SQL_INTEGER_TYPES = new String[]{"int", "tinyint"};
 
     public static final String[] SQL_LONG_TYPES = new String[]{"bigint"};
+
+    public static final String PRIMARY_KEY = "PRIMARY";
+
+    public static final String NOTNULL_KEY = "NOT NULL";
 }
