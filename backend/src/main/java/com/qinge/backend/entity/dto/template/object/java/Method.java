@@ -1,4 +1,4 @@
-package com.qinge.backend.entity.dto.template.java;
+package com.qinge.backend.entity.dto.template.object.java;
 
 import java.util.List;
 
@@ -15,10 +15,13 @@ public class Method {
     private String name;
 
     // 返回参数
-    private String returnValue;
+    private ClassInfo returnType;
 
     // 权限
     private String permission;
+
+    // 泛型
+    private List<Generic> generics;
 
     // 注释
     private List<String> comment;
@@ -30,19 +33,17 @@ public class Method {
     private List<MethodParameter> parameters;
 
     // 方法体
-    private List<String> body;
+    private MethodBody bodyInfo;
 
     public Method() {
     }
 
-    public Method(String name, String returnValue, String permission, List<String> comment, List<Annotation> annotations, List<MethodParameter> parameters, List<String> body) {
-        this.name = name;
-        this.returnValue = returnValue;
-        this.permission = permission;
-        this.comment = comment;
-        this.annotations = annotations;
-        this.parameters = parameters;
-        this.body = body;
+    public List<Generic> getGenerics() {
+        return generics;
+    }
+
+    public void setGenerics(List<Generic> generics) {
+        this.generics = generics;
     }
 
     public String getName() {
@@ -53,12 +54,12 @@ public class Method {
         this.name = name;
     }
 
-    public String getReturnValue() {
-        return returnValue;
+    public ClassInfo getReturnType() {
+        return returnType;
     }
 
-    public void setReturnValue(String returnValue) {
-        this.returnValue = returnValue;
+    public void setReturnType(ClassInfo returnType) {
+        this.returnType = returnType;
     }
 
     public String getPermission() {
@@ -93,11 +94,25 @@ public class Method {
         this.parameters = parameters;
     }
 
-    public List<String> getBody() {
-        return body;
+    public MethodBody getBodyInfo() {
+        return bodyInfo;
     }
 
-    public void setBody(List<String> body) {
-        this.body = body;
+    public void setBodyInfo(MethodBody bodyInfo) {
+        this.bodyInfo = bodyInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "Method{" +
+                "name='" + name + '\'' +
+                ", returnType=" + returnType +
+                ", permission='" + permission + '\'' +
+                ", generics=" + generics +
+                ", comment=" + comment +
+                ", annotations=" + annotations +
+                ", parameters=" + parameters +
+                ", bodyInfo=" + bodyInfo +
+                '}';
     }
 }

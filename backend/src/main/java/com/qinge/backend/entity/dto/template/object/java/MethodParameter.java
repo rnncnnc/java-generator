@@ -1,4 +1,4 @@
-package com.qinge.backend.entity.dto.template.java;
+package com.qinge.backend.entity.dto.template.object.java;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class MethodParameter {
     private String name;
 
     // 参数类型
-    private String type;
+    private ClassInfo type;
 
     // 注解
     private List<Annotation> annotations;
@@ -23,11 +23,7 @@ public class MethodParameter {
     public MethodParameter() {
     }
 
-    public MethodParameter(String name, String type, List<Annotation> annotations) {
-        this.name = name;
-        this.type = type;
-        this.annotations = annotations;
-    }
+
 
     public String getName() {
         return name;
@@ -37,11 +33,11 @@ public class MethodParameter {
         this.name = name;
     }
 
-    public String getType() {
+    public ClassInfo getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ClassInfo type) {
         this.type = type;
     }
 
@@ -51,5 +47,14 @@ public class MethodParameter {
 
     public void setAnnotations(List<Annotation> annotations) {
         this.annotations = annotations;
+    }
+
+    @Override
+    public String toString() {
+        return "MethodParameter{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", annotations=" + annotations +
+                '}';
     }
 }

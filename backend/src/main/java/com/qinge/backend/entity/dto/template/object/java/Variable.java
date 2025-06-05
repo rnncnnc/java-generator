@@ -1,4 +1,4 @@
-package com.qinge.backend.entity.dto.template.java;
+package com.qinge.backend.entity.dto.template.object.java;
 
 import java.util.List;
 
@@ -9,13 +9,16 @@ import java.util.List;
  */
 
 
-public class VariableContext {
+public class Variable {
 
     // 变量名
     private String name;
 
     // 变量类型
-    private String type;
+    private ClassInfo type;
+
+    // 是否是泛型变量
+    private Boolean isGeneric;
 
     // 权限
     private String permission;
@@ -26,15 +29,15 @@ public class VariableContext {
     // 注解
     private List<Annotation> annotations;
 
-    public VariableContext() {
+    public Variable() {
     }
 
-    public VariableContext(String name, String type, String permission, List<String> comment, List<Annotation> annotations) {
-        this.name = name;
-        this.type = type;
-        this.permission = permission;
-        this.comment = comment;
-        this.annotations = annotations;
+    public Boolean getGeneric() {
+        return isGeneric;
+    }
+
+    public void setGeneric(Boolean generic) {
+        isGeneric = generic;
     }
 
     public String getName() {
@@ -45,11 +48,11 @@ public class VariableContext {
         this.name = name;
     }
 
-    public String getType() {
+    public ClassInfo getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ClassInfo type) {
         this.type = type;
     }
 
@@ -75,5 +78,17 @@ public class VariableContext {
 
     public void setAnnotations(List<Annotation> annotations) {
         this.annotations = annotations;
+    }
+
+    @Override
+    public String toString() {
+        return "Variable{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", isGeneric=" + isGeneric +
+                ", permission='" + permission + '\'' +
+                ", comment=" + comment +
+                ", annotations=" + annotations +
+                '}';
     }
 }

@@ -1,6 +1,8 @@
 package com.qinge.backend.builder;
 
-import com.qinge.backend.entity.dto.template.java.JavaClass;
+import com.qinge.backend.entity.dto.template.object.FileObject;
+
+import java.io.IOException;
 
 /**
  * @Data: 2025/6/1 14:17
@@ -9,7 +11,7 @@ import com.qinge.backend.entity.dto.template.java.JavaClass;
  */
 
 
-public abstract class FileBuilder<T> implements Builder<T>{
+public abstract class FileBuilder implements Builder {
 
     // 基础包名
     protected String basePackage;
@@ -17,17 +19,13 @@ public abstract class FileBuilder<T> implements Builder<T>{
     // 临时目录
     protected String temPath;
 
+    /**
+     * 构建文件
+     */
     @Override
-    public void build(T template) {
-        System.out.println("file builder");
-    }
+    abstract public void build(FileObject fileObj) throws IOException;
 
     public FileBuilder() {
-    }
-
-    public FileBuilder(String basePackage, String temPath) {
-        this.basePackage = basePackage;
-        this.temPath = temPath;
     }
 
     public String getBasePackage() {

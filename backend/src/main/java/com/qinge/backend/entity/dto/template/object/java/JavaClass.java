@@ -1,7 +1,8 @@
-package com.qinge.backend.entity.dto.template.java;
+package com.qinge.backend.entity.dto.template.object.java;
 
 
-import com.qinge.backend.entity.dto.template.FileObj;
+import com.qinge.backend.entity.dto.template.object.FileObject;
+import com.qinge.backend.entity.dto.template.object.java.*;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  */
 
 
-public class JavaClass implements FileObj {
+public class JavaClass implements FileObject {
 
     // 包名
     private String packageName;
@@ -30,7 +31,7 @@ public class JavaClass implements FileObj {
     private String permission;
 
     // 泛型
-    private List<String> generics;
+    private List<Generic> generics;
 
     // 是否需要get set
     private Boolean getAndSet;
@@ -51,21 +52,6 @@ public class JavaClass implements FileObj {
     private List<Method> methods;
 
     public JavaClass() {
-    }
-
-    public JavaClass(String packageName, List<Parent> parents, String name, String type, String permission, List<String> generics, Boolean getAndSet, Boolean construct, List<String> comment, List<Annotation> annotations, List<Variable> variables, List<Method> methods) {
-        this.packageName = packageName;
-        this.parents = parents;
-        this.name = name;
-        this.type = type;
-        this.permission = permission;
-        this.generics = generics;
-        this.getAndSet = getAndSet;
-        this.construct = construct;
-        this.comment = comment;
-        this.annotations = annotations;
-        this.variables = variables;
-        this.methods = methods;
     }
 
     public String getPackageName() {
@@ -108,11 +94,11 @@ public class JavaClass implements FileObj {
         this.permission = permission;
     }
 
-    public List<String> getGenerics() {
+    public List<Generic> getGenerics() {
         return generics;
     }
 
-    public void setGenerics(List<String> generics) {
+    public void setGenerics(List<Generic> generics) {
         this.generics = generics;
     }
 

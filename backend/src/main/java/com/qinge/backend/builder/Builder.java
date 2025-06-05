@@ -1,7 +1,8 @@
 package com.qinge.backend.builder;
 
-import com.qinge.backend.entity.dto.template.FileObj;
-import com.qinge.backend.entity.dto.template.Template;
+import com.qinge.backend.entity.dto.template.object.FileObject;
+
+import java.io.IOException;
 
 /**
  * @Data: 2025/6/1 14:16
@@ -11,15 +12,11 @@ import com.qinge.backend.entity.dto.template.Template;
 
 
 public interface Builder<T> {
-    // 基础包名
-    String basePackage = null;
 
-    // 临时目录
-    String temPath = null;
 
     /**
      * 构建文件
-     * @param template
+     * @param fileObj
      */
-    void build(T template);
+    void build(FileObject fileObj) throws IOException;
 }

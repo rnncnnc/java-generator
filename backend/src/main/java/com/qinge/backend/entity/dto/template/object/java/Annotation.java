@@ -1,4 +1,4 @@
-package com.qinge.backend.entity.dto.template.java;
+package com.qinge.backend.entity.dto.template.object.java;
 
 import java.util.List;
 
@@ -37,5 +37,13 @@ public class Annotation {
 
     public void setParams(List<AnnotationParam> params) {
         this.params = params;
+    }
+
+    @Override
+    public String toString() {
+        return "Annotation{" +
+                "name='" + name + '\'' +
+                ", params=" + params +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.qinge.backend.entity.dto.template.java;
+package com.qinge.backend.entity.dto.template.object.java;
 
 /**
  * @Data: 2025/6/1 13:32
@@ -35,5 +35,13 @@ public class AnnotationParam {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "AnnotationParam{" +
+                "key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                '}';
     }
 }

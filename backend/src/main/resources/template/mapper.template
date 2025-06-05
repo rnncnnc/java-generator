@@ -1,3 +1,0 @@
-public interface $(TableName)Mapper extends BaseMapper<$(TableName)Pojo> {
-
-}

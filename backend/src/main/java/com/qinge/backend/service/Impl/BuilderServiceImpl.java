@@ -1,20 +1,27 @@
 package com.qinge.backend.service.Impl;
 
+import com.qinge.backend.builder.ControllerBuilder;
+import com.qinge.backend.builder.FileBuilder;
+import com.qinge.backend.builder.JavaBuilder;
 import com.qinge.backend.entity.constants.ClassDir;
 import com.qinge.backend.entity.dto.BaseInfo;
 import com.qinge.backend.entity.dto.table.Table;
-import com.qinge.backend.factory.ParserFactory;
-import com.qinge.backend.parser.JavaParser;
-import com.qinge.backend.parser.Parser;
-import com.qinge.backend.parser.TemplateParser;
+import com.qinge.backend.entity.dto.template.Template;
+import com.qinge.backend.entity.dto.template.object.FileObject;
+import com.qinge.backend.entity.dto.template.object.java.JavaClass;
+import com.qinge.backend.parser.ObjectParser;
 import com.qinge.backend.service.BuilderService;
 import com.qinge.backend.parser.DataBaseParser;
+import com.qinge.backend.utils.ClassTools;
 import com.qinge.backend.utils.FileTools;
+import com.qinge.backend.utils.StringTools;
+import lombok.extern.slf4j.Slf4j;
 
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -24,13 +31,14 @@ import java.util.*;
  */
 
 
+@Slf4j
 public class BuilderServiceImpl implements BuilderService {
 
     /**
      * mysql构建项目
      */
     @Override
-    public void buildFile() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void buildFile() throws Exception {
         // TODO 移到controller层
         BaseInfo baseInfo = new BaseInfo();
         baseInfo.setDbType("mysql");
@@ -44,34 +52,37 @@ public class BuilderServiceImpl implements BuilderService {
 
         // 创建临时目录
         String temPath = ClassDir.TEMP_DIR + File.separator + "java-" + baseInfo.getArtifactId();
-
         String basePackage = baseInfo.getGroupId() + "." + baseInfo.getArtifactId();
 
         baseInfo.setTempPath(temPath);
 
         // 创建临时目录
         FileTools.createDir(temPath);
+        log.info("创建临时目录成功：" + temPath);
 
         // 解析数据库
         List<Table> tableList = getTableList(baseInfo);
 
-        // TODO 读取JSON文件
 
-        Map<String, Object> templateMap = TemplateParser.parseToTemplate("template//template.json");
+        // 解析模板
+        List<Template> templateList = getAllTemplate("template");
 
-        String fileType = (String) templateMap.get("fileType");
-        if (fileType.equals("java")) {
-            Parser parser = ParserFactory.buildParser(fileType);
-            parser.parseTemplate((Map<String, Object>) templateMap.get("classObj"));
+        for (Template template : templateList) {
+            String fileType = template.getFileType();
+
+            // 获取文件构建器
+            String fullClassName = FileBuilder.class.getName().replace("File", StringTools.firstToUppercase(fileType));
+            FileBuilder fileBuilder = ClassTools.buildClassByFullName(fullClassName);
+
+            FileObject fileObject = template.getClassObj();
+
+            fileBuilder.setBasePackage(basePackage);
+            fileBuilder.setTemPath(temPath);
+
+            fileBuilder.build(fileObject);
+
+            // TODO 结合TableList进行构建
         }
-
-
-        //
-        // // 解析模板
-        // Map<String, Template> templateMap = parseTemplate();
-        //
-        // // 构建文件
-        // buildClass(baseInfo, tableList, templateMap);
     }
 
     /**
@@ -83,42 +94,62 @@ public class BuilderServiceImpl implements BuilderService {
         List<Table> tableList = null;
 
         // 解析数据库信息
-        if (Objects.equals(baseInfo.getDbType(), "mysql")) {
+        if (Objects.equals(baseInfo.getDbType().toLowerCase(), "mysql")) {
             tableList = DataBaseParser.parseMySQLTable(baseInfo);
-        } else if (Objects.equals(baseInfo.getDbType(), "postgresql")) {
+        } else if (Objects.equals(baseInfo.getDbType().toLowerCase(), "postgresql")) {
             tableList = DataBaseParser.parsePostgreSQLTable(baseInfo);
         }
 
+        log.info("解析数据库成功" + baseInfo.getDbType());
+
         return tableList;
     }
-    //
-    // /**
-    //  * 解析模板
-    //  * @return
-    //  */
-    // private Map<String, Template> parseTemplate() {
-    //     Map<String, Template> templateMap = new HashMap<>();
-    //
-    //     // 读取模板文件
-    //     List<String> templates = FileTools.getResourcesFiles("template");
-    //
-    //     for (String template : templates) {
-    //         String separator = File.separator;
-    //         String dirName = template.split(separator.equals("\\") ? "\\\\" : separator)[1].split("\\.")[0];
-    //
-    //         // 解析模板
-    //         Template tem;
-    //         if (dirName.equals("xml")) {
-    //             tem = TemplateParser.parseXMLTemplate(template);
-    //         } else {
-    //             tem = TemplateParser.parseClassTemplate(template);
-    //         }
-    //
-    //         templateMap.put(dirName, tem);
-    //     }
-    //
-    //     return templateMap;
-    // }
+
+
+    /**
+     * 解析路径下的所有模板文件
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
+    private List<Template> getAllTemplate(String filePath) throws IOException, ClassNotFoundException {
+        List<String> pathList = FileTools.getResourcesFiles(filePath);
+        List<Template> templateList = new ArrayList<>();
+
+        for (String path : pathList) {
+            Template template = parseTemplate(path);
+
+            templateList.add(template);
+        }
+
+        return templateList;
+    }
+
+    /**
+     * 根据文件路径解析模板
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    private Template parseTemplate(String fileName) throws IOException, ClassNotFoundException {
+        // 获取要解析的模板的类型
+        String type = StringTools.firstToUppercase(fileName.split("-")[1].split("\\.")[0]);
+
+        // 获取解析器的全类名
+        String fullClassName = ObjectParser.class.getName().replace("Object", type);
+
+        // 构建解析器对象
+        ObjectParser parser = ClassTools.buildClassByFullName(fullClassName);
+
+        // 解析模板
+        Template template = parser.parseFromYml(fileName);
+
+        log.info("解析模板成功：" + fileName);
+
+        return template;
+    }
+
+
     //
     // /**
     //  * 构建所有文件
@@ -215,7 +246,7 @@ public class BuilderServiceImpl implements BuilderService {
     // }
     //
     //
-    public static void main(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws Exception {
         BuilderService builderService = new BuilderServiceImpl();
         builderService.buildFile();
 

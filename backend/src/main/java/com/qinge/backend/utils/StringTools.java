@@ -75,4 +75,17 @@ public class StringTools {
         // 使用Stream API遍历数组，检查是否存在匹配项
         return Arrays.stream(array).anyMatch(target::equals);
     }
+
+    /**
+     * 判断字符串是否为空
+     * @param str
+     * @return
+     */
+    public static boolean isEmpty(String str) {
+        if (str == null || str.isEmpty()) {
+            return true;
+        }
+
+        return false;
+    }
 }

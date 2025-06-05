@@ -1,5 +1,6 @@
 package com.qinge.backend.service;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -12,5 +13,5 @@ import java.lang.reflect.InvocationTargetException;
 public interface BuilderService {
 
     // 构建文件
-    public void buildFile() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
+    public void buildFile() throws Exception;
 }
