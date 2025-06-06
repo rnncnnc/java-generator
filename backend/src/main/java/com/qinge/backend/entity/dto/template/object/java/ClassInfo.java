@@ -1,5 +1,8 @@
 package com.qinge.backend.entity.dto.template.object.java;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * @Data: 2025/6/5 19:27
  * @Author: Lc
@@ -7,7 +10,7 @@ package com.qinge.backend.entity.dto.template.object.java;
  */
 
 
-public class ClassInfo {
+public class ClassInfo implements Serializable {
 
     // 类名
     private String className;
@@ -18,7 +21,18 @@ public class ClassInfo {
     // 是否是泛型
     private Boolean isGeneric;
 
+    // 类的泛型
+    private List<GenericParam> genericParams;
+
     public ClassInfo() {
+    }
+
+    public List<GenericParam> getGenericParams() {
+        return genericParams;
+    }
+
+    public void setGenericParams(List<GenericParam> genericParams) {
+        this.genericParams = genericParams;
     }
 
     public String getClassName() {
@@ -51,6 +65,7 @@ public class ClassInfo {
                 "className='" + className + '\'' +
                 ", packageName='" + packageName + '\'' +
                 ", isGeneric=" + isGeneric +
+                ", genericParams=" + genericParams +
                 '}';
     }
 }

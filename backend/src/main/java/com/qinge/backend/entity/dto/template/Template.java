@@ -15,14 +15,14 @@ public class Template<T extends FileObject> {
     private String fileType;
 
     // 具体的模板对象
-    private T classObj;
+    private T templateObj;
 
     public Template() {
     }
 
     public Template(String fileType, T classObj) {
         this.fileType = fileType;
-        this.classObj = classObj;
+        this.templateObj = classObj;
     }
 
     public String getFileType() {
@@ -33,19 +33,19 @@ public class Template<T extends FileObject> {
         this.fileType = fileType;
     }
 
-    public T getClassObj() {
-        return classObj;
+    public T getTemplateObj() {
+        return templateObj;
     }
 
-    public void setClassObj(T classObj) {
-        this.classObj = classObj;
+    public void setTemplateObj(T classObj) {
+        this.templateObj = classObj;
     }
 
     @Override
     public String toString() {
         return "Template{" +
                 "fileType='" + fileType + '\'' +
-                ", classObj=" + classObj +
+                ", classObj=" + templateObj +
                 '}';
     }
 }

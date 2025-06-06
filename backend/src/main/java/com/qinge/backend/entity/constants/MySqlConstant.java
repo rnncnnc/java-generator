@@ -21,6 +21,8 @@ public class MySqlConstant extends DBConstant {
 
     public static final String[] SQL_LONG_TYPES = new String[]{"bigint"};
 
+    public static final String[] SQL_BOOLEAN_TYPES = new String[]{"boolean", "bit"};
+
     public static final String PRIMARY_KEY = "PRIMARY";
 
     public static final String NOTNULL_KEY = "NOT NULL";

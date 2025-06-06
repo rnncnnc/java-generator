@@ -1,0 +1,12 @@
+fileType: mapper
+templateObj:
+  type: interface
+  name: $(TableName)Mapper
+  packageName: mapper
+  extendsClass:
+    className: BaseMapper
+    packageName: mapper
+    genericParams:
+      - name: $(TableName)Pojo
+        packageName: entity.pojo
+

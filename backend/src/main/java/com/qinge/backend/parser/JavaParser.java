@@ -42,9 +42,13 @@ public class JavaParser extends ObjectParser {
         // 3. 类注释
         javaClass.setComment((List<String>) templateMap.get("comment"));
 
+        javaClass.setExceptions(parseExceptions((List<Map<String, Object>>) templateMap.get("exceptions")));
+
+        javaClass.setExtendsClass(parseClassInfo((Map<String, Object>) templateMap.get("extendsClass")));
+
         // 4. 父类列表（List<Parent>）
-        List<Parent> parents = parseParents((List<Map<String, Object>>) templateMap.get("parents"));
-        javaClass.setParents(parents);
+        List<ClassInfo> classInfos = parseClassInfoList((List<Map<String, Object>>) templateMap.get("implementList"));
+        javaClass.setImplementsList(classInfos);
 
         // 5. 类注解列表（List<Annotation>）
         List<Annotation> annotations = parseAnnotations((List<Map<String, Object>>) templateMap.get("annotations"));
@@ -69,11 +73,34 @@ public class JavaParser extends ObjectParser {
     private ClassInfo parseClassInfo(Map<String, Object> classInfoMap) {
         ClassInfo classInfo = new ClassInfo();
 
+        if (CollectionUtils.isEmpty(classInfoMap)) return classInfo;
+
         classInfo.setClassName((String) classInfoMap.get("className"));
         classInfo.setPackageName((String) classInfoMap.get("packageName"));
         classInfo.setGeneric((Boolean) classInfoMap.get("isGeneric"));
+        classInfo.setGenericParams(parseGenericParam((List<Map<String, Object>>) classInfoMap.get("genericParams")));
 
         return classInfo;
+    }
+
+    /**
+     * 解析泛型参数
+     * @param genericParamMaps
+     * @return
+     */
+    private List<GenericParam> parseGenericParam(List<Map<String, Object>> genericParamMaps) {
+        List<GenericParam> genericParams = new ArrayList<>();
+        if (CollectionUtils.isEmpty(genericParamMaps)) {
+            return genericParams;
+        }
+        for (Map<String, Object> genericParamMap : genericParamMaps) {
+            GenericParam genericParam = new GenericParam();
+            genericParam.setName((String) genericParamMap.get("name"));
+            genericParam.setPackageName((String) genericParamMap.get("packageName"));
+
+            genericParams.add(genericParam);
+        }
+        return genericParams;
     }
 
     /**
@@ -83,6 +110,9 @@ public class JavaParser extends ObjectParser {
      */
     private List<ClassInfo> parseClassInfoList(List<Map<String, Object>> classInfoMaps) {
         List<ClassInfo> classInfoList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(classInfoMaps)) {
+            return classInfoList;
+        }
         for (Map<String, Object> classInfoMap : classInfoMaps) {
             ClassInfo classInfo = parseClassInfo(classInfoMap);
             classInfoList.add(classInfo);
@@ -90,22 +120,18 @@ public class JavaParser extends ObjectParser {
         return classInfoList;
     }
 
-
-    // 解析父类列表
-    private List<Parent> parseParents(List<Map<String, Object>> parentMaps) {
-        List<Parent> parents = new ArrayList<>();
-        if (CollectionUtils.isEmpty(parentMaps)) return parents;
-
-        for (Map<String, Object> parentMap : parentMaps) {
-            Parent parent = new Parent();
-
-            parent.setName((String) parentMap.get("name"));
-            parent.setType(parseClassInfo((Map<String, Object>) parentMap.get("type")));
-            parent.setGenerics(parseClassInfoList((List<Map<String, Object>>) parentMap.get("generics")));
-            parents.add(parent);
-        }
-        return parents;
+    /**
+     * 解析异常列表
+     * @param exceptionMaps
+     * @return
+     */
+    private List<ClassInfo> parseExceptions(List<Map<String, Object>> exceptionMaps) {
+        List<ClassInfo> exceptions = new ArrayList<>();
+        if (CollectionUtils.isEmpty(exceptionMaps)) return exceptions;
+        List<ClassInfo> classInfos = parseClassInfoList(exceptionMaps);
+        return classInfos;
     }
+
 
     // 解析注解列表
     private List<Annotation> parseAnnotations(List<Map<String, Object>> annotationMaps) {
@@ -177,6 +203,7 @@ public class JavaParser extends ObjectParser {
             method.setPermission((String) methodMap.get("permission"));
             method.setComment((List<String>) methodMap.get("comment"));
             method.setGenerics(parseGenerics((List<Map<String, Object>>) methodMap.get("generics")));
+            method.setExceptions(parseExceptions((List<Map<String, Object>>) methodMap.get("exceptions")));
             // 方法注解
             method.setAnnotations(parseAnnotations((List<Map<String, Object>>) methodMap.get("annotations")));
             // 方法参数（List<MethodParameter>）
@@ -194,11 +221,13 @@ public class JavaParser extends ObjectParser {
             method.setParameters(parameters);
             // 方法体
             Map<String, Object> bodyInfoMap = (Map<String, Object>) methodMap.get("bodyInfo");
-            MethodBody bodyInfo = new MethodBody();
-            bodyInfo.setRequire(parseClassInfoList((List<Map<String, Object>>) bodyInfoMap.get("require")));
-            bodyInfo.setBody((List<String>) bodyInfoMap.get("body"));
+            if (bodyInfoMap != null) {
+                MethodBody bodyInfo = new MethodBody();
+                bodyInfo.setRequire(parseClassInfoList((List<Map<String, Object>>) bodyInfoMap.get("require")));
+                bodyInfo.setBody((List<String>) bodyInfoMap.get("body"));
 
-            method.setBodyInfo(bodyInfo);
+                method.setBodyInfo(bodyInfo);
+            }
 
             methods.add(method);
         }

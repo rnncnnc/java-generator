@@ -1,6 +1,5 @@
 package com.qinge.backend.service.Impl;
 
-import com.qinge.backend.builder.ControllerBuilder;
 import com.qinge.backend.builder.FileBuilder;
 import com.qinge.backend.builder.JavaBuilder;
 import com.qinge.backend.entity.constants.ClassDir;
@@ -8,7 +7,6 @@ import com.qinge.backend.entity.dto.BaseInfo;
 import com.qinge.backend.entity.dto.table.Table;
 import com.qinge.backend.entity.dto.template.Template;
 import com.qinge.backend.entity.dto.template.object.FileObject;
-import com.qinge.backend.entity.dto.template.object.java.JavaClass;
 import com.qinge.backend.parser.ObjectParser;
 import com.qinge.backend.service.BuilderService;
 import com.qinge.backend.parser.DataBaseParser;
@@ -20,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -42,7 +38,7 @@ public class BuilderServiceImpl implements BuilderService {
         // TODO 移到controller层
         BaseInfo baseInfo = new BaseInfo();
         baseInfo.setDbType("mysql");
-        baseInfo.setDbUrl("jdbc:mysql://gpa.bakistrim.site:3306/easy_chat");
+        baseInfo.setDbUrl("jdbc:mysql://192.168.0.16:3306/easy_chat");
         baseInfo.setUsername("root");
         baseInfo.setPassword("315766");
         baseInfo.setGroupId("com.qinge");
@@ -68,20 +64,37 @@ public class BuilderServiceImpl implements BuilderService {
         List<Template> templateList = getAllTemplate("template");
 
         for (Template template : templateList) {
+            // 获取文件类型
             String fileType = template.getFileType();
 
             // 获取文件构建器
-            String fullClassName = FileBuilder.class.getName().replace("File", StringTools.firstToUppercase(fileType));
+            String fullClassName = JavaBuilder.class.getName().replace("Java", StringTools.firstToUppercase(fileType));
             FileBuilder fileBuilder = ClassTools.buildClassByFullName(fullClassName);
 
-            FileObject fileObject = template.getClassObj();
+            // 获取模板类型
+            FileObject fileObject = template.getTemplateObj();
 
+            // 设置基础包名
             fileBuilder.setBasePackage(basePackage);
+            // 设置临时文件夹
             fileBuilder.setTemPath(temPath);
 
-            fileBuilder.build(fileObject);
+            // 只需要构建一个文件
+            if (fileType.equals("single")) {
+                // 构建文件
+                fileBuilder.build(fileObject);
+            } else {
+                // 根据数据库创建多个文件
+                for (Table table : tableList) {
 
-            // TODO 结合TableList进行构建
+                    // 将table赋值给fileBuilder
+                    ClassTools.setFieldValue(fileBuilder, "table", table);
+
+                    // 构建文件
+                    fileBuilder.build(fileObject);
+                }
+            }
+
         }
     }
 
@@ -131,7 +144,7 @@ public class BuilderServiceImpl implements BuilderService {
      * @return
      * @throws IOException
      */
-    private Template parseTemplate(String fileName) throws IOException, ClassNotFoundException {
+    private Template parseTemplate(String fileName) throws IOException {
         // 获取要解析的模板的类型
         String type = StringTools.firstToUppercase(fileName.split("-")[1].split("\\.")[0]);
 

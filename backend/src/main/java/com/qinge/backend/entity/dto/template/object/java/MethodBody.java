@@ -1,5 +1,6 @@
 package com.qinge.backend.entity.dto.template.object.java;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  */
 
 
-public class MethodBody {
+public class MethodBody implements Serializable {
 
     private List<String> body;
 

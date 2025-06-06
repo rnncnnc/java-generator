@@ -2,6 +2,8 @@ package com.qinge.backend.entity.dto.table;
 
 import com.qinge.backend.utils.StringTools;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +19,9 @@ public class Table {
     // 表名
     private String TableName;
 
+    // 表名(原始)
+    private String TableOriginName;
+
     // 表注释
     private String TableComment;
 
@@ -26,18 +31,15 @@ public class Table {
     // 索引信息
     private List<Index> Indexs;
 
-    // 导入包的集合
-    private Set<String> importList;
-
     public Table() {
     }
 
-    public Set<String> getImportList() {
-        return importList;
-    }
-
-    public void setImportList(Set<String> importList) {
-        this.importList = importList;
+    /**
+     * 获取当前时间
+     * @return
+     */
+    public String getDateTime() {
+        return new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date());
     }
 
     public String getTableName() {
@@ -50,6 +52,14 @@ public class Table {
 
     public void setTableName(String tableName) {
         TableName = tableName;
+    }
+
+    public String getTableOriginName() {
+        return TableOriginName;
+    }
+
+    public void setTableOriginName(String tableOriginName) {
+        TableOriginName = tableOriginName;
     }
 
     public String getTableComment() {
@@ -80,10 +90,10 @@ public class Table {
     public String toString() {
         return "Table{" +
                 "TableName='" + TableName + '\'' +
+                ", TableOriginName='" + TableOriginName + '\'' +
                 ", TableComment='" + TableComment + '\'' +
                 ", Fields=" + Fields +
                 ", Indexs=" + Indexs +
-                ", importList=" + importList +
                 '}';
     }
 }

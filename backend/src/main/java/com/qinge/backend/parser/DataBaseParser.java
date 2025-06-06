@@ -1,5 +1,6 @@
 package com.qinge.backend.parser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.qinge.backend.connector.MysqlConnector;
 import com.qinge.backend.connector.PostgresqlConnector;
 import com.qinge.backend.entity.constants.DBConstant;
@@ -11,7 +12,9 @@ import com.qinge.backend.entity.dto.table.Table;
 import com.qinge.backend.entity.enums.DataFields;
 import com.qinge.backend.utils.ParserTools;
 import com.qinge.backend.utils.StringTools;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -56,25 +59,24 @@ public class DataBaseParser {
             // 存储表信息
             Table tab = new Table();
 
-            String tabName = ((String) table.get(dbEnum.getTableName()));
+            tab.setTableOriginName((String) table.get(dbEnum.getTableName()));
+            String tabName = ((String) table.get(dbEnum.getTableName())).replace(baseInfo.getTablePrefix(), "");
             String classTabName = tabName;
             // 替换掉表前缀
             if (baseInfo.getTablePrefix() != null) {
-                classTabName = classTabName.replace(baseInfo.getTablePrefix(), "");
-                classTabName = StringTools.toCamel(classTabName, baseInfo.getFieldSeparator());
+                classTabName = StringTools.toCamel(tabName, baseInfo.getFieldSeparator());
                 classTabName = StringTools.firstToUppercase(classTabName);
             }
 
             tab.setTableName(classTabName);
 
-
-            tab.setTableComment((String) table.get(dbEnum.getTableComment()));
+            String tabComment = (String) table.get(dbEnum.getTableComment());
+            tab.setTableComment(tabComment.trim());
 
             // 获取表的字段信息
             List<Map<String, Object>> fields = mysqlConnector.executeQuery("SHOW FULL FIELDS FROM " + tabName);
 
             List<Field> fieldList = new ArrayList<>();
-            Set<String> importList = new HashSet<>();
             for (Map<String, Object> field : fields) {
                 Field fed = new Field();
 
@@ -83,40 +85,36 @@ public class DataBaseParser {
                 fed.setFieldColumn(columnName);
 
                 // 将字段名改为驼峰显示
-                String fieldName = StringTools.toCamel((columnName), baseInfo.getFieldSeparator());
+                String fieldName = StringTools.toCamel(columnName, baseInfo.getFieldSeparator());
                 fed.setFieldName(fieldName);
-                fed.setFieldComment((String) field.get(dbEnum.getColumnComment()));
+
+                String fieldComment = (String) field.get(dbEnum.getColumnComment());
+                fed.setFieldComment(fieldComment.trim());
 
                 // 去除括号  int(8)
                 String dataType = (String) field.get(dbEnum.getColumnType());
                 String[] split = dataType.split("\\(");
                 dataType = split[0];
 
-                // 设置字段的java数据类型
-                dataType = ParserTools.dataTypeToJava(dataType, importList);
-
                 fed.setFieldDataType(dataType);
 
-                // 设置字段的主键信息
-                String key = (String) field.get(dbEnum.getColumnKey());
-                if (Objects.equals(key, "PRI")) {
-                    fed.setFieldKey(MySqlConstant.PRIMARY_KEY);
-                }
+                fed.setFieldKey((String) field.get(dbEnum.getColumnKey()));
 
                 fieldList.add(fed);
             }
 
             tab.setFields(fieldList);
-            tab.setImportList(importList);
 
             // 获取表的索引信息
             List<Map<String, Object>> indexs = mysqlConnector.executeQuery("show index from " + tabName);
+
             List<Index> indexList = new ArrayList<>();
             for (Map<String, Object> index : indexs) {
                 Index ind = new Index();
                 ind.setIndexName((String) index.get(dbEnum.getIndexName()));
 
                 ind.setIndexColumn((String) index.get(dbEnum.getIndexColumnName()));
+
                 ind.setIndexField(StringTools.toCamel((String) index.get(dbEnum.getIndexColumnName()), baseInfo.getFieldSeparator()));
 
                 indexList.add(ind);

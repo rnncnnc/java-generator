@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 
 
-public interface Builder<T> {
+public interface Builder {
 
 
     /**

@@ -1,5 +1,7 @@
 package com.qinge.backend.entity.dto.template.object.java;
 
+import java.io.Serializable;
+
 /**
  * @Data: 2025/6/1 13:32
  * @Author: Lc
@@ -7,7 +9,7 @@ package com.qinge.backend.entity.dto.template.object.java;
  */
 
 
-public class AnnotationParam {
+public class AnnotationParam implements Serializable {
 
     private String key;
 

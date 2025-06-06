@@ -1,6 +1,10 @@
 package com.qinge.backend.utils;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Data: 2025/6/1 9:48
@@ -10,6 +14,42 @@ import java.util.Arrays;
 
 
 public class StringTools {
+
+    /**
+     * 判断是否为true
+     * @param bool
+     * @return
+     */
+    public static Boolean isTrue(Boolean bool) {
+        if (bool == null) {
+            return false;
+        }
+        return bool;
+    }
+
+    /**
+     * 解析出关键词 $(keyword)
+     * @param str
+     * @return
+     */
+    /**
+     * 提取关键词
+     * @param str
+     * @return
+     */
+    public static Set<String> extractKeys(String str) {
+        Set<String> result = new HashSet<>();
+
+        Pattern pattern = Pattern.compile("\\$\\([a-zA-Z]+\\)");
+        Matcher matcher = pattern.matcher(str);
+
+        // 遍历所有匹配项
+        while (matcher.find()) {
+            String keyword = matcher.group();
+            result.add(keyword.substring(2, keyword.length() - 1)); // 添加完整匹配的子串（如#abcd）
+        }
+        return result;
+    }
 
     /**
      * 将字符串转为驼峰

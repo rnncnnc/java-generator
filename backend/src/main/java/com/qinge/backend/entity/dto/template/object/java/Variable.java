@@ -1,5 +1,6 @@
 package com.qinge.backend.entity.dto.template.object.java;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  */
 
 
-public class Variable {
+public class Variable implements Serializable {
 
     // 变量名
     private String name;
@@ -31,6 +32,7 @@ public class Variable {
 
     public Variable() {
     }
+
 
     public Boolean getGeneric() {
         return isGeneric;

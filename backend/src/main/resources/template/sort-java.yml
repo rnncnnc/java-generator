@@ -1,0 +1,25 @@
+fileType: single
+templateObj:
+  type: class
+  name: Sort
+  permission: public
+  packageName: entity.query
+  variables:
+    - name: index
+      type:
+        className: Integer
+      permission: private
+      comment:
+        - '/**'
+        - ' * 排序字段 1 表示从查结果的第一个字段开始排序'
+        - ' */'
+    - name: order
+      type:
+        className: String
+      permission: private
+      comment:
+        - '/**'
+        - ' * 正序倒序 asc desc'
+        - ' */'
+  construct: true
+  getAndSet: true

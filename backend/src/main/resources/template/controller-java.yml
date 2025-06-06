@@ -1,0 +1,204 @@
+fileType: controller
+templateObj:
+  type: class
+  name: $(TableName)Controller
+  packageName: controller
+  permission: public
+  comment:
+    - '/**'
+    - '* @Data: $(DateTime)'
+    - '* @Author: Lc'
+    - '* @Description:'
+    - '*/'
+  annotations:
+    - name: RestController
+    - name: RequestMapping
+      params:
+        - key: value
+          value: /$(LTableName)
+    - name: Tag
+      params:
+        - key: name
+          value: $(TableName)接口
+        - key: description
+          value: $(TableComment)
+  variables:
+    - name: $(LTableName)Service
+      type:
+        className: $(TableName)Service
+        packageName: service
+        isGeneric: true
+      generics:
+        - name: $(TableName)Pojo
+          packageName: entity.pojo
+      permission: private
+      annotations:
+        - name: Resource
+  methods:
+    - name: select
+      returnType:
+        className: Result
+        packageName: entity.vo
+      permission: public
+      comment:
+        - '/**'
+        - ' * 获取数据'
+        - ' * @return'
+        - ' */'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 获取数据
+            - key: description
+              value: 返回数据
+        - name: GetMapping
+          params:
+            - value: /select
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: entity.query
+          - className: $(TableName)Pojo
+            packageName: entity.pojo
+        body:
+          - 'Query<$(TableName)Pojo> query = new Query<>();'
+          - ''
+          - 'List<$(TableName)Pojo> $(TableName)List = $(LTableName)Service.select(query);'
+          - ''
+          - 'return Result.success($(TableName)List);'
+    - name: insert
+      returnType:
+        className: Result
+        packageName: entity.vo
+      comment:
+        - '/**'
+        - ' * 插入数据'
+        - ' * @param pojo'
+        - ' * @return'
+        - ' */'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 插入数据
+            - key: description
+              value: 向数据库插入数据
+        - name: PostMapping
+          params:
+            - value: /insert
+      parameters:
+        - name: pojo
+          type:
+            className: $(TableName)Pojo
+            packageName: entity.pojo
+          annotations:
+            - name: RequestBody
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: entity.query
+          - className: $(TableName)Pojo
+            packageName: entity.pojo
+        body:
+          - 'Query<$(TableName)Pojo> query = new Query<>();'
+          - ''
+          - 'query.setPojo(pojo);'
+          - ''
+          - '$(LTableName)Service.insert(query);'
+          - ''
+          - 'return Result.success();'
+    - name: update
+      returnType:
+        className: Result
+        packageName: entity.vo
+      comment:
+        - '/**'
+        - ' * 根据id更新数据'
+        - ' * @param id'
+        - ' * @param np'
+        - ' * @return'
+        - ' */'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 根据id更新数据
+            - key: description
+              value: 根据条件更新数据
+        - name: PutMapping
+          params:
+            - value: /update/{id}
+      parameters:
+        - name: id
+          type:
+            className: Integer
+          annotations:
+            - name: PathVariable
+              params:
+                - value: id
+        - name: np
+          type:
+            className: $(TableName)Pojo
+            packageName: entity.pojo
+          annotations:
+            - name: RequestBody
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: entity.query
+          - className: $(TableName)Pojo
+            packageName: entity.pojo
+        body:
+          - 'Query<$(TableName)Pojo> query = new Query<>();'
+          - ''
+          - '$(TableName)Pojo $(LTableName)Pojo = new $(TableName)Pojo();'
+          - ''
+          - '$(LTableName)Pojo.setId(id);'
+          - ''
+          - 'query.setPojo($(LTableName)Pojo);'
+          - ''
+          - '$(LTableName)Service.update(query, np);'
+          - ''
+          - 'return Result.success();'
+    - name: delete
+      returnType:
+        className: Result
+        packageName: entity.vo
+      comment:
+        - '/**'
+        - ' * 删除数据'
+        - ' * @param pojo'
+        - ' * @return'
+        - ' */'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 删除数据
+            - key: description
+              value: 根据条件删除数据
+        - name: DeleteMapping
+          params:
+            - value: /delete
+      parameters:
+        - name: pojo
+          type:
+            className: $(TableName)Pojo
+            packageName: entity.pojo
+          annotations:
+            - name: RequestBody
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: entity.query
+          - className: $(TableName)Pojo
+            packageName: entity.pojo
+        body:
+          - 'Query<$(TableName)Pojo> query = new Query<>();'
+          - ''
+          - 'query.setPojo(pojo);'
+          - ''
+          - '$(LTableName)Service.delete(query);'
+          - ''
+          - 'return Result.success();'

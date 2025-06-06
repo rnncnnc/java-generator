@@ -1,5 +1,8 @@
 package com.qinge.backend.utils;
 
+import org.apache.commons.lang3.SerializationUtils;
+
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +16,16 @@ import java.lang.reflect.Method;
 
 
 public class ClassTools {
+
+    /**
+     * 深拷贝方法
+     * @param source
+     * @return
+     * @param <T>
+     */
+    public static  <T extends Serializable> T deepCopy(T source) {
+        return SerializationUtils.clone(source);
+    }
 
 
     /**

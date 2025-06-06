@@ -32,13 +32,13 @@ public abstract class ObjectParser implements Parser {
             Yaml yaml = new Yaml();
             Map<String, Object> yamlRootMap = yaml.load(inputStream);
             // 3. 提取 classObj 节点（核心数据）
-            Map<String, Object> classObjMap = (Map<String, Object>) yamlRootMap.get("classObj");
+            Map<String, Object> classObjMap = (Map<String, Object>) yamlRootMap.get("templateObj");
             // 4. 调用模板解析方法
             FileObject fileObj = parseTemplate(classObjMap);
 
             Template<FileObject> fileObjTemplate = new Template<>();
             fileObjTemplate.setFileType((String) yamlRootMap.get("fileType"));
-            fileObjTemplate.setClassObj(fileObj);
+            fileObjTemplate.setTemplateObj(fileObj);
 
             return fileObjTemplate;
         }

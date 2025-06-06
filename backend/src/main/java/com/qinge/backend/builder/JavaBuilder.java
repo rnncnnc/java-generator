@@ -1,16 +1,21 @@
 package com.qinge.backend.builder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.qinge.backend.builder.FileBuilder;
+import com.qinge.backend.entity.dto.table.Table;
 import com.qinge.backend.entity.dto.template.object.FileObject;
 import com.qinge.backend.entity.dto.template.object.java.*;
-import com.qinge.backend.entity.enums.ClassType;
+import com.qinge.backend.entity.enums.ClassTypes;
+import com.qinge.backend.entity.enums.KeywordMethods;
 import com.qinge.backend.utils.ClassTools;
+import com.qinge.backend.utils.JsonTools;
 import com.qinge.backend.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
-import javax.tools.Tool;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -25,6 +30,9 @@ import java.util.*;
 @Slf4j
 public abstract class JavaBuilder extends FileBuilder {
 
+    // 数据库的表信息
+    protected Table table;
+
     /**
      * 构建文件
      * @param fileObj
@@ -34,7 +42,10 @@ public abstract class JavaBuilder extends FileBuilder {
     public void build(FileObject fileObj) throws IOException {
         JavaClass javaClass = (JavaClass) fileObj;
 
-        String filePath = temPath + File.separator + javaClass.getPackageName() + File.separator + javaClass.getType() + ".java";
+        // 写入内容之前进行的操作
+        javaClass = beforeWrite(javaClass);
+
+        String filePath = temPath + File.separator + javaClass.getPackageName().replace(".", File.separator) + File.separator + javaClass.getName() + ".java";
 
         File parentDir = new File(filePath).getParentFile();
         if (!parentDir.exists() && !parentDir.mkdirs()) { // 递归创建多级目录
@@ -44,10 +55,69 @@ public abstract class JavaBuilder extends FileBuilder {
         // 写入内容
         String content = writeContent(javaClass);
 
+        // 写入内容之后进行的操作
+        content = afterWrite(content);
+
         // 3. 写入文件（自动创建文件，若已存在则覆盖）
         Files.write(Paths.get(filePath), content.getBytes());
         log.info("写入文件成功: " + javaClass.getName());
 
+    }
+
+    /**
+     * 写入内容之前要进行的操作
+     * @param javaClass
+     */
+    protected JavaClass beforeWrite(JavaClass javaClass) throws JsonProcessingException {
+        // 深拷贝类
+        JavaClass javaClassUsed = ClassTools.deepCopy(javaClass);
+
+        // 返回替换关键词后的类
+        return replaceKeyword(javaClassUsed, table);
+    };
+
+    /**
+     * 写入内容之后要进行的操作
+     * @param content
+     * @return
+     */
+    protected String afterWrite(String content) {
+        return content;
+    };
+
+    /**
+     * 替换关键字
+     * @param obj
+     * @return
+     */
+    protected <T, E> T replaceKeyword(T obj, E source) throws JsonProcessingException {
+        String json = JsonTools.toJson(obj);
+
+        Set<String> keys = StringTools.extractKeys(json);
+
+        Map<String, String> keywrodMap = new HashMap<>();
+
+        // 将关键字替换为对应的值
+        for (String key : keys) {
+            java.lang.reflect.Method method = KeywordMethods.getByName(key);
+            if (method != null) {
+                try {
+                    String value = ((String) method.invoke(source)).trim();
+                    keywrodMap.put(key, value);
+                } catch (InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        // 替换关键字
+        for (Map.Entry<String, String> entry : keywrodMap.entrySet()) {
+            json = json.replace("$(" + entry.getKey() + ")", entry.getValue());
+        }
+
+        return (T) JsonTools.fromJson(json, obj.getClass());
     }
 
     /**
@@ -68,53 +138,54 @@ public abstract class JavaBuilder extends FileBuilder {
         builder.append("\n");
 
         // 写入注解
-        writeAnnotation(builder, javaClass.getAnnotations(), "");
+        writeAnnotation(builder, javaClass.getAnnotations(), "", "\n");
 
         if (StringTools.isEmpty(javaClass.getName()) || StringTools.isEmpty(javaClass.getType())) {
             throw new RuntimeException("模板错误,缺失数据");
         }
+
+        // 写入权限修饰符
+        writePermission(builder, javaClass.getPermission());
+
         // 写入类开头
-        builder.append(javaClass.getPermission()).append(" ").append(javaClass.getName()).append(" ").append(javaClass.getType());
+        builder.append(javaClass.getType()).append(" ").append(javaClass.getName());
 
         writeGeneric(builder, javaClass.getGenerics());
 
-        // 写入父类 extend implements
-        if (!CollectionUtils.isEmpty(javaClass.getParents())) {
+        if (javaClass.getExtendsClass() != null && javaClass.getExtendsClass().getClassName() != null) {
+            builder.append(" extends ").append(javaClass.getExtendsClass().getClassName());
 
-            for (Parent parent : javaClass.getParents()) {
-                if (StringTools.isEmpty(parent.getName())) {
-                    continue;
+            // 写入泛型参数
+            writeGenericParams(builder, javaClass.getExtendsClass().getGenericParams());
+
+        }
+
+        // 写入接口列表
+        if (!CollectionUtils.isEmpty(javaClass.getImplementsList())) {
+
+            builder.append(" implements ");
+
+            for (ClassInfo classInfo : javaClass.getImplementsList()) {
+                if (StringTools.isEmpty(classInfo.getClassName())) {
+                    throw new RuntimeException("模板错误,缺失数据");
                 }
 
-                builder.append(" ").append(parent.getName()).append(" ").append(parent.getType().getClassName());
-                if (!CollectionUtils.isEmpty(parent.getGenerics())) {
+                builder.append(classInfo.getClassName());
 
-                    Boolean tag = false;
+                // 写入泛型参数
+                writeGenericParams(builder, classInfo.getGenericParams());
 
-                    builder.append("<");
 
-                    for (ClassInfo generic : parent.getGenerics()) {
-                        if (StringTools.isEmpty(generic.getClassName())) {
-                            continue;
-                        }
-
-                        builder.append(generic.getClassName());
-
-                        if (parent.getGenerics().indexOf(generic) != parent.getGenerics().size() - 1) {
-                            builder.append(", ");
-                        }
-
-                        tag = true;
-                    }
-
-                    if (tag) {
-                        builder.append(">");
-                    } else {
-                        builder.setLength(builder.length() - 1);
-                    }
+                if (javaClass.getImplementsList().indexOf(classInfo)!= javaClass.getImplementsList().size() - 1) {
+                    builder.append(", ");
                 }
             }
         }
+
+        builder.append(" ");
+
+        // 写入异常
+        writeException(builder, javaClass.getExceptions());
 
         builder.append(" {\n");
 
@@ -128,12 +199,12 @@ public abstract class JavaBuilder extends FileBuilder {
         builder.append("\n");
 
         // 写入构造方法
-        if (javaClass.getConstruct()) {
+        if (StringTools.isTrue(javaClass.getConstruct())) {
             writeConstructor(builder, javaClass.getName(), javaClass.getVariables());
         }
 
         // 写入getter和setter方法
-        if (javaClass.getGetAndSet()) {
+        if (StringTools.isTrue(javaClass.getGetAndSet())) {
             writeGetterAndSetter(builder, javaClass.getVariables());
         }
 
@@ -143,16 +214,96 @@ public abstract class JavaBuilder extends FileBuilder {
         return builder.toString();
     }
 
+    /**
+     * 写入权限修饰符
+     * @param builder
+     * @param permission
+     */
+    protected void writePermission(StringBuilder builder, String permission) {
+        if (!StringTools.isEmpty(permission)) {
+            builder.append(permission)
+                    .append(" ");
+        }
+    }
+
+    /**
+     * 写入异常
+     * @param exceptionList
+     */
+    protected void writeException(StringBuilder builder, List<ClassInfo> exceptionList) {
+        if (!CollectionUtils.isEmpty(exceptionList)) {
+            builder.append("throws ");
+
+            for (ClassInfo exception : exceptionList) {
+                if (StringTools.isEmpty(exception.getClassName())) {
+                    throw new RuntimeException("模板错误,缺失数据");
+                }
+                builder.append(exception.getClassName());
+                if (exceptionList.indexOf(exception) != exceptionList.size() - 1) {
+                    builder.append(", ");
+                }
+
+            }
+        }
+    }
+
+    /**
+     * 写入classInfo
+     * @param builder
+     * @param classInfo
+     */
+    protected void writeClassInfo(StringBuilder builder, ClassInfo classInfo) {
+
+        if (StringTools.isEmpty(classInfo.getClassName())) {
+            throw new RuntimeException("模板错误,缺失数据");
+        }
+
+        builder.append(classInfo.getClassName());
+
+        if (!CollectionUtils.isEmpty(classInfo.getGenericParams())) {
+            writeGenericParams(builder, classInfo.getGenericParams());
+        }
+    }
+
+    /**
+     * 写入泛型参数
+     * @param builder
+     * @param genericParamList
+     */
+    protected void writeGenericParams(StringBuilder builder, List<GenericParam> genericParamList) {
+        if (!CollectionUtils.isEmpty(genericParamList)) {
+
+            builder.append("<");
+
+            for (GenericParam genericParam : genericParamList) {
+                if (StringTools.isEmpty(genericParam.getName())) {
+                    throw new RuntimeException("模板错误,缺失数据");
+                }
+
+                builder.append(genericParam.getName());
+
+                if (genericParamList.indexOf(genericParam) != genericParamList.size() - 1) {
+                    builder.append(", ");
+                }
+            }
+
+            builder.append(">");
+
+        }
+    }
+
+    /**
+     * 写入泛型
+     * @param builder
+     * @param genericList
+     */
     protected void writeGeneric(StringBuilder builder, List<Generic> genericList) {
         // 写入泛型
         if (!CollectionUtils.isEmpty(genericList)) {
             builder.append("<");
-
-            Boolean tag = false;
-
             for (Generic generic : genericList) {
                 if (StringTools.isEmpty(generic.getName())) {
-                    continue;
+                    throw new RuntimeException("模板错误,缺失数据");
                 }
 
                 // 写入泛型名称
@@ -170,14 +321,9 @@ public abstract class JavaBuilder extends FileBuilder {
                     builder.append(", ");
                 }
 
-                tag = true;
             }
 
-            if (tag) {
-                builder.append(">");
-            } else {
-                builder.setLength(builder.length() - 1);
-            }
+            builder.append("> ");
 
         }
     }
@@ -187,7 +333,7 @@ public abstract class JavaBuilder extends FileBuilder {
      * @param builder
      * @param annotationList
      */
-    protected void writeAnnotation(StringBuilder builder, List<Annotation> annotationList, String prefix) {
+    protected void writeAnnotation(StringBuilder builder, List<Annotation> annotationList, String prefix,  String split) {
         if (CollectionUtils.isEmpty(annotationList)) {
             return;
         }
@@ -195,7 +341,7 @@ public abstract class JavaBuilder extends FileBuilder {
         // 写入注解
         for (Annotation annotation : annotationList) {
             if (StringTools.isEmpty(annotation.getName())) {
-                continue;
+                throw new RuntimeException("模板错误,缺失数据");
             }
             builder.append(prefix).append("@").append(annotation.getName());
 
@@ -204,7 +350,10 @@ public abstract class JavaBuilder extends FileBuilder {
                 builder.append("(");
                 for (AnnotationParam annotationParam : annotation.getParams()) {
 
-                    builder.append(annotationParam.getKey()).append(" = ");
+                    // 如果key为空，直接写入值，否则写入key和值
+                    if (!StringTools.isEmpty(annotationParam.getKey())) {
+                        builder.append(annotationParam.getKey()).append(" = ");
+                    }
 
                     // 如果值是true或false，直接写入，否则加上双引号
                     String value = annotationParam.getValue();
@@ -218,7 +367,10 @@ public abstract class JavaBuilder extends FileBuilder {
                         builder.append(", ");
                     }
                 }
-                builder.append(")\n");
+                builder.append(")")
+                        .append(split);
+            } else {
+                builder.append(split);
             }
         }
     }
@@ -256,21 +408,25 @@ public abstract class JavaBuilder extends FileBuilder {
         for (Variable variable : variableList) {
 
             if (StringTools.isEmpty(variable.getName()) || StringTools.isEmpty(variable.getType().getClassName())) {
-                continue;
+                throw new RuntimeException("模板错误,缺失数据");
             }
 
             // 写入注释
             writeComment(builder, variable.getComment(), "\t");
 
             // 写入注解
-            writeAnnotation(builder, variable.getAnnotations(), "\t");
+            writeAnnotation(builder, variable.getAnnotations(), "\t", "\n");
 
             // 写入变量
-            builder.append("\t")
-                    .append(variable.getPermission())
-                    .append(" ")
-                    .append(variable.getType().getClassName())
-                    .append(" ")
+            builder.append("\t");
+
+            // 写入权限修饰符
+            writePermission(builder, variable.getPermission());
+
+            // 写入变量类型
+            writeClassInfo(builder, variable.getType());
+
+            builder.append(" ")
                     .append(variable.getName())
                     .append(";\n");
         }
@@ -288,51 +444,29 @@ public abstract class JavaBuilder extends FileBuilder {
 
         for (Method method : methodList) {
             if (StringTools.isEmpty(method.getName()) || StringTools.isEmpty(method.getReturnType().getClassName())) {
-                continue;
+                throw new RuntimeException("模板错误,缺失数据");
             }
 
             // 写入注释
             writeComment(builder, method.getComment(), "\t");
 
             // 写入注解
-            writeAnnotation(builder, method.getAnnotations(), "\t");
+            writeAnnotation(builder, method.getAnnotations(), "\t", "\n");
 
             // 写入方法
-            builder.append("\t").append(method.getPermission()).append(" ");
+            builder.append("\t");
+
+            // 写入权限修饰符
+            writePermission(builder, method.getPermission());
 
             // 写入泛型
-            if (!CollectionUtils.isEmpty(method.getGenerics())) {
-                builder.append("<");
+            writeGeneric(builder, method.getGenerics());
 
-                Boolean tag = false;
+            // 写入方法返回值的泛型
+            writeClassInfo(builder, method.getReturnType());
 
-                for (Generic generic : method.getGenerics()) {
-                    if (StringTools.isEmpty(generic.getName())) {
-                        continue;
-                    }
-
-                    builder.append(generic.getName());
-
-                    if (!StringTools.isEmpty(generic.getType())) {
-                        builder.append(" extends ")
-                                .append(generic.getType());
-                    }
-
-                    if (method.getGenerics().indexOf(generic) != method.getGenerics().size() - 1) {
-                        builder.append(", ");
-                    }
-
-                    tag = true;
-                }
-
-                if (tag) {
-                    builder.append(">");
-                } else {
-                    builder.setLength(builder.length() - 1);
-                }
-            }
-
-            builder.append(method.getReturnType().getClassName()).append(" ").append(method.getName()).append("(");
+            // 写入方法名
+            builder.append(" ").append(method.getName()).append("(");
 
             // 写入参数
             if (!CollectionUtils.isEmpty(method.getParameters())) {
@@ -340,29 +474,34 @@ public abstract class JavaBuilder extends FileBuilder {
                 for (MethodParameter methodParameter : method.getParameters()) {
 
                     if (StringTools.isEmpty(methodParameter.getName()) || StringTools.isEmpty(methodParameter.getType().getClassName())) {
-                        continue;
+                        throw new RuntimeException("模板错误,缺失数据");
                     }
 
                     if (!CollectionUtils.isEmpty(methodParameter.getAnnotations())) {
                         // 写入注解
-                        writeAnnotation(builder, methodParameter.getAnnotations(), "\n\t\t\t");
-                        builder.append("\t\t\t")
-                                .append(methodParameter.getType().getClassName())
-                                .append(" ")
-                                .append(methodParameter.getName());
-                    } else {
-                        builder.append(methodParameter.getType()).append(" ").append(methodParameter.getName());
+                        writeAnnotation(builder, methodParameter.getAnnotations(), "", " ");
                     }
+
+                    // 写入参数类型
+                    writeClassInfo(builder, methodParameter.getType());
+
+                    // 写入参数名
+                    builder.append(" ").append(methodParameter.getName());
 
                     if (method.getParameters().indexOf(methodParameter) != method.getParameters().size() - 1) {
                         builder.append(", ");
                     }
                 }
             }
-            builder.append(") {\n");
+            builder.append(") ");
+
+            // 写入异常
+            writeException(builder, method.getExceptions());
+
+            builder.append("{\n");
 
             // 写入方法体
-            if (!CollectionUtils.isEmpty(method.getBodyInfo().getBody())) {
+            if (method.getBodyInfo() != null && !CollectionUtils.isEmpty(method.getBodyInfo().getBody())) {
                 for (String body : method.getBodyInfo().getBody()) {
                     builder.append("\t\t").append(body).append("\n");
                 }
@@ -378,7 +517,6 @@ public abstract class JavaBuilder extends FileBuilder {
      */
     protected void writeImport(StringBuilder builder, JavaClass javaClass) {
 
-        System.out.println(javaClass);
         // 设置包名
         String packageName = basePackage + "." + javaClass.getPackageName();
         builder.append("package " + packageName + ";\n");
@@ -389,142 +527,66 @@ public abstract class JavaBuilder extends FileBuilder {
         // 存储其他jar包的类
         Set<String> otherClass = new HashSet<>();
 
-        // 获取parent中需要导入的类
-        if (!CollectionUtils.isEmpty(javaClass.getParents())) {
-            for (Parent parent : javaClass.getParents()) {
-                if (StringTools.isEmpty(parent.getType().getClassName())) {
-                    continue;
-                }
-                if (StringTools.isEmpty(parent.getType().getPackageName())) {
-                    // 否则,需要从环境中导入
-                    otherClass.add(parent.getName());
-                } else {
-                    // 如果有包名 则是创建的类
-                    baseClass.add("import " + basePackage + "." + parent.getType().getPackageName() + "." + parent.getType().getClassName() + ";\n");
-                }
+        // 解析继承类
+        parseClassInfo(baseClass, otherClass, javaClass.getExtendsClass());
 
-                // 获取泛型中需要导入的类
-                if (!CollectionUtils.isEmpty(parent.getGenerics())) {
-                    for (ClassInfo classInfo : parent.getGenerics()) {
-                        if (StringTools.isEmpty(classInfo.getClassName())) {
-                            continue;
-                        }
-                        if (StringTools.isEmpty(classInfo.getPackageName())) {
-                            otherClass.add(classInfo.getClassName());
-                        } else {
-                            baseClass.add("import " + basePackage + "." + classInfo.getPackageName() + "." + classInfo.getClassName() + ";\n");
-                        }
-                    }
-                }
-            }
-        }
+        // 写入接口
+        parseClassInfoList(baseClass, otherClass, javaClass.getImplementsList());
 
         // 获取泛型中需要导入的类
-        if (!CollectionUtils.isEmpty(javaClass.getGenerics())) {
-            for (Generic generic : javaClass.getGenerics()) {
-                if (StringTools.isEmpty(generic.getType())) {
-                    continue;
-                }
-                if (StringTools.isEmpty(generic.getPackageName())) {
-                    otherClass.add(generic.getType());
-                } else {
-                    baseClass.add("import " + basePackage + "." + generic.getPackageName() + "." + generic.getType() + ";\n");
-                }
-            }
-        }
+        parseGenericList(baseClass, otherClass, javaClass.getGenerics());
 
         // 获取注解中需要导入的类
-        if (!CollectionUtils.isEmpty(javaClass.getAnnotations())) {
-            for (Annotation annotation : javaClass.getAnnotations()) {
-                otherClass.add(annotation.getName());
-            }
-        }
+        parseAnnotationList(baseClass, otherClass, javaClass.getAnnotations());
+
+        // 解析异常
+        parseClassInfoList(baseClass, otherClass, javaClass.getExceptions());
+
 
         // 获取变量中需要导入的类
         if (!CollectionUtils.isEmpty(javaClass.getVariables())) {
             for (Variable variable : javaClass.getVariables()) {
-                if (StringTools.isEmpty(variable.getType().getClassName()) || variable.getType().getGeneric()) {
-                    continue;
-                }
-                if (StringTools.isEmpty(variable.getType().getPackageName())) {
-                    otherClass.add(variable.getType().getClassName());
-                } else {
-                    baseClass.add("import " + basePackage + "." + variable.getType().getPackageName() + "." + variable.getType().getClassName() + ";\n");
-                }
+
+                // 解析变量类型
+                parseClassInfo(baseClass, otherClass, variable.getType());
 
                 // 获取变量上注解中需要导入的类
-                if (!CollectionUtils.isEmpty(variable.getAnnotations())) {
-                    for (Annotation annotation : variable.getAnnotations()) {
-                        otherClass.add(annotation.getName());
-                    }
-                }
+                parseAnnotationList(baseClass, otherClass, variable.getAnnotations());
+
+                // 获取泛型中需要导入的类
+                parseGenericParamList(baseClass, otherClass, variable.getType().getGenericParams());
+
             }
         }
 
         // 获取方法中需要导入的类
         if (!CollectionUtils.isEmpty(javaClass.getMethods())) {
             for (Method method : javaClass.getMethods()) {
-                if (StringTools.isEmpty(method.getReturnType().getClassName()) || method.getReturnType().getGeneric()) {
-                    continue;
-                }
-                if (StringTools.isEmpty(method.getReturnType().getPackageName())) {
-                    otherClass.add(method.getReturnType().getClassName());
-                } else {
-                    baseClass.add("import " + basePackage + "." + method.getReturnType().getPackageName() + "." + method.getReturnType().getClassName() + ";\n");
-                }
+                // 解析方法返回值
+                parseClassInfo(baseClass, otherClass, method.getReturnType());
 
                 // 获取变量上注解中需要导入的类
-                if (!CollectionUtils.isEmpty(method.getAnnotations())) {
-                    for (Annotation annotation : method.getAnnotations()) {
-                        otherClass.add(annotation.getName());
-                    }
-                }
+                parseAnnotationList(baseClass, otherClass, method.getAnnotations());
 
                 // 获取泛型中需要导入的类
-                if (!CollectionUtils.isEmpty(method.getGenerics())) {
-                    for (Generic generic : method.getGenerics()) {
-                        if (StringTools.isEmpty(generic.getType())) {
-                            continue;
-                        }
-                        if (StringTools.isEmpty(generic.getPackageName())) {
-                            otherClass.add(generic.getType());
-                        } else {
-                            baseClass.add("import " + basePackage + "." + generic.getPackageName() + "." + generic.getType() + ";\n");
-                        }
-                    }
-                }
+                parseGenericList(baseClass, otherClass, method.getGenerics());
+
+                // 解析异常
+                parseClassInfoList(baseClass, otherClass, method.getExceptions());
 
                 // 获取参数中需要导入的类
                 if (!CollectionUtils.isEmpty(method.getParameters())) {
                     for (MethodParameter parameter : method.getParameters()) {
-                        if (StringTools.isEmpty(parameter.getType().getClassName())) {
-                            continue;
-                        }
-                        if (StringTools.isEmpty(parameter.getType().getPackageName())) {
-                            otherClass.add(parameter.getType().getClassName());
-                        } else {
-                            baseClass.add("import " + basePackage + "." + parameter.getType().getPackageName() + "." + parameter.getType().getClassName() + ";\n");
-                        }
+
+                        // 解析方法参数
+                        parseClassInfo(baseClass, otherClass, parameter.getType());
 
                         // 获取参数注解需要导入的类
-                        if (!CollectionUtils.isEmpty(parameter.getAnnotations())) {
-                            for (Annotation annotation : parameter.getAnnotations()) {
-                                otherClass.add(annotation.getName());
-                            }
-                        }
+                        parseAnnotationList(baseClass, otherClass, parameter.getAnnotations());
 
                         // 获取方法体内需要导入的类
-                        if (!CollectionUtils.isEmpty(method.getBodyInfo().getRequire())) {
-                            for (ClassInfo classInfo : method.getBodyInfo().getRequire()) {
-                                if (StringTools.isEmpty(classInfo.getClassName())) {
-                                    continue;
-                                }
-                                if (StringTools.isEmpty(classInfo.getPackageName())) {
-                                    otherClass.add(classInfo.getClassName());
-                                } else {
-                                    baseClass.add("import " + basePackage + "." + classInfo.getPackageName() + "." + classInfo.getClassName() + ";\n");
-                                }
-                            }
+                        if (method.getBodyInfo() != null) {
+                            parseClassInfoList(baseClass, otherClass, method.getBodyInfo().getRequire());
                         }
                     }
                 }
@@ -544,6 +606,108 @@ public abstract class JavaBuilder extends FileBuilder {
         }
     }
 
+    /**
+     * 解析annotation 注解列表
+     * @param baseClass
+     * @param otherClass
+     * @param annotationList
+     */
+    protected void parseAnnotationList(Set<String> baseClass, Set<String> otherClass, List<Annotation> annotationList) {
+        if (!CollectionUtils.isEmpty(annotationList)) {
+            for (Annotation annotation : annotationList) {
+                otherClass.add(annotation.getName());
+            }
+        }
+    }
+
+    /**
+     * 解析classInfo
+     * @param baseClass
+     * @param otherClass
+     * @param classInfo
+     */
+    protected void parseClassInfo(Set<String> baseClass, Set<String> otherClass, ClassInfo classInfo) {
+        if (classInfo == null || StringTools.isEmpty(classInfo.getClassName())) {
+            return;
+        }
+
+        if (StringTools.isEmpty(classInfo.getPackageName())) {
+            // 否则,需要从环境中导入
+            otherClass.add(classInfo.getClassName());
+        } else if (!StringTools.isTrue(classInfo.getGeneric())){
+            // 如果有包名 则是创建的类
+            baseClass.add("import " + basePackage + "." + classInfo.getPackageName() + "." + classInfo.getClassName() + ";\n");
+        }
+
+        // 获取泛型中需要导入的类
+        parseGenericParamList(baseClass, otherClass, classInfo.getGenericParams());
+    }
+
+
+
+    /**
+     * 解析classInfoList
+     * @param baseClass
+     * @param otherClass
+     * @param classInfoList
+     */
+    protected void parseClassInfoList(Set<String> baseClass, Set<String> otherClass, List<ClassInfo> classInfoList) {
+        if (!CollectionUtils.isEmpty(classInfoList)) {
+            for (ClassInfo classInfo : classInfoList) {
+                parseClassInfo(baseClass, otherClass, classInfo);
+            }
+        }
+    }
+
+    /**
+     * 解析generic 泛型中的关键词
+     * @param baseClass
+     * @param otherClass
+     * @param genericList
+     */
+    protected void parseGenericList(Set<String> baseClass, Set<String> otherClass, List<Generic> genericList) {
+        if (!CollectionUtils.isEmpty(genericList)) {
+            for (Generic generic : genericList) {
+                if (StringTools.isEmpty(generic.getName())) {
+                    throw new RuntimeException("模板错误,缺失数据");
+                }
+
+                if (StringTools.isEmpty(generic.getType())) {
+                    continue;
+                }
+
+                if (StringTools.isEmpty(generic.getPackageName())) {
+                    otherClass.add(generic.getType());
+                } else {
+                    baseClass.add("import " + basePackage + "." + generic.getPackageName() + "." + generic.getType() + ";\n");
+                }
+            }
+        }
+    }
+
+    /**
+     * 提取genericParam 泛型参数中的关键词
+     * @param baseClass
+     * @param otherClass
+     * @param genericParamList
+     */
+    protected void parseGenericParamList(Set<String> baseClass, Set<String> otherClass, List<GenericParam> genericParamList) {
+        if (!CollectionUtils.isEmpty(genericParamList)) {
+
+            for (GenericParam genericParam : genericParamList) {
+                if (StringTools.isEmpty(genericParam.getName())) {
+                    throw new RuntimeException("模板错误,缺失数据");
+                }
+
+                if (StringTools.isEmpty(genericParam.getPackageName())) {
+                    otherClass.add(genericParam.getName());
+                } else {
+                    baseClass.add("import " + basePackage + "." + genericParam.getPackageName() + "." + genericParam.getName() + ";\n");
+                }
+            }
+        }
+    }
+
 
     /**
      * 分析包含的关键词,返回 import + 全类名;
@@ -553,16 +717,16 @@ public abstract class JavaBuilder extends FileBuilder {
         Set<String> importList = new HashSet<>();
 
         for (String key : keyList) {
-            key = StringTools.firstToUppercase(key.toLowerCase());
 
-            String className = ClassType.getByKeyword(key);
-            if (className != null) {
+            String className = ClassTypes.getByKeyword(key);
+            if (!StringTools.isEmpty(className)) {
                 importList.add("import " + className + ";\n");
+            } else {
+                log.warn(key + " is not found!");
             }
         }
 
         // TODO 结合消息中间件,用python在jar包中找类
-
         return importList;
     }
 
@@ -589,7 +753,7 @@ public abstract class JavaBuilder extends FileBuilder {
         builder.append("\tpublic ").append(className).append("(");
         for (Variable variable : variableList) {
             if (StringTools.isEmpty(variable.getName()) || StringTools.isEmpty(variable.getType().getClassName())) {
-                continue;
+                throw new RuntimeException("模板错误,缺失数据");
             }
 
             builder.append(variable.getType().getClassName())
@@ -603,7 +767,7 @@ public abstract class JavaBuilder extends FileBuilder {
 
         for (Variable variable : variableList) {
             if (StringTools.isEmpty(variable.getName()) || StringTools.isEmpty(variable.getType().getClassName())) {
-                continue;
+                throw new RuntimeException("模板错误,缺失数据");
             }
 
             builder.append("\t\tthis.")
@@ -628,7 +792,7 @@ public abstract class JavaBuilder extends FileBuilder {
 
         for (Variable variable : variableList) {
             if (StringTools.isEmpty(variable.getName()) || StringTools.isEmpty(variable.getType().getClassName())) {
-                continue;
+                throw new RuntimeException("模板错误,缺失数据");
             }
 
             builder.append("\n");

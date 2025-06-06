@@ -1,0 +1,25 @@
+fileType: single
+templateObj:
+  type: class
+  name: OpenApiConfig
+  permission: public
+  packageName: config
+  annotations:
+    - name: Configuration
+  methods:
+    - name: customOpenAPI
+      returnType:
+        className: OpenAPI
+      permission: public
+      annotations:
+        - name: Bean
+      bodyInfo:
+        require:
+          - name: Info
+          - name: OpenAPI
+        body:
+          - 'return new OpenAPI()'
+          - '         .info(new Info()'
+          - '                 .title("$(ArtifactId) API")'
+          - '                 .version("1.0")'
+          - '                 .description("Player Backend 接口文档"));'

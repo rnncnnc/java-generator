@@ -1,0 +1,25 @@
+fileType: single
+templateObj:
+  type: class
+  name: Page
+  permission: public
+  packageName: entity.query
+  variables:
+    - name: pageNum;
+      type:
+        className: Integer
+      permission: private
+      comment:
+        - '/**'
+        - ' * 页码'
+        - ' */'
+    - name: pageSize
+      type:
+        className: Integer
+      permission: private
+      comment:
+        - '/**'
+        - ' * 每页大小'
+        - ' */'
+  construct: true
+  getAndSet: true

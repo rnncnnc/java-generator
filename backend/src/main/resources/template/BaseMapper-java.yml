@@ -1,0 +1,83 @@
+fileType: single
+templateObj:
+  type: interface
+  name: BaseMapper
+  packageName: mapper
+  permission: public
+  comment:
+    - '/**'
+    - '* @Data: $(DateTime)'
+    - '* @Author: Lc'
+    - '* @Description:'
+    - '*/'
+  generics:
+    - name: T
+  methods:
+    - name: select
+      returnType:
+        className: List
+        genericParams:
+          - name: T
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: entity.query
+            genericParams:
+              - name: T
+      comment:
+        - '/**'
+        - ' * 查找符合类型的所有数据'
+        - ' * @param query'
+        - ' * @return'
+        - ' */'
+    - name: insert
+      returnType:
+        className: void
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: entity.query
+            genericParams:
+              - name: T
+      comment:
+        - '/**'
+        - ' * 插入数据'
+        - ' * @param query'
+        - ' */'
+    - name: update
+      returnType:
+        className: void
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: entity.query
+            genericParams:
+              - name: T
+        - name: np
+          type:
+            className: T
+            isGeneric: true
+      comment:
+        - '/**'
+        - ' * 更新数据'
+        - ' * @param query'
+        - ' * @param np'
+        - ' */'
+    - name: delete
+      returnType:
+        className: void
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: entity.query
+            genericParams:
+              - name: T
+      comment:
+        - '/**'
+        - ' * 删除数据'
+        - ' * @param query'
+        - ' */'

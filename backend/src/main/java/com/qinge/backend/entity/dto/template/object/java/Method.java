@@ -1,5 +1,6 @@
 package com.qinge.backend.entity.dto.template.object.java;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  */
 
 
-public class Method {
+public class Method implements Serializable {
 
     // 方法名
     private String name;
@@ -22,6 +23,9 @@ public class Method {
 
     // 泛型
     private List<Generic> generics;
+
+    // 异常
+    private List<ClassInfo> exceptions;
 
     // 注释
     private List<String> comment;
@@ -36,6 +40,14 @@ public class Method {
     private MethodBody bodyInfo;
 
     public Method() {
+    }
+
+    public List<ClassInfo> getExceptions() {
+        return exceptions;
+    }
+
+    public void setExceptions(List<ClassInfo> exceptions) {
+        this.exceptions = exceptions;
     }
 
     public List<Generic> getGenerics() {
@@ -109,6 +121,7 @@ public class Method {
                 ", returnType=" + returnType +
                 ", permission='" + permission + '\'' +
                 ", generics=" + generics +
+                ", exceptions=" + exceptions +
                 ", comment=" + comment +
                 ", annotations=" + annotations +
                 ", parameters=" + parameters +

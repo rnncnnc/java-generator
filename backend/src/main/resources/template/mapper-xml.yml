@@ -1,0 +1,27 @@
+fileType: mapperXml
+templateObj:
+  name: saber
+  filePath: mapper/xml
+  header:
+    - '<?xml version="1.0" encoding="UTF-8" ?>'
+    - '<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">'
+  tags:
+    - name: sql
+      params:
+        - key: id
+          value: select
+        - key: resultType
+          value: entity.pojo.UserPojo
+      tags:
+        - name: include
+          params:
+            - key: refid
+              value: select
+          tags:
+            - name: NONE
+              params:
+                - value: '誓约胜利之剑'
+                - value: 'GO GO GO'
+                - value: '出发咯'
+      comment:
+        - 'namespace 需要映射的接口的全类名'

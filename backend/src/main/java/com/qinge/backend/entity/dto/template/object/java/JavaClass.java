@@ -4,6 +4,7 @@ package com.qinge.backend.entity.dto.template.object.java;
 import com.qinge.backend.entity.dto.template.object.FileObject;
 import com.qinge.backend.entity.dto.template.object.java.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -13,13 +14,16 @@ import java.util.List;
  */
 
 
-public class JavaClass implements FileObject {
+public class JavaClass implements FileObject, Serializable {
 
     // 包名
     private String packageName;
 
-    // 父类
-    private List<Parent> parents;
+    // 继承的父类
+    private ClassInfo extendsClass;
+
+    // 实现的接口
+    private List<ClassInfo> implementsList;
 
     // 类名
     private String name;
@@ -39,8 +43,11 @@ public class JavaClass implements FileObject {
     // 是否需要构造方法
     private Boolean construct;
 
+    // 异常
+    private List<ClassInfo> exceptions;
+
     // 注释
-    List<String> comment;
+    private List<String> comment;
 
     // 注解
     private List<Annotation> annotations;
@@ -54,6 +61,14 @@ public class JavaClass implements FileObject {
     public JavaClass() {
     }
 
+    public List<ClassInfo> getExceptions() {
+        return exceptions;
+    }
+
+    public void setExceptions(List<ClassInfo> exceptions) {
+        this.exceptions = exceptions;
+    }
+
     public String getPackageName() {
         return packageName;
     }
@@ -62,12 +77,20 @@ public class JavaClass implements FileObject {
         this.packageName = packageName;
     }
 
-    public List<Parent> getParents() {
-        return parents;
+    public ClassInfo getExtendsClass() {
+        return extendsClass;
     }
 
-    public void setParents(List<Parent> parents) {
-        this.parents = parents;
+    public void setExtendsClass(ClassInfo extendsClass) {
+        this.extendsClass = extendsClass;
+    }
+
+    public List<ClassInfo> getImplementsList() {
+        return implementsList;
+    }
+
+    public void setImplementsList(List<ClassInfo> implementsList) {
+        this.implementsList = implementsList;
     }
 
     public String getName() {
@@ -154,13 +177,15 @@ public class JavaClass implements FileObject {
     public String toString() {
         return "JavaClass{" +
                 "packageName='" + packageName + '\'' +
-                ", parents=" + parents +
+                ", extendsClass=" + extendsClass +
+                ", implementsList=" + implementsList +
                 ", name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", permission='" + permission + '\'' +
                 ", generics=" + generics +
                 ", getAndSet=" + getAndSet +
                 ", construct=" + construct +
+                ", exceptions=" + exceptions +
                 ", comment=" + comment +
                 ", annotations=" + annotations +
                 ", variables=" + variables +

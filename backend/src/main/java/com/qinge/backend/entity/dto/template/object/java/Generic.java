@@ -1,5 +1,7 @@
 package com.qinge.backend.entity.dto.template.object.java;
 
+import java.io.Serializable;
+
 /**
  * @Data: 2025/6/5 11:00
  * @Author: Lc
@@ -7,7 +9,7 @@ package com.qinge.backend.entity.dto.template.object.java;
  */
 
 
-public class Generic {
+public class Generic implements Serializable {
 
     private String name;
 
