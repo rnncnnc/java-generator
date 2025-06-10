@@ -1,8 +1,16 @@
-fileType: mapper
+fileType: java
+classType: mapper
 templateObj:
   type: interface
   name: $(TableName)Mapper
   packageName: mapper
+  permission: public
+  comment:
+    - '/**'
+    - '* @Data: $(DateTime)'
+    - '* @Author: Lc'
+    - '* @Description:'
+    - '*/'
   extendsClass:
     className: BaseMapper
     packageName: mapper

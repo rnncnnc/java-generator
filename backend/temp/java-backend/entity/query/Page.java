@@ -22,8 +22,8 @@ public class Page  {
 	}
 
 	public Page(Integer pageNum;, Integer pageSize) {
-		this.pageNum; = pageNum;
-		this.pageSize = pageSize
+		this.pageNum; = pageNum;;
+		this.pageSize = pageSize;
 	}
 
 	public void setPageNum;(Integer pageNum;) {
@@ -31,7 +31,7 @@ public class Page  {
 	}
 
 	public Integer getPageNum;() {
-		return this.pageNum;
+		return this.pageNum;;
 	}
 
 	public void setPageSize(Integer pageSize) {
@@ -39,6 +39,6 @@ public class Page  {
 	}
 
 	public Integer getPageSize() {
-		return this.pageSize
+		return this.pageSize;
 	}
 }

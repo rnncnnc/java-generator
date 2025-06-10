@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 需要映射的接口的全类名 -->
+<mapper namespace="com.qinge.playerbackend.mapper.ChatSessionUserMapper">
+	<sql id="ChatSessionUser">
+		user_id,
+		contact_id,
+		session_id,
+		contact_name,
+	</sql>
+
+	<!-- 	批量查询数据	 -->
+	<select id="select" resultType="com.qinge.playerbackend.entity.pojo.ChatSessionUserPojo">
+		select
+		<trim suffixOverrides=",">
+			<include refid="ChatSessionUser">
+			</include>
+		</trim>
+		from chat_session_user
+		<if test="pojo != null">
+			<where>
+				<if test="pojo.userId != null">
+					and user_id = #{pojo.userId}
+				</if>
+				<if test="pojo.contactId != null">
+					and contact_id = #{pojo.contactId}
+				</if>
+			</where>
+		</if>
+		<if test="page != null">
+			limit #{page.pageSize} offset #{page.pageNum}
+		</if>
+		<if test="sort != null">
+			order by #{sort.index} #{sort.order}
+		</if>
+	</select>
+
+	<!-- 	插入数据	 -->
+	<insert id="insert" parameterType="com.qinge.playerbackend.entity.pojo.ChatSessionUserPojo">
+		insert into chat_session_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.userId != null">
+				user_id,
+			</if>
+			<if test="pojo.contactId != null">
+				contact_id,
+			</if>
+			<if test="pojo.sessionId != null">
+				session_id,
+			</if>
+			<if test="pojo.contactName != null">
+				contact_name,
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.userId != null">
+				#{pojo.userId},
+			</if>
+			<if test="pojo.contactId != null">
+				#{pojo.contactId},
+			</if>
+			<if test="pojo.sessionId != null">
+				#{pojo.sessionId},
+			</if>
+			<if test="pojo.contactName != null">
+				#{pojo.contactName},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 	更新数据	 -->
+	<update id="update" parameterType="com.qinge.playerbackend.entity.pojo.ChatSessionUserPojo">
+		update chat_session_user
+		<set>
+			<if test="np.userId != null">
+				user_id = #{np.userId},
+			</if>
+			<if test="np.contactId != null">
+				contact_id = #{np.contactId},
+			</if>
+			<if test="np.sessionId != null">
+				session_id = #{np.sessionId},
+			</if>
+			<if test="np.contactName != null">
+				contact_name = #{np.contactName},
+			</if>
+		</set>
+		<where>
+			<if test="query.pojo.userId != null">
+				and user_id = #{query.pojo.userId}
+			</if>
+			<if test="query.pojo.contactId != null">
+				and contact_id = #{query.pojo.contactId}
+			</if>
+		</where>
+	</update>
+
+	<!-- 	删除数据	 -->
+	<delete id="delete" parameterType="com.qinge.playerbackend.entity.pojo.ChatSessionUserPojo">
+		delete from chat_session_user
+		<where>
+			<if test="pojo.userId != null">
+				and user_id = #{pojo.userId}
+			</if>
+			<if test="pojo.contactId != null">
+				and contact_id = #{pojo.contactId}
+			</if>
+		</where>
+	</delete>
+</mapper>

@@ -41,9 +41,9 @@ public class Result  {
 	}
 
 	public Result(Integer code, String msg, Object data) {
-		this.code = code
-		this.msg = msg
-		this.data = data
+		this.code = code;
+		this.msg = msg;
+		this.data = data;
 	}
 
 	public void setCode(Integer code) {
@@ -51,7 +51,7 @@ public class Result  {
 	}
 
 	public Integer getCode() {
-		return this.code
+		return this.code;
 	}
 
 	public void setMsg(String msg) {
@@ -59,7 +59,7 @@ public class Result  {
 	}
 
 	public String getMsg() {
-		return this.msg
+		return this.msg;
 	}
 
 	public void setData(Object data) {
@@ -67,6 +67,6 @@ public class Result  {
 	}
 
 	public Object getData() {
-		return this.data
+		return this.data;
 	}
 }

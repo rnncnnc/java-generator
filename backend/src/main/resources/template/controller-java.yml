@@ -1,4 +1,5 @@
-fileType: controller
+fileType: java
+classType: controller
 templateObj:
   type: class
   name: $(TableName)Controller
@@ -27,10 +28,9 @@ templateObj:
       type:
         className: $(TableName)Service
         packageName: service
-        isGeneric: true
-      generics:
-        - name: $(TableName)Pojo
-          packageName: entity.pojo
+        genericParams:
+          - name: $(TableName)Pojo
+            packageName: entity.pojo
       permission: private
       annotations:
         - name: Resource
@@ -61,6 +61,7 @@ templateObj:
             packageName: entity.query
           - className: $(TableName)Pojo
             packageName: entity.pojo
+          - className: List
         body:
           - 'Query<$(TableName)Pojo> query = new Query<>();'
           - ''
@@ -108,14 +109,14 @@ templateObj:
           - '$(LTableName)Service.insert(query);'
           - ''
           - 'return Result.success();'
-    - name: update
+    - name: updateBy$(UFieldName)
       returnType:
         className: Result
         packageName: entity.vo
       comment:
         - '/**'
-        - ' * 根据id更新数据'
-        - ' * @param id'
+        - ' * 根据$(FieldName)更新数据'
+        - ' * @param $(FieldName)'
         - ' * @param np'
         - ' * @return'
         - ' */'
@@ -123,20 +124,20 @@ templateObj:
         - name: Operation
           params:
             - key: summary
-              value: 根据id更新数据
+              value: 根据$(FieldName)更新数据
             - key: description
               value: 根据条件更新数据
         - name: PutMapping
           params:
-            - value: /update/{id}
+            - value: /update/$(FieldName)/{$(FieldName)}
       parameters:
-        - name: id
+        - name: $(FieldName)
           type:
-            className: Integer
+            className: $(FieldDataType)
           annotations:
             - name: PathVariable
               params:
-                - value: id
+                - value: $(FieldName)
         - name: np
           type:
             className: $(TableName)Pojo
@@ -154,7 +155,7 @@ templateObj:
           - ''
           - '$(TableName)Pojo $(LTableName)Pojo = new $(TableName)Pojo();'
           - ''
-          - '$(LTableName)Pojo.setId(id);'
+          - '$(LTableName)Pojo.set$(UFieldName)($(FieldName));'
           - ''
           - 'query.setPojo($(LTableName)Pojo);'
           - ''

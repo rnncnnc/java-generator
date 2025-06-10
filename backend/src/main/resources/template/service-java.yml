@@ -1,4 +1,5 @@
-fileType: service
+fileType: java
+classType: service
 templateObj:
   type: interface
   name: $(TableName)Service

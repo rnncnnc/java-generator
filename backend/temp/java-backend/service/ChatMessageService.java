@@ -12,16 +12,14 @@ public interface ChatMessageService<T>   {
 	 * @param query
 	 * @return
 	 */
-	List<T> select(Query<T> query) {
-	}
+	List<T> select(Query<T> query) ;
 
 
 	/**
 	 * 插入数据
 	 * @param query
 	 */
-	void insert(Query<T> query) {
-	}
+	void insert(Query<T> query) ;
 
 
 	/**
@@ -29,16 +27,14 @@ public interface ChatMessageService<T>   {
 	 * @param query
 	 * @param np
 	 */
-	void update(Query<T> query, T np) {
-	}
+	void update(Query<T> query, T np) ;
 
 
 	/**
 	 * 删除数据
 	 * @param query
 	 */
-	void delete(Query<T> query) {
-	}
+	void delete(Query<T> query) ;
 
 
 }

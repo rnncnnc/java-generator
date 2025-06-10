@@ -1,13 +1,16 @@
 package com.qinge.backend.entity.pojo;
 
+import java.lang.Long;
+import java.lang.Integer;
 import jakarta.persistence.Table;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
+import java.lang.String;
 
 
 /**
-* @Data: 2025/06/07 01:59
+* @Data: 2025/06/10 16:08
  * @Author: Lc
  * @Description:
  */
@@ -24,7 +27,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "message_id")
 	@Schema(name = "messageId", description = "消息自增id")
-	private bigint messageId;
+	private Long messageId;
 
 
 	/**
@@ -32,7 +35,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "session_id")
 	@Schema(name = "sessionId", description = "会话id")
-	private varchar sessionId;
+	private String sessionId;
 
 
 	/**
@@ -40,7 +43,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "message_type")
 	@Schema(name = "messageType", description = "消息类型")
-	private tinyint messageType;
+	private Integer messageType;
 
 
 	/**
@@ -48,7 +51,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "message_content")
 	@Schema(name = "messageContent", description = "消息内容")
-	private varchar messageContent;
+	private String messageContent;
 
 
 	/**
@@ -56,7 +59,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "send_user_id")
 	@Schema(name = "sendUserId", description = "发送人id")
-	private varchar sendUserId;
+	private String sendUserId;
 
 
 	/**
@@ -64,7 +67,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "send_user_nick_name")
 	@Schema(name = "sendUserNickName", description = "发送人昵称")
-	private varchar sendUserNickName;
+	private String sendUserNickName;
 
 
 	/**
@@ -72,7 +75,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "send_time")
 	@Schema(name = "sendTime", description = "发送时间")
-	private bigint sendTime;
+	private Long sendTime;
 
 
 	/**
@@ -80,7 +83,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "contact_id")
 	@Schema(name = "contactId", description = "接收联系人id")
-	private varchar contactId;
+	private String contactId;
 
 
 	/**
@@ -88,7 +91,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "contact_type")
 	@Schema(name = "contactType", description = "联系人类型 0：单聊   1：群聊")
-	private tinyint contactType;
+	private Integer contactType;
 
 
 	/**
@@ -96,7 +99,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "file_size")
 	@Schema(name = "fileSize", description = "文件大小")
-	private bigint fileSize;
+	private Long fileSize;
 
 
 	/**
@@ -104,7 +107,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "file_name")
 	@Schema(name = "fileName", description = "文件名称")
-	private varchar fileName;
+	private String fileName;
 
 
 	/**
@@ -112,7 +115,7 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "file_type")
 	@Schema(name = "fileType", description = "文件类型")
-	private tinyint fileType;
+	private Integer fileType;
 
 
 	/**
@@ -120,129 +123,129 @@ public class ChatMessagePojo  {
 	*/
 	@Column(name = "status")
 	@Schema(name = "status", description = "状态    0：正在发送     1：已发送")
-	private tinyint status;
+	private Integer status;
 
 
 	public ChatMessagePojo() {
 	}
 
-	public ChatMessagePojo(bigint messageId, varchar sessionId, tinyint messageType, varchar messageContent, varchar sendUserId, varchar sendUserNickName, bigint sendTime, varchar contactId, tinyint contactType, bigint fileSize, varchar fileName, tinyint fileType, tinyint status) {
-		this.messageId = messageId
-		this.sessionId = sessionId
-		this.messageType = messageType
-		this.messageContent = messageContent
-		this.sendUserId = sendUserId
-		this.sendUserNickName = sendUserNickName
-		this.sendTime = sendTime
-		this.contactId = contactId
-		this.contactType = contactType
-		this.fileSize = fileSize
-		this.fileName = fileName
-		this.fileType = fileType
-		this.status = status
-	}
-
-	public void setMessageId(bigint messageId) {
+	public ChatMessagePojo(Long messageId, String sessionId, Integer messageType, String messageContent, String sendUserId, String sendUserNickName, Long sendTime, String contactId, Integer contactType, Long fileSize, String fileName, Integer fileType, Integer status) {
 		this.messageId = messageId;
-	}
-
-	public bigint getMessageId() {
-		return this.messageId
-	}
-
-	public void setSessionId(varchar sessionId) {
 		this.sessionId = sessionId;
-	}
-
-	public varchar getSessionId() {
-		return this.sessionId
-	}
-
-	public void setMessageType(tinyint messageType) {
 		this.messageType = messageType;
-	}
-
-	public tinyint getMessageType() {
-		return this.messageType
-	}
-
-	public void setMessageContent(varchar messageContent) {
 		this.messageContent = messageContent;
-	}
-
-	public varchar getMessageContent() {
-		return this.messageContent
-	}
-
-	public void setSendUserId(varchar sendUserId) {
 		this.sendUserId = sendUserId;
-	}
-
-	public varchar getSendUserId() {
-		return this.sendUserId
-	}
-
-	public void setSendUserNickName(varchar sendUserNickName) {
 		this.sendUserNickName = sendUserNickName;
-	}
-
-	public varchar getSendUserNickName() {
-		return this.sendUserNickName
-	}
-
-	public void setSendTime(bigint sendTime) {
 		this.sendTime = sendTime;
-	}
-
-	public bigint getSendTime() {
-		return this.sendTime
-	}
-
-	public void setContactId(varchar contactId) {
 		this.contactId = contactId;
-	}
-
-	public varchar getContactId() {
-		return this.contactId
-	}
-
-	public void setContactType(tinyint contactType) {
 		this.contactType = contactType;
-	}
-
-	public tinyint getContactType() {
-		return this.contactType
-	}
-
-	public void setFileSize(bigint fileSize) {
 		this.fileSize = fileSize;
-	}
-
-	public bigint getFileSize() {
-		return this.fileSize
-	}
-
-	public void setFileName(varchar fileName) {
 		this.fileName = fileName;
-	}
-
-	public varchar getFileName() {
-		return this.fileName
-	}
-
-	public void setFileType(tinyint fileType) {
 		this.fileType = fileType;
-	}
-
-	public tinyint getFileType() {
-		return this.fileType
-	}
-
-	public void setStatus(tinyint status) {
 		this.status = status;
 	}
 
-	public tinyint getStatus() {
-		return this.status
+	public void setMessageId(Long messageId) {
+		this.messageId = messageId;
+	}
+
+	public Long getMessageId() {
+		return this.messageId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public String getSessionId() {
+		return this.sessionId;
+	}
+
+	public void setMessageType(Integer messageType) {
+		this.messageType = messageType;
+	}
+
+	public Integer getMessageType() {
+		return this.messageType;
+	}
+
+	public void setMessageContent(String messageContent) {
+		this.messageContent = messageContent;
+	}
+
+	public String getMessageContent() {
+		return this.messageContent;
+	}
+
+	public void setSendUserId(String sendUserId) {
+		this.sendUserId = sendUserId;
+	}
+
+	public String getSendUserId() {
+		return this.sendUserId;
+	}
+
+	public void setSendUserNickName(String sendUserNickName) {
+		this.sendUserNickName = sendUserNickName;
+	}
+
+	public String getSendUserNickName() {
+		return this.sendUserNickName;
+	}
+
+	public void setSendTime(Long sendTime) {
+		this.sendTime = sendTime;
+	}
+
+	public Long getSendTime() {
+		return this.sendTime;
+	}
+
+	public void setContactId(String contactId) {
+		this.contactId = contactId;
+	}
+
+	public String getContactId() {
+		return this.contactId;
+	}
+
+	public void setContactType(Integer contactType) {
+		this.contactType = contactType;
+	}
+
+	public Integer getContactType() {
+		return this.contactType;
+	}
+
+	public void setFileSize(Long fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public Long getFileSize() {
+		return this.fileSize;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFileName() {
+		return this.fileName;
+	}
+
+	public void setFileType(Integer fileType) {
+		this.fileType = fileType;
+	}
+
+	public Integer getFileType() {
+		return this.fileType;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public Integer getStatus() {
+		return this.status;
 	}
 }

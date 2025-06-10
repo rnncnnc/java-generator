@@ -11,10 +11,13 @@ import java.io.Serializable;
 
 public class Generic implements Serializable {
 
+    // 泛型名
     private String name;
 
+    // 泛型类型 extends
     private String type;
 
+    // 类型的包名
     private String packageName;
 
     public Generic() {

@@ -1,13 +1,16 @@
 package com.qinge.backend.entity.pojo;
 
+import java.lang.Long;
+import java.lang.Integer;
 import jakarta.persistence.Table;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
+import java.lang.String;
 
 
 /**
-* @Data: 2025/06/07 01:59
+* @Data: 2025/06/10 16:08
  * @Author: Lc
  * @Description:
  */
@@ -24,7 +27,7 @@ public class AppUpdatePojo  {
 	*/
 	@Column(name = "id")
 	@Schema(name = "id", description = "自增id")
-	private int id;
+	private Integer id;
 
 
 	/**
@@ -32,7 +35,7 @@ public class AppUpdatePojo  {
 	*/
 	@Column(name = "version")
 	@Schema(name = "version", description = "版本号")
-	private varchar version;
+	private String version;
 
 
 	/**
@@ -40,7 +43,7 @@ public class AppUpdatePojo  {
 	*/
 	@Column(name = "update_desc")
 	@Schema(name = "updateDesc", description = "更新描述")
-	private varchar updateDesc;
+	private String updateDesc;
 
 
 	/**
@@ -48,7 +51,7 @@ public class AppUpdatePojo  {
 	*/
 	@Column(name = "status")
 	@Schema(name = "status", description = "0：未发布 1：灰度发布 2：全网发布")
-	private tinyint status;
+	private Integer status;
 
 
 	/**
@@ -56,7 +59,7 @@ public class AppUpdatePojo  {
 	*/
 	@Column(name = "create_time")
 	@Schema(name = "createTime", description = "创建时间")
-	private datetime createTime;
+	private Long createTime;
 
 
 	/**
@@ -64,7 +67,7 @@ public class AppUpdatePojo  {
 	*/
 	@Column(name = "grayscale_uid")
 	@Schema(name = "grayscaleUid", description = "灰度uid")
-	private varchar grayscaleUid;
+	private String grayscaleUid;
 
 
 	/**
@@ -72,7 +75,7 @@ public class AppUpdatePojo  {
 	*/
 	@Column(name = "file_type")
 	@Schema(name = "fileType", description = "文件类型 0：本地文件 1：外链")
-	private tinyint fileType;
+	private Integer fileType;
 
 
 	/**
@@ -80,84 +83,84 @@ public class AppUpdatePojo  {
 	*/
 	@Column(name = "outer_link")
 	@Schema(name = "outerLink", description = "外链地址")
-	private varchar outerLink;
+	private String outerLink;
 
 
 	public AppUpdatePojo() {
 	}
 
-	public AppUpdatePojo(int id, varchar version, varchar updateDesc, tinyint status, datetime createTime, varchar grayscaleUid, tinyint fileType, varchar outerLink) {
-		this.id = id
-		this.version = version
-		this.updateDesc = updateDesc
-		this.status = status
-		this.createTime = createTime
-		this.grayscaleUid = grayscaleUid
-		this.fileType = fileType
-		this.outerLink = outerLink
-	}
-
-	public void setId(int id) {
+	public AppUpdatePojo(Integer id, String version, String updateDesc, Integer status, Long createTime, String grayscaleUid, Integer fileType, String outerLink) {
 		this.id = id;
-	}
-
-	public int getId() {
-		return this.id
-	}
-
-	public void setVersion(varchar version) {
 		this.version = version;
-	}
-
-	public varchar getVersion() {
-		return this.version
-	}
-
-	public void setUpdateDesc(varchar updateDesc) {
 		this.updateDesc = updateDesc;
-	}
-
-	public varchar getUpdateDesc() {
-		return this.updateDesc
-	}
-
-	public void setStatus(tinyint status) {
 		this.status = status;
-	}
-
-	public tinyint getStatus() {
-		return this.status
-	}
-
-	public void setCreateTime(datetime createTime) {
 		this.createTime = createTime;
-	}
-
-	public datetime getCreateTime() {
-		return this.createTime
-	}
-
-	public void setGrayscaleUid(varchar grayscaleUid) {
 		this.grayscaleUid = grayscaleUid;
-	}
-
-	public varchar getGrayscaleUid() {
-		return this.grayscaleUid
-	}
-
-	public void setFileType(tinyint fileType) {
 		this.fileType = fileType;
-	}
-
-	public tinyint getFileType() {
-		return this.fileType
-	}
-
-	public void setOuterLink(varchar outerLink) {
 		this.outerLink = outerLink;
 	}
 
-	public varchar getOuterLink() {
-		return this.outerLink
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getId() {
+		return this.id;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getVersion() {
+		return this.version;
+	}
+
+	public void setUpdateDesc(String updateDesc) {
+		this.updateDesc = updateDesc;
+	}
+
+	public String getUpdateDesc() {
+		return this.updateDesc;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public Integer getStatus() {
+		return this.status;
+	}
+
+	public void setCreateTime(Long createTime) {
+		this.createTime = createTime;
+	}
+
+	public Long getCreateTime() {
+		return this.createTime;
+	}
+
+	public void setGrayscaleUid(String grayscaleUid) {
+		this.grayscaleUid = grayscaleUid;
+	}
+
+	public String getGrayscaleUid() {
+		return this.grayscaleUid;
+	}
+
+	public void setFileType(Integer fileType) {
+		this.fileType = fileType;
+	}
+
+	public Integer getFileType() {
+		return this.fileType;
+	}
+
+	public void setOuterLink(String outerLink) {
+		this.outerLink = outerLink;
+	}
+
+	public String getOuterLink() {
+		return this.outerLink;
 	}
 }

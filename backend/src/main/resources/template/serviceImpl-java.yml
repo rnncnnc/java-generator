@@ -1,4 +1,5 @@
-fileType: serviceImpl
+fileType: java
+classType: serviceImpl
 templateObj:
   type: class
   name: $(TableName)ServiceImpl
@@ -28,6 +29,8 @@ templateObj:
           - name: $(TableName)Pojo
             packageName: entity.pojo
       permission: public
+      annotations:
+        - name: Override
       parameters:
         - name: query
           type:
@@ -49,6 +52,8 @@ templateObj:
       returnType:
         className: void
       permission: public
+      annotations:
+        - name: Override
       parameters:
         - name: query
           type:
@@ -69,6 +74,8 @@ templateObj:
       returnType:
         className: void
       permission: public
+      annotations:
+        - name: Override
       parameters:
         - name: query
           type:
@@ -94,6 +101,8 @@ templateObj:
       returnType:
         className: void
       permission: public
+      annotations:
+        - name: Override
       parameters:
         - name: query
           type:

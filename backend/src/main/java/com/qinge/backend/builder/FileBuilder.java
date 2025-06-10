@@ -1,8 +1,18 @@
 package com.qinge.backend.builder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.qinge.backend.entity.dto.table.Table;
 import com.qinge.backend.entity.dto.template.object.FileObject;
+import com.qinge.backend.entity.enums.KeywordMethods;
+import com.qinge.backend.utils.JsonTools;
+import com.qinge.backend.utils.StringTools;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Data: 2025/6/1 14:17
@@ -11,6 +21,7 @@ import java.io.IOException;
  */
 
 
+@Slf4j
 public abstract class FileBuilder implements Builder {
 
     // 基础包名
@@ -20,10 +31,50 @@ public abstract class FileBuilder implements Builder {
     protected String temPath;
 
     /**
+     * 替换关键字
+     * @param obj
+     * @return
+     */
+    protected <T, E> T replaceKeyword(T obj, E source) throws JsonProcessingException {
+        String json = JsonTools.toJson(obj);
+
+        Set<String> keys = StringTools.extractKeys(json);
+
+        Map<String, String> keywrodMap = new HashMap<>();
+
+        String sourceType = source.getClass().getSimpleName();
+
+        // 将关键字替换为对应的值
+        for (String key : keys) {
+            if (!sourceType.equals(Table.class.getSimpleName()) && !key.contains(sourceType)) {
+                continue;
+            }
+
+            java.lang.reflect.Method method = KeywordMethods.getByName(key);
+            if (method != null) {
+                try {
+                    String value = ((String) method.invoke(source)).trim();
+                    keywrodMap.put(key, value);
+                } catch (InvocationTargetException | IllegalAccessException e) {
+                    log.error("替换关键字失败: {}", key);
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        // 替换关键字
+        for (Map.Entry<String, String> entry : keywrodMap.entrySet()) {
+            json = json.replace("$(" + entry.getKey() + ")", entry.getValue());
+        }
+
+        return (T) JsonTools.fromJson(json, obj.getClass());
+    }
+
+    /**
      * 构建文件
      */
     @Override
-    abstract public void build(FileObject fileObj) throws IOException;
+    abstract public void build(FileObject fileObj) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException;
 
     public FileBuilder() {
     }

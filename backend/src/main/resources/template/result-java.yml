@@ -1,4 +1,5 @@
-fileType: single
+fileType: java
+classType: single
 templateObj:
   type: class
   name: Result
@@ -33,20 +34,17 @@ templateObj:
     - name: success
       returnType:
         className: Result
-        packageName: entity.vo
       permission: public static
       parameters:
         - name: data
           type:
             className: Object
-            packageName: entity.vo
       bodyInfo:
         body:
           - 'return new Result(1, "success", data);'
     - name: success
       returnType:
         className: Result
-        packageName: entity.vo
       permission: public static
       bodyInfo:
         body:
@@ -54,7 +52,6 @@ templateObj:
     - name: error
       returnType:
         className: Result
-        packageName: entity.vo
       permission: public static
       parameters:
         - name: msg

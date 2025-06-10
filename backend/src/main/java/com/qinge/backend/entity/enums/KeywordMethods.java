@@ -59,11 +59,29 @@ public enum KeywordMethods {
             }
         }
     }.evaluate()),
+    BASEPACKAGE("BasePackage", new Object() {
+        Method evaluate() {
+            try {
+                return Table.class.getMethod("getBasePackage");
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }.evaluate()),
 
     FIELDNAME("FieldName", new Object() {
         Method evaluate() {
             try {
                 return Field.class.getMethod("getFieldName");
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }.evaluate()),
+    LFIELDNAME("UFieldName", new Object() {
+        Method evaluate() {
+            try {
+                return Field.class.getMethod("getUFieldName");
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }

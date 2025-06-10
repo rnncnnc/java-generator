@@ -1,4 +1,5 @@
-fileType: single
+fileType: java
+classType: single
 templateObj:
   type: class
   name: OpenApiConfig
@@ -15,8 +16,8 @@ templateObj:
         - name: Bean
       bodyInfo:
         require:
-          - name: Info
-          - name: OpenAPI
+          - className: Info
+          - className: OpenAPI
         body:
           - 'return new OpenAPI()'
           - '         .info(new Info()'

@@ -1,11 +1,12 @@
-fileType: single
+fileType: java
+classType: single
 templateObj:
   type: class
   name: Page
   permission: public
   packageName: entity.query
   variables:
-    - name: pageNum;
+    - name: pageNum
       type:
         className: Integer
       permission: private

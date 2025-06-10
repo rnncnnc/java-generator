@@ -74,7 +74,7 @@ public class ClassTools {
 
     /**
      * 通过全类名动态构建类实例（关键方法）
-     * @param fullClassName 全限定类名（如 "com.qinge.backend.builder.PojoBuilder"）
+     * @param fullClassName 全限定类名（如 "com.qinge.backend.builder.java.PojoBuilder"）
      * @param <T> 目标类类型
      * @return 类实例
      */

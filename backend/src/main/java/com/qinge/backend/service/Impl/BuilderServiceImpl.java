@@ -1,15 +1,15 @@
 package com.qinge.backend.service.Impl;
 
 import com.qinge.backend.builder.FileBuilder;
-import com.qinge.backend.builder.JavaBuilder;
+import com.qinge.backend.builder.java.JavaBuilder;
 import com.qinge.backend.entity.constants.ClassDir;
 import com.qinge.backend.entity.dto.BaseInfo;
 import com.qinge.backend.entity.dto.table.Table;
 import com.qinge.backend.entity.dto.template.Template;
 import com.qinge.backend.entity.dto.template.object.FileObject;
-import com.qinge.backend.parser.ObjectParser;
+import com.qinge.backend.parser.file.ObjectParser;
 import com.qinge.backend.service.BuilderService;
-import com.qinge.backend.parser.DataBaseParser;
+import com.qinge.backend.parser.database.DataBaseParser;
 import com.qinge.backend.utils.ClassTools;
 import com.qinge.backend.utils.FileTools;
 import com.qinge.backend.utils.StringTools;
@@ -42,7 +42,7 @@ public class BuilderServiceImpl implements BuilderService {
         baseInfo.setUsername("root");
         baseInfo.setPassword("315766");
         baseInfo.setGroupId("com.qinge");
-        baseInfo.setArtifactId("backend");
+        baseInfo.setArtifactId("playerbackend");
         baseInfo.setTablePrefix("tb_");
         baseInfo.setFieldSeparator("_");
 
@@ -67,8 +67,15 @@ public class BuilderServiceImpl implements BuilderService {
             // 获取文件类型
             String fileType = template.getFileType();
 
+            // 获取类类型
+            String classType = template.getClassType();
+
             // 获取文件构建器
-            String fullClassName = JavaBuilder.class.getName().replace("Java", StringTools.firstToUppercase(fileType));
+            String fullClassName =  FileBuilder.class.getName();
+            String prefix = fullClassName.substring(0, fullClassName.lastIndexOf("."));
+            String suffix = fullClassName.substring(fullClassName.lastIndexOf(".") + 1).replace("File", StringTools.firstToUppercase(classType));
+            fullClassName = prefix + "." + fileType.toLowerCase() + "." + suffix;
+
             FileBuilder fileBuilder = ClassTools.buildClassByFullName(fullClassName);
 
             // 获取模板类型
@@ -80,12 +87,14 @@ public class BuilderServiceImpl implements BuilderService {
             fileBuilder.setTemPath(temPath);
 
             // 只需要构建一个文件
-            if (fileType.equals("single")) {
+            if (classType.equals("single")) {
                 // 构建文件
                 fileBuilder.build(fileObject);
             } else {
                 // 根据数据库创建多个文件
                 for (Table table : tableList) {
+
+                    table.setBasePackage(baseInfo.getGroupId() + "." + baseInfo.getArtifactId());
 
                     // 将table赋值给fileBuilder
                     ClassTools.setFieldValue(fileBuilder, "table", table);

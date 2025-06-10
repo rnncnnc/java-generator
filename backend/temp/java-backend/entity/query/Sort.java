@@ -23,8 +23,8 @@ public class Sort  {
 	}
 
 	public Sort(Integer index, String order) {
-		this.index = index
-		this.order = order
+		this.index = index;
+		this.order = order;
 	}
 
 	public void setIndex(Integer index) {
@@ -32,7 +32,7 @@ public class Sort  {
 	}
 
 	public Integer getIndex() {
-		return this.index
+		return this.index;
 	}
 
 	public void setOrder(String order) {
@@ -40,6 +40,6 @@ public class Sort  {
 	}
 
 	public String getOrder() {
-		return this.order
+		return this.order;
 	}
 }

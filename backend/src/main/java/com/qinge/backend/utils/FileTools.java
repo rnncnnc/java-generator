@@ -1,6 +1,6 @@
 package com.qinge.backend.utils;
 
-import com.qinge.backend.parser.DataBaseParser;
+import com.qinge.backend.parser.database.DataBaseParser;
 
 import java.io.*;
 import java.net.JarURLConnection;

@@ -4,10 +4,11 @@ import jakarta.persistence.Table;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
+import java.lang.String;
 
 
 /**
-* @Data: 2025/06/07 01:59
+* @Data: 2025/06/10 16:08
  * @Author: Lc
  * @Description:
  */
@@ -24,7 +25,7 @@ public class ChatSessionUserPojo  {
 	*/
 	@Column(name = "user_id")
 	@Schema(name = "userId", description = "用户id")
-	private varchar userId;
+	private String userId;
 
 
 	/**
@@ -32,7 +33,7 @@ public class ChatSessionUserPojo  {
 	*/
 	@Column(name = "contact_id")
 	@Schema(name = "contactId", description = "联系人id")
-	private varchar contactId;
+	private String contactId;
 
 
 	/**
@@ -40,7 +41,7 @@ public class ChatSessionUserPojo  {
 	*/
 	@Column(name = "session_id")
 	@Schema(name = "sessionId", description = "会话id")
-	private varchar sessionId;
+	private String sessionId;
 
 
 	/**
@@ -48,48 +49,48 @@ public class ChatSessionUserPojo  {
 	*/
 	@Column(name = "contact_name")
 	@Schema(name = "contactName", description = "联系人名称")
-	private varchar contactName;
+	private String contactName;
 
 
 	public ChatSessionUserPojo() {
 	}
 
-	public ChatSessionUserPojo(varchar userId, varchar contactId, varchar sessionId, varchar contactName) {
-		this.userId = userId
-		this.contactId = contactId
-		this.sessionId = sessionId
-		this.contactName = contactName
-	}
-
-	public void setUserId(varchar userId) {
+	public ChatSessionUserPojo(String userId, String contactId, String sessionId, String contactName) {
 		this.userId = userId;
-	}
-
-	public varchar getUserId() {
-		return this.userId
-	}
-
-	public void setContactId(varchar contactId) {
 		this.contactId = contactId;
-	}
-
-	public varchar getContactId() {
-		return this.contactId
-	}
-
-	public void setSessionId(varchar sessionId) {
 		this.sessionId = sessionId;
-	}
-
-	public varchar getSessionId() {
-		return this.sessionId
-	}
-
-	public void setContactName(varchar contactName) {
 		this.contactName = contactName;
 	}
 
-	public varchar getContactName() {
-		return this.contactName
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getUserId() {
+		return this.userId;
+	}
+
+	public void setContactId(String contactId) {
+		this.contactId = contactId;
+	}
+
+	public String getContactId() {
+		return this.contactId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public String getSessionId() {
+		return this.sessionId;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+
+	public String getContactName() {
+		return this.contactName;
 	}
 }

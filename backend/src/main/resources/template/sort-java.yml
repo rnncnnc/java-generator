@@ -1,4 +1,5 @@
-fileType: single
+fileType: java
+classType: single
 templateObj:
   type: class
   name: Sort

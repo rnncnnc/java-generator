@@ -9,20 +9,28 @@ import com.qinge.backend.entity.dto.template.object.FileObject;
  */
 
 
-public class Template<T extends FileObject> {
+public class Template {
 
-    // 生成的文件类型 pojo controller service mapper xml 等
+    // 生成的文件类型 java xml 等
     private String fileType;
 
+    // 生成的文件类型 controller service 等
+    private String classType;
+
     // 具体的模板对象
-    private T templateObj;
+    private FileObject templateObj;
 
     public Template() {
     }
 
-    public Template(String fileType, T classObj) {
-        this.fileType = fileType;
-        this.templateObj = classObj;
+
+
+    public String getClassType() {
+        return classType;
+    }
+
+    public void setClassType(String classType) {
+        this.classType = classType;
     }
 
     public String getFileType() {
@@ -33,11 +41,11 @@ public class Template<T extends FileObject> {
         this.fileType = fileType;
     }
 
-    public T getTemplateObj() {
+    public FileObject getTemplateObj() {
         return templateObj;
     }
 
-    public void setTemplateObj(T classObj) {
+    public void setTemplateObj(FileObject classObj) {
         this.templateObj = classObj;
     }
 

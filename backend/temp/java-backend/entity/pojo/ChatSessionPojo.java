@@ -1,13 +1,15 @@
 package com.qinge.backend.entity.pojo;
 
+import java.lang.Long;
 import jakarta.persistence.Table;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
+import java.lang.String;
 
 
 /**
-* @Data: 2025/06/07 01:59
+* @Data: 2025/06/10 16:08
  * @Author: Lc
  * @Description:
  */
@@ -24,7 +26,7 @@ public class ChatSessionPojo  {
 	*/
 	@Column(name = "session_id")
 	@Schema(name = "sessionId", description = "会话id")
-	private varchar sessionId;
+	private String sessionId;
 
 
 	/**
@@ -32,7 +34,7 @@ public class ChatSessionPojo  {
 	*/
 	@Column(name = "last_message")
 	@Schema(name = "lastMessage", description = "最后接收的消息")
-	private varchar lastMessage;
+	private String lastMessage;
 
 
 	/**
@@ -40,39 +42,39 @@ public class ChatSessionPojo  {
 	*/
 	@Column(name = "last_receive_time")
 	@Schema(name = "lastReceiveTime", description = "最后接收消息时间毫秒")
-	private bigint lastReceiveTime;
+	private Long lastReceiveTime;
 
 
 	public ChatSessionPojo() {
 	}
 
-	public ChatSessionPojo(varchar sessionId, varchar lastMessage, bigint lastReceiveTime) {
-		this.sessionId = sessionId
-		this.lastMessage = lastMessage
-		this.lastReceiveTime = lastReceiveTime
-	}
-
-	public void setSessionId(varchar sessionId) {
+	public ChatSessionPojo(String sessionId, String lastMessage, Long lastReceiveTime) {
 		this.sessionId = sessionId;
-	}
-
-	public varchar getSessionId() {
-		return this.sessionId
-	}
-
-	public void setLastMessage(varchar lastMessage) {
 		this.lastMessage = lastMessage;
-	}
-
-	public varchar getLastMessage() {
-		return this.lastMessage
-	}
-
-	public void setLastReceiveTime(bigint lastReceiveTime) {
 		this.lastReceiveTime = lastReceiveTime;
 	}
 
-	public bigint getLastReceiveTime() {
-		return this.lastReceiveTime
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public String getSessionId() {
+		return this.sessionId;
+	}
+
+	public void setLastMessage(String lastMessage) {
+		this.lastMessage = lastMessage;
+	}
+
+	public String getLastMessage() {
+		return this.lastMessage;
+	}
+
+	public void setLastReceiveTime(Long lastReceiveTime) {
+		this.lastReceiveTime = lastReceiveTime;
+	}
+
+	public Long getLastReceiveTime() {
+		return this.lastReceiveTime;
 	}
 }

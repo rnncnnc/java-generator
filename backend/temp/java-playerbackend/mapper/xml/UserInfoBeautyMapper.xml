@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 需要映射的接口的全类名 -->
+<mapper namespace="com.qinge.playerbackend.mapper.UserInfoBeautyMapper">
+	<sql id="UserInfoBeauty">
+		id,
+		email,
+		user_id,
+		status,
+	</sql>
+
+	<!-- 	批量查询数据	 -->
+	<select id="select" resultType="com.qinge.playerbackend.entity.pojo.UserInfoBeautyPojo">
+		select
+		<trim suffixOverrides=",">
+			<include refid="UserInfoBeauty">
+			</include>
+		</trim>
+		from user_info_beauty
+		<if test="pojo != null">
+			<where>
+				<if test="pojo.id != null">
+					and id = #{pojo.id}
+				</if>
+				<if test="pojo.userId != null">
+					and user_id = #{pojo.userId}
+				</if>
+				<if test="pojo.email != null">
+					and email = #{pojo.email}
+				</if>
+			</where>
+		</if>
+		<if test="page != null">
+			limit #{page.pageSize} offset #{page.pageNum}
+		</if>
+		<if test="sort != null">
+			order by #{sort.index} #{sort.order}
+		</if>
+	</select>
+
+	<!-- 	插入数据	 -->
+	<insert id="insert" parameterType="com.qinge.playerbackend.entity.pojo.UserInfoBeautyPojo">
+		insert into user_info_beauty
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.id != null">
+				id,
+			</if>
+			<if test="pojo.email != null">
+				email,
+			</if>
+			<if test="pojo.userId != null">
+				user_id,
+			</if>
+			<if test="pojo.status != null">
+				status,
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.id != null">
+				#{pojo.id},
+			</if>
+			<if test="pojo.email != null">
+				#{pojo.email},
+			</if>
+			<if test="pojo.userId != null">
+				#{pojo.userId},
+			</if>
+			<if test="pojo.status != null">
+				#{pojo.status},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 	更新数据	 -->
+	<update id="update" parameterType="com.qinge.playerbackend.entity.pojo.UserInfoBeautyPojo">
+		update user_info_beauty
+		<set>
+			<if test="np.id != null">
+				id = #{np.id},
+			</if>
+			<if test="np.email != null">
+				email = #{np.email},
+			</if>
+			<if test="np.userId != null">
+				user_id = #{np.userId},
+			</if>
+			<if test="np.status != null">
+				status = #{np.status},
+			</if>
+		</set>
+		<where>
+			<if test="query.pojo.id != null">
+				and id = #{query.pojo.id}
+			</if>
+			<if test="query.pojo.userId != null">
+				and user_id = #{query.pojo.userId}
+			</if>
+			<if test="query.pojo.email != null">
+				and email = #{query.pojo.email}
+			</if>
+		</where>
+	</update>
+
+	<!-- 	删除数据	 -->
+	<delete id="delete" parameterType="com.qinge.playerbackend.entity.pojo.UserInfoBeautyPojo">
+		delete from user_info_beauty
+		<where>
+			<if test="pojo.id != null">
+				and id = #{pojo.id}
+			</if>
+			<if test="pojo.userId != null">
+				and user_id = #{pojo.userId}
+			</if>
+			<if test="pojo.email != null">
+				and email = #{pojo.email}
+			</if>
+		</where>
+	</delete>
+</mapper>

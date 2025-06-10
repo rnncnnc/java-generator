@@ -1,4 +1,5 @@
-fileType: pojo
+fileType: java
+classType: pojo
 templateObj:
   type: class
   name: $(TableName)Pojo

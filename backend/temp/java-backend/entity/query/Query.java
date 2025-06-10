@@ -29,9 +29,9 @@ public class Query<T>   {
 	}
 
 	public Query(Page page, Sort sort, T pojo) {
-		this.page = page
-		this.sort = sort
-		this.pojo = pojo
+		this.page = page;
+		this.sort = sort;
+		this.pojo = pojo;
 	}
 
 	public void setPage(Page page) {
@@ -39,7 +39,7 @@ public class Query<T>   {
 	}
 
 	public Page getPage() {
-		return this.page
+		return this.page;
 	}
 
 	public void setSort(Sort sort) {
@@ -47,7 +47,7 @@ public class Query<T>   {
 	}
 
 	public Sort getSort() {
-		return this.sort
+		return this.sort;
 	}
 
 	public void setPojo(T pojo) {
@@ -55,6 +55,6 @@ public class Query<T>   {
 	}
 
 	public T getPojo() {
-		return this.pojo
+		return this.pojo;
 	}
 }

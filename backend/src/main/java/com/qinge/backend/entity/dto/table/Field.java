@@ -1,5 +1,7 @@
 package com.qinge.backend.entity.dto.table;
 
+import com.qinge.backend.utils.StringTools;
+
 /**
  * @Data: 2025/5/30 12:51
  * @Author: Lc
@@ -25,6 +27,10 @@ public class Field {
     private String FieldComment;
 
     public Field() {
+    }
+
+    public String getUFieldName() {
+        return StringTools.firstToUppercase(FieldName);
     }
 
     public String getFieldName() {
