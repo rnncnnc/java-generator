@@ -1,14 +1,16 @@
 package com.qinge.backend.utils;
 
-import com.qinge.backend.parser.database.DataBaseParser;
-
 import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @Data: 2025/5/30 15:25
@@ -111,7 +113,7 @@ public class FileTools {
      */
     public static Deque<String> readResourceFile(String resourcePath) {
         Deque<String> content = new ArrayDeque<>();
-        try (InputStream inputStream = DataBaseParser.class.getClassLoader().getResourceAsStream(resourcePath);
+        try (InputStream inputStream = FileTools.class.getClassLoader().getResourceAsStream(resourcePath);
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
             if (inputStream == null) {
@@ -197,6 +199,64 @@ public class FileTools {
             }
         }
         return result;
+    }
+
+    /**
+     * 将文件打包成压缩包
+     * @param filePath 文件列表
+     * @return 压缩包路径
+     */
+    public static String zipFiles(String filePath, String zipName) {
+
+        Path path = Paths.get(filePath);
+
+        // 生成压缩包路径
+        File parentFile = path.getParent().toFile();
+        String zipFilePath = parentFile.getAbsolutePath() + File.separator + zipName + ".zip";
+
+        // 将文件打包成压缩包
+        try(
+                FileOutputStream fos = new FileOutputStream(zipFilePath);
+                ZipOutputStream zos = new ZipOutputStream(fos); // 获取压缩包的文件流
+        ){
+
+            File sourceDir = new File(filePath);
+            File[] files = sourceDir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    addFileToZip(sourceDir, file, zos);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return zipFilePath;
+    }
+
+    // 辅助方法：递归添加文件到ZIP流
+    private static void addFileToZip(File baseDir, File currentFile, ZipOutputStream zos) throws IOException {
+        String entryName = baseDir.toPath().relativize(currentFile.toPath()).toString();
+
+        if (currentFile.isDirectory()) {
+            zos.putNextEntry(new ZipEntry(entryName + "/"));
+            zos.closeEntry();
+            File[] subFiles = currentFile.listFiles();
+            if (subFiles != null) {
+                for (File subFile : subFiles) {
+                    addFileToZip(baseDir, subFile, zos);
+                }
+            }
+        } else {
+            zos.putNextEntry(new ZipEntry(entryName));
+            try (FileInputStream fis = new FileInputStream(currentFile)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    zos.write(buffer, 0, length);
+                }
+            }
+            zos.closeEntry();
+        }
     }
 
 

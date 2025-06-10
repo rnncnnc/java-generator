@@ -1,9 +1,9 @@
 package com.qinge.backend.parser.file;
 
-import com.qinge.backend.entity.dto.template.object.FileObject;
-import com.qinge.backend.entity.dto.template.object.xml.Tag;
-import com.qinge.backend.entity.dto.template.object.xml.TagParam;
-import com.qinge.backend.entity.dto.template.object.xml.XmlFile;
+import com.qinge.backend.entity.template.object.FileObject;
+import com.qinge.backend.entity.template.object.xml.Tag;
+import com.qinge.backend.entity.template.object.xml.TagParam;
+import com.qinge.backend.entity.template.object.xml.XmlFile;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;

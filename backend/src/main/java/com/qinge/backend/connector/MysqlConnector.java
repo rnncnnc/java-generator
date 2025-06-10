@@ -13,18 +13,14 @@ import java.sql.DriverManager;
 public class MysqlConnector extends DBConnector{
 
 
-    public MysqlConnector(String db_url, String username, String password) {
-        super(db_url, username, password);
-    }
-
     @Override
-    public Connection getConnection() {
+    public Connection getConnection(String url, String username, String password) {
         Connection conn = null;
         try {
             // 加载 MySql JDBC 驱动
             Class.forName("com.mysql.cj.jdbc.Driver");
             // 建立数据库连接
-            conn = DriverManager.getConnection(db_url, username, password);
+            conn = DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
             e.printStackTrace();
         }

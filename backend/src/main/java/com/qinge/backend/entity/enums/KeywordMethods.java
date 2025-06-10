@@ -1,8 +1,8 @@
 package com.qinge.backend.entity.enums;
 
-import com.qinge.backend.entity.dto.table.Field;
-import com.qinge.backend.entity.dto.table.Index;
-import com.qinge.backend.entity.dto.table.Table;
+import com.qinge.backend.entity.table.Field;
+import com.qinge.backend.entity.table.Index;
+import com.qinge.backend.entity.table.Table;
 
 import java.lang.reflect.Method;
 

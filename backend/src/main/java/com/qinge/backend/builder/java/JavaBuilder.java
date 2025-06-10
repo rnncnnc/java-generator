@@ -2,20 +2,17 @@ package com.qinge.backend.builder.java;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.qinge.backend.builder.FileBuilder;
-import com.qinge.backend.entity.dto.table.Table;
-import com.qinge.backend.entity.dto.template.object.FileObject;
-import com.qinge.backend.entity.dto.template.object.java.*;
+import com.qinge.backend.entity.table.Table;
+import com.qinge.backend.entity.template.object.FileObject;
+import com.qinge.backend.entity.template.object.java.*;
 import com.qinge.backend.entity.enums.ClassTypes;
-import com.qinge.backend.entity.enums.KeywordMethods;
 import com.qinge.backend.utils.ClassTools;
-import com.qinge.backend.utils.JsonTools;
 import com.qinge.backend.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;

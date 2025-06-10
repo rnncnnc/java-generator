@@ -1,7 +1,7 @@
 package com.qinge.backend.builder.java;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.qinge.backend.entity.dto.template.object.java.JavaClass;
+import com.qinge.backend.entity.template.object.java.JavaClass;
 
 /**
  * @Data: 2025/6/6 17:47

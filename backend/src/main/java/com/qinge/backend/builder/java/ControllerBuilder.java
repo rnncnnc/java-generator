@@ -2,10 +2,9 @@ package com.qinge.backend.builder.java;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.qinge.backend.entity.dto.table.Field;
-import com.qinge.backend.entity.dto.template.object.java.JavaClass;
-import com.qinge.backend.entity.dto.template.object.java.Method;
-import com.qinge.backend.entity.dto.template.object.java.MethodBody;
+import com.qinge.backend.entity.table.Field;
+import com.qinge.backend.entity.template.object.java.JavaClass;
+import com.qinge.backend.entity.template.object.java.Method;
 import com.qinge.backend.utils.ClassTools;
 import com.qinge.backend.utils.StringTools;
 
@@ -39,8 +38,6 @@ public class ControllerBuilder extends JavaBuilder {
             // 替换关键词
             if (hasKeyword(method)) {
                 for (Field field : table.getFields()) {
-                    System.out.println(field);
-
                     // 如果数据库字段的索引值不为空，说明是索引字段，复制方法体信息
                     if (!StringTools.isEmpty(field.getFieldKey())) {
                         Method methodCopy = ClassTools.deepCopy(method);

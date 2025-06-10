@@ -2,10 +2,10 @@ package com.qinge.backend.builder.xml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.qinge.backend.builder.FileBuilder;
-import com.qinge.backend.entity.dto.template.object.FileObject;
-import com.qinge.backend.entity.dto.template.object.xml.Tag;
-import com.qinge.backend.entity.dto.template.object.xml.TagParam;
-import com.qinge.backend.entity.dto.template.object.xml.XmlFile;
+import com.qinge.backend.entity.template.object.FileObject;
+import com.qinge.backend.entity.template.object.xml.Tag;
+import com.qinge.backend.entity.template.object.xml.TagParam;
+import com.qinge.backend.entity.template.object.xml.XmlFile;
 import com.qinge.backend.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;

@@ -1,8 +1,8 @@
 package com.qinge.backend.parser.file;
 
-import com.qinge.backend.entity.dto.template.object.FileObject;
-import com.qinge.backend.entity.dto.template.object.java.JavaClass;
-import com.qinge.backend.entity.dto.template.object.java.*;
+import com.qinge.backend.entity.template.object.FileObject;
+import com.qinge.backend.entity.template.object.java.JavaClass;
+import com.qinge.backend.entity.template.object.java.*;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;

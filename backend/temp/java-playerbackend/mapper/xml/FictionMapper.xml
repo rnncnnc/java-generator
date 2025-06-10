@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 需要映射的接口的全类名 -->
+<mapper namespace="com.qinge.playerbackend.mapper.FictionMapper">
+	<sql id="Fiction">
+		id,
+		novel,
+		type,
+		chap_count,
+	</sql>
+
+	<!-- 	批量查询数据	 -->
+	<select id="select" resultType="com.qinge.playerbackend.entity.pojo.FictionPojo">
+		select
+		<trim suffixOverrides=",">
+			<include refid="Fiction">
+			</include>
+		</trim>
+		from fiction
+		<if test="pojo != null">
+			<where>
+				<if test="pojo.title != null">
+					and title = #{pojo.title}
+				</if>
+				<if test="pojo.id != null">
+					and id = #{pojo.id}
+				</if>
+			</where>
+		</if>
+		<if test="page != null">
+			limit #{page.pageSize} offset #{page.pageNum}
+		</if>
+		<if test="sort != null">
+			order by #{sort.index} #{sort.order}
+		</if>
+	</select>
+
+	<!-- 	插入数据	 -->
+	<insert id="insert" parameterType="com.qinge.playerbackend.entity.pojo.FictionPojo">
+		insert into fiction
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.id != null">
+				id,
+			</if>
+			<if test="pojo.novel != null">
+				novel,
+			</if>
+			<if test="pojo.type != null">
+				type,
+			</if>
+			<if test="pojo.chapCount != null">
+				chap_count,
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.id != null">
+				#{pojo.id},
+			</if>
+			<if test="pojo.novel != null">
+				#{pojo.novel},
+			</if>
+			<if test="pojo.type != null">
+				#{pojo.type},
+			</if>
+			<if test="pojo.chapCount != null">
+				#{pojo.chapCount},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 	更新数据	 -->
+	<update id="update" parameterType="com.qinge.playerbackend.entity.pojo.FictionPojo">
+		update fiction
+		<set>
+			<if test="np.id != null">
+				id = #{np.id},
+			</if>
+			<if test="np.novel != null">
+				novel = #{np.novel},
+			</if>
+			<if test="np.type != null">
+				type = #{np.type},
+			</if>
+			<if test="np.chapCount != null">
+				chap_count = #{np.chapCount},
+			</if>
+		</set>
+		<where>
+			<if test="query.pojo.title != null">
+				and title = #{query.pojo.title}
+			</if>
+			<if test="query.pojo.id != null">
+				and id = #{query.pojo.id}
+			</if>
+		</where>
+	</update>
+
+	<!-- 	删除数据	 -->
+	<delete id="delete" parameterType="com.qinge.playerbackend.entity.pojo.FictionPojo">
+		delete from fiction
+		<where>
+			<if test="pojo.title != null">
+				and title = #{pojo.title}
+			</if>
+			<if test="pojo.id != null">
+				and id = #{pojo.id}
+			</if>
+		</where>
+	</delete>
+</mapper>

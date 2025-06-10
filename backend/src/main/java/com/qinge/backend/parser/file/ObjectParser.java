@@ -1,7 +1,7 @@
 package com.qinge.backend.parser.file;
 
-import com.qinge.backend.entity.dto.template.Template;
-import com.qinge.backend.entity.dto.template.object.FileObject;
+import com.qinge.backend.entity.template.Template;
+import com.qinge.backend.entity.template.object.FileObject;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;

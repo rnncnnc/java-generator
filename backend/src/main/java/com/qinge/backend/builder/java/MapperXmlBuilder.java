@@ -1,7 +1,7 @@
 package com.qinge.backend.builder.java;
 
 import com.qinge.backend.builder.xml.XmlBuilder;
-import com.qinge.backend.entity.dto.table.Table;
+import com.qinge.backend.entity.table.Table;
 
 /**
  * @Data: 2025/6/7 1:00

@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * @Data: 2025/6/5 11:23
@@ -62,7 +63,7 @@ public class ClassTools {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static Object runMethodByMethodName(Object object,String methodName, Object... args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static Object runMethodByMethodName(Object object, String methodName, Object... args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         Class<?> aClass = object.getClass();
 

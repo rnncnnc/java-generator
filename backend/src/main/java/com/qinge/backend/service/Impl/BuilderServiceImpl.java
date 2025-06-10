@@ -1,22 +1,20 @@
 package com.qinge.backend.service.Impl;
 
 import com.qinge.backend.builder.FileBuilder;
-import com.qinge.backend.builder.java.JavaBuilder;
-import com.qinge.backend.entity.constants.ClassDir;
-import com.qinge.backend.entity.dto.BaseInfo;
-import com.qinge.backend.entity.dto.table.Table;
-import com.qinge.backend.entity.dto.template.Template;
-import com.qinge.backend.entity.dto.template.object.FileObject;
+import com.qinge.backend.connector.DBConnector;
+import com.qinge.backend.entity.BaseInfo;
+import com.qinge.backend.entity.table.Table;
+import com.qinge.backend.entity.template.Template;
+import com.qinge.backend.entity.template.object.FileObject;
+import com.qinge.backend.parser.database.DBParser;
 import com.qinge.backend.parser.file.ObjectParser;
 import com.qinge.backend.service.BuilderService;
-import com.qinge.backend.parser.database.DataBaseParser;
 import com.qinge.backend.utils.ClassTools;
 import com.qinge.backend.utils.FileTools;
 import com.qinge.backend.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -34,23 +32,21 @@ public class BuilderServiceImpl implements BuilderService {
      * mysql构建项目
      */
     @Override
-    public void buildFile() throws Exception {
+    public void buildFile(BaseInfo baseInfo) throws Exception {
         // TODO 移到controller层
-        BaseInfo baseInfo = new BaseInfo();
-        baseInfo.setDbType("mysql");
-        baseInfo.setDbUrl("jdbc:mysql://192.168.0.16:3306/easy_chat");
-        baseInfo.setUsername("root");
-        baseInfo.setPassword("315766");
-        baseInfo.setGroupId("com.qinge");
-        baseInfo.setArtifactId("playerbackend");
-        baseInfo.setTablePrefix("tb_");
-        baseInfo.setFieldSeparator("_");
+        // BaseInfo baseInfo = new BaseInfo();
+        // baseInfo.setDbType("postgresql");
+        // baseInfo.setDbUrl("jdbc:postgresql://192.168.0.16:5432/fiction");
+        // baseInfo.setUsername("root");
+        // baseInfo.setPassword("315766");
+        // baseInfo.setGroupId("com.qinge");
+        // baseInfo.setArtifactId("playerbackend");
+        // // baseInfo.setTablePrefix("tb_");
+        // baseInfo.setFieldSeparator("_");
 
-        // 创建临时目录
-        String temPath = ClassDir.TEMP_DIR + File.separator + "java-" + baseInfo.getArtifactId();
+        // 基础包名
+        String temPath = baseInfo.getTempPath();
         String basePackage = baseInfo.getGroupId() + "." + baseInfo.getArtifactId();
-
-        baseInfo.setTempPath(temPath);
 
         // 创建临时目录
         FileTools.createDir(temPath);
@@ -59,6 +55,19 @@ public class BuilderServiceImpl implements BuilderService {
         // 解析数据库
         List<Table> tableList = getTableList(baseInfo);
 
+
+        // 构建文件
+        buildClass(basePackage, temPath, tableList);
+    }
+
+    /**
+     * 构建文件
+     * @param basePackage
+     * @param temPath
+     * @param tableList
+     * @throws Exception
+     */
+    private void buildClass(String basePackage, String temPath, List<Table> tableList) throws Exception {
 
         // 解析模板
         List<Template> templateList = getAllTemplate("template");
@@ -94,7 +103,7 @@ public class BuilderServiceImpl implements BuilderService {
                 // 根据数据库创建多个文件
                 for (Table table : tableList) {
 
-                    table.setBasePackage(baseInfo.getGroupId() + "." + baseInfo.getArtifactId());
+                    table.setBasePackage(basePackage);
 
                     // 将table赋值给fileBuilder
                     ClassTools.setFieldValue(fileBuilder, "table", table);
@@ -112,15 +121,30 @@ public class BuilderServiceImpl implements BuilderService {
      * @param baseInfo
      * @return
      */
-    private List<Table> getTableList(BaseInfo baseInfo) {
-        List<Table> tableList = null;
+    private List<Table> getTableList(BaseInfo baseInfo) throws Exception {
 
-        // 解析数据库信息
-        if (Objects.equals(baseInfo.getDbType().toLowerCase(), "mysql")) {
-            tableList = DataBaseParser.parseMySQLTable(baseInfo);
-        } else if (Objects.equals(baseInfo.getDbType().toLowerCase(), "postgresql")) {
-            tableList = DataBaseParser.parsePostgreSQLTable(baseInfo);
-        }
+        String dbType = baseInfo.getDbType();
+
+        // 获取解析器的全类名
+        String connectorClassName = DBConnector.class.getName().replace("DB", StringTools.firstToUppercase(dbType.toLowerCase()));
+
+        // 构造连接器对象
+        DBConnector connector = ClassTools.buildClassByFullName(connectorClassName);
+        ClassTools.setFieldValue(connector, "url", baseInfo.getDbUrl());
+        ClassTools.setFieldValue(connector, "username", baseInfo.getUsername());
+        ClassTools.setFieldValue(connector, "password", baseInfo.getPassword());
+
+        // 获取数据库解析器
+        String parserClassName = DBParser.class.getName().replace("DB", StringTools.firstToUppercase(dbType.toLowerCase()));
+
+        // 构建数据库解析器对象
+        DBParser parser = ClassTools.buildClassByFullName(parserClassName);
+        ClassTools.setFieldValue(parser, "connector", connector);
+        ClassTools.setFieldValue(parser, "tablePrefix", baseInfo.getTablePrefix());
+        ClassTools.setFieldValue(parser, "fieldSeparator", baseInfo.getFieldSeparator());
+
+        // 解析数据库
+        List<Table> tableList = parser.parseTableFromDB();
 
         log.info("解析数据库成功" + baseInfo.getDbType());
 
@@ -171,106 +195,4 @@ public class BuilderServiceImpl implements BuilderService {
         return template;
     }
 
-
-    //
-    // /**
-    //  * 构建所有文件
-    //  * @param tableList
-    //  */
-    // private void buildClass(BaseInfo baseInfo, List<Table> tableList, Map<String, Template> templateMap) {
-    //     createDir(baseInfo.getTempPath());
-    //
-    //     for (Table table : tableList) {
-    //         getBuilder(new PojoBuilder(), baseInfo, table, templateMap, "pojo", "entity");
-    //         getBuilder(new ServiceBuilder(), baseInfo, table, templateMap, "service", "");
-    //         getBuilder(new MapperBuilder(), baseInfo, table, templateMap, "mapper", "");
-    //         getBuilder(new ServiceImplBuilder(), baseInfo, table, templateMap, "Impl", "service");
-    //         getBuilder(new ControllerBuilder(), baseInfo, table, templateMap, "controller", "");
-    //     }
-    //
-    //     getBuilderSingle(new BaseMapperBuilder(), baseInfo, templateMap, "BaseMapper", "mapper", "");
-    //     getBuilderSingle(new QueryBuilder(), baseInfo, templateMap, "query", "query", "entity");
-    //     getBuilderSingle(new SortBuilder(), baseInfo, templateMap, "sort", "query", "entity");
-    //     getBuilderSingle(new PageBuilder(), baseInfo, templateMap, "page", "query", "entity");
-    //     getBuilderSingle(new ResultBuilder(), baseInfo, templateMap, "result", "vo", "entity");
-    // }
-    //
-    // /**
-    //  * 构建单个文件
-    //  * @param basePath
-    //  */
-    // private void createDir(String basePath) {
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.ENTITY_DIR);
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.ENTITY_POJO_DIR);
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.ENTITY_QUERY_DIR);
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.ENTITY_VO_DIR);
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.SERVICE_DIR);
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.SERVICE_IMPL_DIR);
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.MAPPER_DIR);
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.MAPPER_XML_DIR);
-    //     FileTools.mkdir(basePath + File.separator + ClassDir.CONTROLLER_DIR);
-    // }
-    //
-    //
-    // private void getBuilder(Builder builder, BaseInfo baseInfo, Table table, Map<String, Template> templateMap, String basePackage, String otherPackage) {
-    //
-    //     // 生成基础路径
-    //     String basePath = baseInfo.getTempPath() + File.separator + basePackage;
-    //
-    //     String equalName = basePackage;
-    //     if (!otherPackage.equals("")) {
-    //         equalName = otherPackage + "." + basePackage;
-    //         basePath = baseInfo.getTempPath() + File.separator + otherPackage + File.separator + basePackage;
-    //     }
-    //
-    //     // 生成文件路径
-    //     String filePath = basePath + File.separator + table.getTableName() + StringTools.firstToUppercase(basePackage) + ".java";
-    //
-    //     // 生成包名
-    //     String basePackageName = baseInfo.getGroupId() + "." + baseInfo.getArtifactId();
-    //     String packageName = baseInfo.getGroupId() + "." + baseInfo.getArtifactId() + "." + equalName;
-    //
-    //     builder.setTable(table);
-    //     builder.setTemplate(templateMap.get(basePackage));
-    //     builder.setBasePath(basePath);
-    //     builder.setFilePath(filePath);
-    //     builder.setPackageName(packageName);
-    //     builder.setBasePackageName(basePackageName);
-    //
-    //     builder.build();
-    // }
-    //
-    // private void getBuilderSingle(Builder builder, BaseInfo baseInfo, Map<String, Template> templateMap, String fileName, String basePackage, String otherPackage) {
-    //     // 生成基础路径
-    //     String basePath = baseInfo.getTempPath() + File.separator + basePackage;
-    //
-    //     String equalName = basePackage;
-    //     if (!otherPackage.equals("")) {
-    //         equalName = otherPackage + "." + basePackage;
-    //         basePath = baseInfo.getTempPath() + File.separator + otherPackage + File.separator + basePackage;
-    //     }
-    //
-    //     // 生成文件路径
-    //     String filePath = basePath + File.separator + fileName + ".java";
-    //
-    //     // 生成包名
-    //     String basePackageName = baseInfo.getGroupId() + "." + baseInfo.getArtifactId();
-    //     String packageName = baseInfo.getGroupId() + "." + baseInfo.getArtifactId() + "." + equalName;
-    //
-    //     builder.setTable(new Table());
-    //     builder.setTemplate(templateMap.get(fileName));
-    //     builder.setBasePath(basePath);
-    //     builder.setFilePath(filePath);
-    //     builder.setPackageName(packageName);
-    //     builder.setBasePackageName(basePackageName);
-    //
-    //     builder.build();
-    // }
-    //
-    //
-    public static void main(String[] args) throws Exception {
-        BuilderService builderService = new BuilderServiceImpl();
-        builderService.buildFile();
-
-    }
 }

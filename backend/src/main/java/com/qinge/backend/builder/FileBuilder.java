@@ -1,8 +1,8 @@
 package com.qinge.backend.builder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.qinge.backend.entity.dto.table.Table;
-import com.qinge.backend.entity.dto.template.object.FileObject;
+import com.qinge.backend.entity.table.Table;
+import com.qinge.backend.entity.template.object.FileObject;
 import com.qinge.backend.entity.enums.KeywordMethods;
 import com.qinge.backend.utils.JsonTools;
 import com.qinge.backend.utils.StringTools;
@@ -53,6 +53,7 @@ public abstract class FileBuilder implements Builder {
             java.lang.reflect.Method method = KeywordMethods.getByName(key);
             if (method != null) {
                 try {
+                    System.out.println(source);
                     String value = ((String) method.invoke(source)).trim();
                     keywrodMap.put(key, value);
                 } catch (InvocationTargetException | IllegalAccessException e) {

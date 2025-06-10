@@ -1,11 +1,12 @@
 package com.qinge.backend.builder.java;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.qinge.backend.entity.dto.table.Field;
-import com.qinge.backend.entity.dto.template.object.java.Annotation;
-import com.qinge.backend.entity.dto.template.object.java.AnnotationParam;
-import com.qinge.backend.entity.dto.template.object.java.JavaClass;
-import com.qinge.backend.entity.dto.template.object.java.Variable;
+import com.qinge.backend.entity.table.Field;
+import com.qinge.backend.entity.template.object.java.Annotation;
+import com.qinge.backend.entity.template.object.java.AnnotationParam;
+import com.qinge.backend.entity.template.object.java.JavaClass;
+import com.qinge.backend.entity.template.object.java.Variable;
+import com.qinge.backend.entity.enums.DBKeys;
 import com.qinge.backend.utils.ClassTools;
 import com.qinge.backend.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +42,8 @@ public class PojoBuilder extends JavaBuilder {
                 variableCopy = replaceKeyword(variableCopy, field);
 
                 // 如果是主键 则添加@Id注解
-                // TODO 改进判断主键的方法
                 Annotation annotation;
-                if (!StringTools.isEmpty(field.getFieldKey()) && field.getFieldKey().equals("PRI")) {
+                if (!StringTools.isEmpty(field.getFieldKey()) && field.getFieldKey().equals(DBKeys.PRIMARY.getName())) {
                     annotation = new Annotation();
                     annotation.setName("Id");
 

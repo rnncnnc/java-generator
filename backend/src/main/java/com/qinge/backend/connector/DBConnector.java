@@ -19,19 +19,22 @@ import java.util.Map;
 public abstract class DBConnector {
 
     // 数据库连接 URL，需替换为实际的数据库名、主机和端口  "jdbc:postgresql://localhost:5432/your_database_name"
-    protected String db_url;
+    protected String url;
     // 数据库用户名，需替换为实际用户名
     protected String username;
     // 数据库密码，需替换为实际密码
     protected String password;
 
-    public DBConnector(String db_url, String username, String password) {
-        this.db_url = db_url;
+    public DBConnector() {
+    }
+
+    public DBConnector(String url, String username, String password) {
+        this.url = url;
         this.username = username;
         this.password = password;
     }
 
-    public abstract Connection getConnection();
+    public abstract Connection getConnection(String url, String username, String password);
 
     // 执行查询语句并返回结果集
     public List<Map<String, Object>> executeQuery(String sql) {
@@ -42,7 +45,7 @@ public abstract class DBConnector {
         ResultSet rs = null;
 
         try {
-            conn = getConnection();
+            conn = getConnection(url, username, password);
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 

@@ -1,6 +1,6 @@
 package com.qinge.backend.builder;
 
-import com.qinge.backend.entity.dto.template.object.FileObject;
+import com.qinge.backend.entity.template.object.FileObject;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

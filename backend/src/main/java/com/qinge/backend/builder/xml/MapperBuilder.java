@@ -1,9 +1,9 @@
 package com.qinge.backend.builder.xml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.qinge.backend.entity.dto.table.Table;
-import com.qinge.backend.entity.dto.template.object.xml.Tag;
-import com.qinge.backend.entity.dto.template.object.xml.XmlFile;
+import com.qinge.backend.entity.table.Table;
+import com.qinge.backend.entity.template.object.xml.Tag;
+import com.qinge.backend.entity.template.object.xml.XmlFile;
 import com.qinge.backend.utils.ClassTools;
 import com.qinge.backend.utils.StringTools;
 import org.springframework.util.CollectionUtils;
