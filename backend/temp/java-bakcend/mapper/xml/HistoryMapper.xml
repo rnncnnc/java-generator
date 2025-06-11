@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 需要映射的接口的全类名 -->
+<mapper namespace="com.qinge.bakcend.mapper.HistoryMapper">
+	<sql id="History">
+		id,
+		fiction_id,
+		fiction_name,
+		type_id,
+		chapter_id,
+		page,
+		page_size,
+		create_time,
+	</sql>
+
+	<!-- 	批量查询数据	 -->
+	<select id="select" resultType="com.qinge.bakcend.entity.pojo.HistoryPojo">
+		select
+		<trim suffixOverrides=",">
+			<include refid="History">
+			</include>
+		</trim>
+		from history
+		<if test="pojo != null">
+			<where>
+				<if test="pojo.id != null">
+					and id = #{pojo.id}
+				</if>
+			</where>
+		</if>
+		<if test="page != null">
+			limit #{page.pageSize} offset #{page.pageNum}
+		</if>
+		<if test="sort != null">
+			order by #{sort.index} #{sort.order}
+		</if>
+	</select>
+
+	<!-- 	插入数据	 -->
+	<insert id="insert" parameterType="com.qinge.bakcend.entity.pojo.HistoryPojo">
+		insert into history
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.id != null">
+				id,
+			</if>
+			<if test="pojo.fictionId != null">
+				fiction_id,
+			</if>
+			<if test="pojo.fictionName != null">
+				fiction_name,
+			</if>
+			<if test="pojo.typeId != null">
+				type_id,
+			</if>
+			<if test="pojo.chapterId != null">
+				chapter_id,
+			</if>
+			<if test="pojo.page != null">
+				page,
+			</if>
+			<if test="pojo.pageSize != null">
+				page_size,
+			</if>
+			<if test="pojo.createTime != null">
+				create_time,
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.id != null">
+				#{pojo.id},
+			</if>
+			<if test="pojo.fictionId != null">
+				#{pojo.fictionId},
+			</if>
+			<if test="pojo.fictionName != null">
+				#{pojo.fictionName},
+			</if>
+			<if test="pojo.typeId != null">
+				#{pojo.typeId},
+			</if>
+			<if test="pojo.chapterId != null">
+				#{pojo.chapterId},
+			</if>
+			<if test="pojo.page != null">
+				#{pojo.page},
+			</if>
+			<if test="pojo.pageSize != null">
+				#{pojo.pageSize},
+			</if>
+			<if test="pojo.createTime != null">
+				#{pojo.createTime},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 	更新数据	 -->
+	<update id="update" parameterType="com.qinge.bakcend.entity.pojo.HistoryPojo">
+		update history
+		<set>
+			<if test="np.id != null">
+				id = #{np.id},
+			</if>
+			<if test="np.fictionId != null">
+				fiction_id = #{np.fictionId},
+			</if>
+			<if test="np.fictionName != null">
+				fiction_name = #{np.fictionName},
+			</if>
+			<if test="np.typeId != null">
+				type_id = #{np.typeId},
+			</if>
+			<if test="np.chapterId != null">
+				chapter_id = #{np.chapterId},
+			</if>
+			<if test="np.page != null">
+				page = #{np.page},
+			</if>
+			<if test="np.pageSize != null">
+				page_size = #{np.pageSize},
+			</if>
+			<if test="np.createTime != null">
+				create_time = #{np.createTime},
+			</if>
+		</set>
+		<where>
+			<if test="query.pojo.id != null">
+				and id = #{query.pojo.id}
+			</if>
+		</where>
+	</update>
+
+	<!-- 	删除数据	 -->
+	<delete id="delete" parameterType="com.qinge.bakcend.entity.pojo.HistoryPojo">
+		delete from history
+		<where>
+			<if test="pojo.id != null">
+				and id = #{pojo.id}
+			</if>
+		</where>
+	</delete>
+</mapper>

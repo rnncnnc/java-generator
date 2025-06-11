@@ -13,6 +13,7 @@ import com.qinge.backend.utils.ClassTools;
 import com.qinge.backend.utils.FileTools;
 import com.qinge.backend.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.*;
 
 
 @Slf4j
+@Service
 public class BuilderServiceImpl implements BuilderService {
 
     /**

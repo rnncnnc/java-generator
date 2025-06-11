@@ -233,7 +233,13 @@ public class FileTools {
         return zipFilePath;
     }
 
-    // 辅助方法：递归添加文件到ZIP流
+    /**
+     * 辅助方法：递归添加文件到ZIP流中
+     * @param baseDir
+     * @param currentFile
+     * @param zos
+     * @throws IOException
+     */
     private static void addFileToZip(File baseDir, File currentFile, ZipOutputStream zos) throws IOException {
         String entryName = baseDir.toPath().relativize(currentFile.toPath()).toString();
 

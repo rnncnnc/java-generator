@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 需要映射的接口的全类名 -->
+<mapper namespace="com.qinge.backend.mapper.Group_infoMapper">
+	<sql id="Group_info">
+		group_id,
+		create_time,
+		group_name,
+		group_notice,
+		group_owner_id,
+		join_type,
+		status,
+	</sql>
+
+	<!-- 	批量查询数据	 -->
+	<select id="select" resultType="com.qinge.backend.entity.pojo.Group_infoPojo">
+		select
+		<trim suffixOverrides=",">
+			<include refid="Group_info">
+			</include>
+		</trim>
+		from group_info
+		<if test="pojo != null">
+			<where>
+				<if test="pojo.group_id != null">
+					and group_id = #{pojo.group_id}
+				</if>
+			</where>
+		</if>
+		<if test="page != null">
+			limit #{page.pageSize} offset #{page.pageNum}
+		</if>
+		<if test="sort != null">
+			order by #{sort.index} #{sort.order}
+		</if>
+	</select>
+
+	<!-- 	插入数据	 -->
+	<insert id="insert" parameterType="com.qinge.backend.entity.pojo.Group_infoPojo">
+		insert into group_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.group_id != null">
+				group_id,
+			</if>
+			<if test="pojo.create_time != null">
+				create_time,
+			</if>
+			<if test="pojo.group_name != null">
+				group_name,
+			</if>
+			<if test="pojo.group_notice != null">
+				group_notice,
+			</if>
+			<if test="pojo.group_owner_id != null">
+				group_owner_id,
+			</if>
+			<if test="pojo.join_type != null">
+				join_type,
+			</if>
+			<if test="pojo.status != null">
+				status,
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.group_id != null">
+				#{pojo.group_id},
+			</if>
+			<if test="pojo.create_time != null">
+				#{pojo.create_time},
+			</if>
+			<if test="pojo.group_name != null">
+				#{pojo.group_name},
+			</if>
+			<if test="pojo.group_notice != null">
+				#{pojo.group_notice},
+			</if>
+			<if test="pojo.group_owner_id != null">
+				#{pojo.group_owner_id},
+			</if>
+			<if test="pojo.join_type != null">
+				#{pojo.join_type},
+			</if>
+			<if test="pojo.status != null">
+				#{pojo.status},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 	更新数据	 -->
+	<update id="update" parameterType="com.qinge.backend.entity.pojo.Group_infoPojo">
+		update group_info
+		<set>
+			<if test="np.group_id != null">
+				group_id = #{np.group_id},
+			</if>
+			<if test="np.create_time != null">
+				create_time = #{np.create_time},
+			</if>
+			<if test="np.group_name != null">
+				group_name = #{np.group_name},
+			</if>
+			<if test="np.group_notice != null">
+				group_notice = #{np.group_notice},
+			</if>
+			<if test="np.group_owner_id != null">
+				group_owner_id = #{np.group_owner_id},
+			</if>
+			<if test="np.join_type != null">
+				join_type = #{np.join_type},
+			</if>
+			<if test="np.status != null">
+				status = #{np.status},
+			</if>
+		</set>
+		<where>
+			<if test="query.pojo.group_id != null">
+				and group_id = #{query.pojo.group_id}
+			</if>
+		</where>
+	</update>
+
+	<!-- 	删除数据	 -->
+	<delete id="delete" parameterType="com.qinge.backend.entity.pojo.Group_infoPojo">
+		delete from group_info
+		<where>
+			<if test="pojo.group_id != null">
+				and group_id = #{pojo.group_id}
+			</if>
+		</where>
+	</delete>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 需要映射的接口的全类名 -->
+<mapper namespace="com.qinge.bakcend.mapper.UserContactMapper">
+	<sql id="UserContact">
+		user_id,
+		contact_id,
+		contact_type,
+		create_time,
+		last_update_time,
+		status,
+	</sql>
+
+	<!-- 	批量查询数据	 -->
+	<select id="select" resultType="com.qinge.bakcend.entity.pojo.UserContactPojo">
+		select
+		<trim suffixOverrides=",">
+			<include refid="UserContact">
+			</include>
+		</trim>
+		from user_contact
+		<if test="pojo != null">
+			<where>
+				<if test="pojo.contactId != null">
+					and contact_id = #{pojo.contactId}
+				</if>
+				<if test="pojo.userId != null">
+					and user_id = #{pojo.userId}
+				</if>
+			</where>
+		</if>
+		<if test="page != null">
+			limit #{page.pageSize} offset #{page.pageNum}
+		</if>
+		<if test="sort != null">
+			order by #{sort.index} #{sort.order}
+		</if>
+	</select>
+
+	<!-- 	插入数据	 -->
+	<insert id="insert" parameterType="com.qinge.bakcend.entity.pojo.UserContactPojo">
+		insert into user_contact
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.userId != null">
+				user_id,
+			</if>
+			<if test="pojo.contactId != null">
+				contact_id,
+			</if>
+			<if test="pojo.contactType != null">
+				contact_type,
+			</if>
+			<if test="pojo.createTime != null">
+				create_time,
+			</if>
+			<if test="pojo.lastUpdateTime != null">
+				last_update_time,
+			</if>
+			<if test="pojo.status != null">
+				status,
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.userId != null">
+				#{pojo.userId},
+			</if>
+			<if test="pojo.contactId != null">
+				#{pojo.contactId},
+			</if>
+			<if test="pojo.contactType != null">
+				#{pojo.contactType},
+			</if>
+			<if test="pojo.createTime != null">
+				#{pojo.createTime},
+			</if>
+			<if test="pojo.lastUpdateTime != null">
+				#{pojo.lastUpdateTime},
+			</if>
+			<if test="pojo.status != null">
+				#{pojo.status},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 	更新数据	 -->
+	<update id="update" parameterType="com.qinge.bakcend.entity.pojo.UserContactPojo">
+		update user_contact
+		<set>
+			<if test="np.userId != null">
+				user_id = #{np.userId},
+			</if>
+			<if test="np.contactId != null">
+				contact_id = #{np.contactId},
+			</if>
+			<if test="np.contactType != null">
+				contact_type = #{np.contactType},
+			</if>
+			<if test="np.createTime != null">
+				create_time = #{np.createTime},
+			</if>
+			<if test="np.lastUpdateTime != null">
+				last_update_time = #{np.lastUpdateTime},
+			</if>
+			<if test="np.status != null">
+				status = #{np.status},
+			</if>
+		</set>
+		<where>
+			<if test="query.pojo.contactId != null">
+				and contact_id = #{query.pojo.contactId}
+			</if>
+			<if test="query.pojo.userId != null">
+				and user_id = #{query.pojo.userId}
+			</if>
+		</where>
+	</update>
+
+	<!-- 	删除数据	 -->
+	<delete id="delete" parameterType="com.qinge.bakcend.entity.pojo.UserContactPojo">
+		delete from user_contact
+		<where>
+			<if test="pojo.contactId != null">
+				and contact_id = #{pojo.contactId}
+			</if>
+			<if test="pojo.userId != null">
+				and user_id = #{pojo.userId}
+			</if>
+		</where>
+	</delete>
+</mapper>

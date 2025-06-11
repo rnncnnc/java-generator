@@ -9,9 +9,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -25,6 +23,7 @@ import java.net.URLEncoder;
 
 @Slf4j
 @RestController
+@RequestMapping(value = "/api")
 public class BuilderController {
 
     @Resource
@@ -65,14 +64,20 @@ public class BuilderController {
 
             // 浏览器下载时显示的文件名
             String fileName = URLEncoder.encode(file.getName(), "utf-8");
-            response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
+            // 标准编码格式（支持现代浏览器）
+            String encodedFileName = URLEncoder.encode(fileName, "utf-8").replace("+", "%20");
+            // 兼容不同浏览器的文件名设置
+            response.addHeader("Content-Disposition",
+                    "attachment; filename*=UTF-8''" + encodedFileName +
+                            "; filename=\"" + encodedFileName + "\"");  // 旧版浏览器兼容
+
 
             // 支持分片下载的大小
             response.setHeader("Accept-Range", "bytes");
 
-            // 文件大小
-            response.setHeader("fSize", String.valueOf(fSize));
 
+            // 文件大小 自定义文件头
+            response.setHeader("fSize", String.valueOf(fSize));
             // 文件名
             response.setHeader("fName", fileName);
 
@@ -100,7 +105,7 @@ public class BuilderController {
                         last = fSize - 1;
                     }
                 } else {
-                    pos = Long.parseLong(strRange[0].trim());
+                    pos = Long.parseLong(numRange.replaceAll("-", "").trim());
                 }
             }
 

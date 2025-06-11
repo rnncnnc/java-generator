@@ -9,7 +9,7 @@ public class Page  {
 	/**
 	 * 页码
 	 */
-	private Integer pageNum;;
+	private Integer pageNum;
 
 
 	/**
@@ -21,17 +21,17 @@ public class Page  {
 	public Page() {
 	}
 
-	public Page(Integer pageNum;, Integer pageSize) {
-		this.pageNum; = pageNum;;
+	public Page(Integer pageNum, Integer pageSize) {
+		this.pageNum = pageNum;
 		this.pageSize = pageSize;
 	}
 
-	public void setPageNum;(Integer pageNum;) {
-		this.pageNum; = pageNum;;
+	public void setPageNum(Integer pageNum) {
+		this.pageNum = pageNum;
 	}
 
-	public Integer getPageNum;() {
-		return this.pageNum;;
+	public Integer getPageNum() {
+		return this.pageNum;
 	}
 
 	public void setPageSize(Integer pageSize) {

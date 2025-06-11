@@ -69,12 +69,14 @@ public abstract class DBParser implements DataBaseParser {
             String tabName = originTableName;
 
             // 替换掉表的前缀
-            if (tablePrefix != null) {
+            if (!StringTools.isEmpty(tablePrefix) && tabName.startsWith(tablePrefix)) {
                 tabName = ((String) table.get(dbFields.getTableName())).split(tablePrefix)[1];
             }
 
             // 将表名改为驼峰显示
-            tabName = StringTools.toCamel(tabName, fieldSeparator);
+            if (!StringTools.isEmpty(fieldSeparator) && tabName.contains(fieldSeparator)) {
+                tabName = StringTools.toCamel(tabName, fieldSeparator);
+            }
 
             // 设置表名
             tab.setTableName(StringTools.firstToUppercase(tabName));
@@ -112,7 +114,10 @@ public abstract class DBParser implements DataBaseParser {
             fed.setFieldColumn(columnName);
 
             // 将字段名改为驼峰显示
-            String fieldName = StringTools.toCamel(columnName, fieldSeparator);
+            String fieldName = columnName;
+            if (!StringTools.isEmpty(fieldSeparator) && columnName.contains(fieldSeparator)) {
+                fieldName = StringTools.toCamel(columnName, fieldSeparator);
+            }
             fed.setFieldName(fieldName);
 
             // 设置字段注释
@@ -164,11 +169,18 @@ public abstract class DBParser implements DataBaseParser {
             // 设置索引名
             ind.setIndexName((String) index.get(dbFields.getIndexName()));
 
+            String indexColumn = (String) index.get(dbFields.getIndexColumnName());
+
             // 设置索引数据库名
-            ind.setIndexColumn((String) index.get(dbFields.getIndexColumnName()));
+            ind.setIndexColumn(indexColumn);
+
+
+           if (!StringTools.isEmpty(fieldSeparator) && indexColumn.contains(fieldSeparator)) {
+               indexColumn = StringTools.toCamel(indexColumn, fieldSeparator);
+           }
 
             // 设置索引字段名
-            ind.setIndexField(StringTools.toCamel((String) index.get(dbFields.getIndexColumnName()), fieldSeparator));
+            ind.setIndexField(indexColumn);
 
             indexList.add(ind);
         }

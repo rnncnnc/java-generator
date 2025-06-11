@@ -1,6 +1,4 @@
 package com.qinge.backend.entity.vo;
-import com.qinge.backend.entity.vo.Object;
-import com.qinge.backend.entity.vo.Result;
 
 import java.lang.Integer;
 import java.lang.Object;

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 需要映射的接口的全类名 -->
+<mapper namespace="com.qinge.backend.mapper.Chat_sessionMapper">
+	<sql id="Chat_session">
+		session_id,
+		last_message,
+		last_receive_time,
+	</sql>
+
+	<!-- 	批量查询数据	 -->
+	<select id="select" resultType="com.qinge.backend.entity.pojo.Chat_sessionPojo">
+		select
+		<trim suffixOverrides=",">
+			<include refid="Chat_session">
+			</include>
+		</trim>
+		from chat_session
+		<if test="pojo != null">
+			<where>
+				<if test="pojo.session_id != null">
+					and session_id = #{pojo.session_id}
+				</if>
+			</where>
+		</if>
+		<if test="page != null">
+			limit #{page.pageSize} offset #{page.pageNum}
+		</if>
+		<if test="sort != null">
+			order by #{sort.index} #{sort.order}
+		</if>
+	</select>
+
+	<!-- 	插入数据	 -->
+	<insert id="insert" parameterType="com.qinge.backend.entity.pojo.Chat_sessionPojo">
+		insert into chat_session
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.session_id != null">
+				session_id,
+			</if>
+			<if test="pojo.last_message != null">
+				last_message,
+			</if>
+			<if test="pojo.last_receive_time != null">
+				last_receive_time,
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.session_id != null">
+				#{pojo.session_id},
+			</if>
+			<if test="pojo.last_message != null">
+				#{pojo.last_message},
+			</if>
+			<if test="pojo.last_receive_time != null">
+				#{pojo.last_receive_time},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 	更新数据	 -->
+	<update id="update" parameterType="com.qinge.backend.entity.pojo.Chat_sessionPojo">
+		update chat_session
+		<set>
+			<if test="np.session_id != null">
+				session_id = #{np.session_id},
+			</if>
+			<if test="np.last_message != null">
+				last_message = #{np.last_message},
+			</if>
+			<if test="np.last_receive_time != null">
+				last_receive_time = #{np.last_receive_time},
+			</if>
+		</set>
+		<where>
+			<if test="query.pojo.session_id != null">
+				and session_id = #{query.pojo.session_id}
+			</if>
+		</where>
+	</update>
+
+	<!-- 	删除数据	 -->
+	<delete id="delete" parameterType="com.qinge.backend.entity.pojo.Chat_sessionPojo">
+		delete from chat_session
+		<where>
+			<if test="pojo.session_id != null">
+				and session_id = #{pojo.session_id}
+			</if>
+		</where>
+	</delete>
+</mapper>
