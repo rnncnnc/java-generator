@@ -4,16 +4,16 @@ import { download } from '@/utils/request'
 
 const formRef = ref()
 const form = ref({
-  database: 'mysql',
-  host: 'localhost',
-  port: '3306',
-  schema: 'fiction',
-  username: 'root',
-  password: '315766',
-  group: 'com.qinge',
-  artifact: 'bakcend',
+  database: '',
+  host: '',
+  port: '',
+  schema: '',
+  username: '',
+  password: '',
+  group: '',
+  artifact: '',
   tablePrefix: '',
-  fieldSeparator: '_'
+  fieldSeparator: ''
 })
 
 const rules = ref({

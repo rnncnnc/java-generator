@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 # ---> Java
+=======
+>>>>>>> e2babb8f77577a71e593bef93dea7ff4746540ed
 # Compiled class file
 *.class
 
@@ -22,6 +25,7 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+<<<<<<< HEAD
 replay_pid*
 
 # ---> Vue
@@ -35,3 +39,5 @@ docs/_book
 # TODO: where does this rule come from?
 test/
 
+=======
+>>>>>>> e2babb8f77577a71e593bef93dea7ff4746540ed

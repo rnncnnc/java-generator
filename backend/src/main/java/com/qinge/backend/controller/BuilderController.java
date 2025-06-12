@@ -138,6 +138,10 @@ public class BuilderController {
             }
 
             System.out.println("下载完成");
+
+            // 下载完成后删除临时文件
+            file.delete();
+            FileTools.deleteDirectory(new File(temPath));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (UnsupportedEncodingException e) {
