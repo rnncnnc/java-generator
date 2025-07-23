@@ -57,7 +57,6 @@ public class BuilderServiceImpl implements BuilderService {
         // 解析数据库
         List<Table> tableList = getTableList(baseInfo);
 
-
         // 构建文件
         buildClass(basePackage, temPath, tableList);
     }

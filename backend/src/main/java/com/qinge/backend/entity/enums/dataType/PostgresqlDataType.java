@@ -16,7 +16,7 @@ public enum PostgresqlDataType {
     BIGDECIMAL("BigDecimal", Arrays.asList("numeric", "real", "double precision")),
     STRING("String", Arrays.asList("char", "varchar", "text", "bpchar", "citext", "character varying")),
     INTEGER("Integer", Arrays.asList("int", "integer", "smallint", "int2", "int4")),
-    LONG("Long", Arrays.asList("bigint", "int8")),
+    BIGINTEGER("BigInteger", Arrays.asList("bigint", "int8", "timestamp")),
     BOOLEAN("Boolean", Arrays.asList("boolean", "bool")),
     BLOB("Blob", Arrays.asList("bytea"))
     ;

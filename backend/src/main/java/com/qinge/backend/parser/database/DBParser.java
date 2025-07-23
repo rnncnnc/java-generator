@@ -111,6 +111,12 @@ public abstract class DBParser implements DataBaseParser {
 
             // 设置原始字段名
             String columnName = (String) field.get(dbFields.getColumnName());
+
+            // 判断字段是否已经存在 若存在则跳过
+            if (fieldList.stream().anyMatch(f -> f.getFieldColumn().equals(columnName))) {
+                continue;
+            }
+
             fed.setFieldColumn(columnName);
 
             // 将字段名改为驼峰显示

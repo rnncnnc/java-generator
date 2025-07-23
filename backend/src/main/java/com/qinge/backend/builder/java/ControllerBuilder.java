@@ -39,14 +39,16 @@ public class ControllerBuilder extends JavaBuilder {
             if (hasKeyword(method)) {
                 for (Field field : table.getFields()) {
                     // 如果数据库字段的索引值不为空，说明是索引字段，复制方法体信息
-                    if (!StringTools.isEmpty(field.getFieldKey())) {
-                        Method methodCopy = ClassTools.deepCopy(method);
-
-                        // 替换关键词
-                        Method repMethod = replaceKeyword(methodCopy, field);
-
-                        replacedMethods.add(repMethod);
+                    if (StringTools.isEmpty(field.getFieldKey()) || field.getFieldKey().equals("Index")) {
+                        continue;
                     }
+
+                    Method methodCopy = ClassTools.deepCopy(method);
+
+                    // 替换关键词
+                    Method repMethod = replaceKeyword(methodCopy, field);
+
+                    replacedMethods.add(repMethod);
                 }
 
                 iterator.remove();

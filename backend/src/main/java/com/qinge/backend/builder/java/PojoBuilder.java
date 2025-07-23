@@ -33,6 +33,8 @@ public class PojoBuilder extends JavaBuilder {
         List<Variable> variables = javaClass.getVariables();
         List<Variable> variableList = new ArrayList<>();
 
+        System.out.println(table.getFields());
+
         for (Field field : table.getFields()) {
 
             for (Variable variable : variables) {
