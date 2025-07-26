@@ -17,9 +17,6 @@ pipeline {
 			}
 		}
 		
-		stage('通过maven构建后端项目') {
-			
-		}
 	
 	}
 }
