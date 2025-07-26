@@ -455,7 +455,7 @@ public abstract class JavaBuilder extends FileBuilder {
                     }
                 }
             }
-            builder.append(") ");
+            builder.append(")");
 
             // 写入异常
             writeException(builder, method.getExceptions());
@@ -463,7 +463,7 @@ public abstract class JavaBuilder extends FileBuilder {
 
             // 写入方法体
             if (method.getBodyInfo() != null && !CollectionUtils.isEmpty(method.getBodyInfo().getBody())) {
-                builder.append("{\n");
+                builder.append(" {\n");
 
                 for (String body : method.getBodyInfo().getBody()) {
                     builder.append("\t\t").append(body).append("\n");

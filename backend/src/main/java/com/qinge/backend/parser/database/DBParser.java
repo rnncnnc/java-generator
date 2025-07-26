@@ -177,6 +177,11 @@ public abstract class DBParser implements DataBaseParser {
 
             String indexColumn = (String) index.get(dbFields.getIndexColumnName());
 
+            String finalIndexColumn = indexColumn;
+            if (indexList.stream().anyMatch(f -> f.getIndexColumn().equals(finalIndexColumn))) {
+                continue;
+            }
+
             // 设置索引数据库名
             ind.setIndexColumn(indexColumn);
 

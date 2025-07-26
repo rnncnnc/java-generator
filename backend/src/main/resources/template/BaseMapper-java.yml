@@ -32,6 +32,24 @@ templateObj:
         - ' * @param query'
         - ' * @return'
         - ' */'
+    - name: selectTest
+      returnType:
+        className: List
+        genericParams:
+          - name: T
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: entity.query
+            genericParams:
+              - name: T
+      comment:
+        - '/**'
+        - ' * 测试数据是否已存在'
+        - ' * @param query'
+        - ' * @return'
+        - ' */'
     - name: insert
       returnType:
         className: void

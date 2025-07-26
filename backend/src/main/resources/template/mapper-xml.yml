@@ -24,6 +24,61 @@ templateObj:
                 - name: NONE
                   params:
                     - value: $(FieldColumn),
+        - name: sql
+          params:
+            - key: id
+              value: $(TableName)Test
+          tags:
+            - name: List
+              params:
+                - value: Field
+              tags:
+                - name: NONE
+                  params:
+                    - value: $(IndexColumn),
+        - name: select
+          comment:
+            - 测试数据是否存在
+          params:
+            - key: id
+              value: select
+            - key: resultType
+              value: $(BasePackage).entity.pojo.$(TableName)Pojo
+          tags:
+            - name: NONE
+              params:
+                - value: select
+            - name: trim
+              params:
+                - key: suffixOverrides
+                  value: ','
+              tags:
+                - name: include
+                  params:
+                    - key: refid
+                      value: $(TableName)Test
+            - name: NONE
+              params:
+                - value: from $(TableOriginName)
+            - name: if
+              params:
+                - key: test
+                  value: pojo != null
+              tags:
+                - name: where
+                  tags:
+                    - name: List
+                      params:
+                        - value: Index
+                      tags:
+                        - name: if
+                          params:
+                            - key: test
+                              value: pojo.$(IndexField) != null
+                          tags:
+                            - name: NONE
+                              params:
+                                - value: 'and $(IndexColumn) = #{pojo.$(IndexField)}'
         - name: select
           comment:
             - 批量查询数据
