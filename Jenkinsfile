@@ -70,7 +70,7 @@ pipeline {
 	// 通知
 	post {
 		success {
-			emailext body: '部署成功${JOB_NAME}，访问地址：http://${server_ip}：${host_port}', subject: 'pipeline', to: '2769876032@qq.com'
+			emailext body: '部署成功${JOB_NAME},访问地址: http://${server_ip}:${host_port}', subject: 'pipeline', to: '2769876032@qq.com'
 		}
 
 		failure {
