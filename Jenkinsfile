@@ -61,7 +61,8 @@ pipeline {
         
         stage('通过docker制作自定义镜像') {
             steps {
-                sh '''mkdir ./docker/java-generator
+                sh '''rm -rf ./docker/java-generator
+                mkdir ./docker/java-generator
                 mv ./backend/target/*.jar ./docker/java-generator
                 mv ./fronted/dist ./docker/java-generator
                 docker build ./docker -t ${JOB_NAME}:${tag}'''
