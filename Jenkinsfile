@@ -39,7 +39,7 @@ pipeline {
                 -Dsonar.sources=./fronted/src \\
                 -Dsonar.projectName=${JOB_NAME}-fronted \\
                 -Dsonar.projectKey=${JOB_NAME}-fronted \\
-                -Dsonar.exclusions=**/node_modules/**,** /dist/**,**/*.test.js,**/*.spec.js,**/coverage/** \\
+                -Dsonar.exclusions='**/node_modules/**,** /dist/**,**/*.test.js,**/*.spec.js,**/coverage/**' \\
                 -Dsonar.vue.file.suffixes=.vue \\
 				-Dsonar.sourceEncoding=UTF-8 \\
 				-Dsonar.projectVersion=${tag} \\
