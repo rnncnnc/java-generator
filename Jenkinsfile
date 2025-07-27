@@ -17,7 +17,7 @@ pipeline {
             }
         }
         
-        stage('通过maven构建前端项目') {
+        stage('通过nodejs构建前端项目') {
             steps {
                 sh '''cd fronted
                 /var/jenkins_home/nodejs/bin/pnpm install
