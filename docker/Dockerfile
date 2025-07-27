@@ -1,4 +1,4 @@
-FROM openjdk-nginx:17-jdk-slim
+FROM 192.168.0.65:880/qinge/openjdk-nginx:17-jdk-slim
 
 COPY ./java-generator /JavaGenerator
 COPY java-generator.conf /etc/nginx/conf.d/
