@@ -11,12 +11,12 @@ import java.util.List;
 
 
 public enum PostgresqlDataType {
-    DATETIME("Long", Arrays.asList("timestamp", "timestamptz")),
+    DATETIME("Long", Arrays.asList("timestamp without time zone", "timestamptz")),
     DATE("Date", Arrays.asList("date")),
     BIGDECIMAL("BigDecimal", Arrays.asList("numeric", "real", "double precision")),
     STRING("String", Arrays.asList("char", "varchar", "text", "bpchar", "citext", "character varying")),
     INTEGER("Integer", Arrays.asList("int", "integer", "smallint", "int2", "int4")),
-    BIGINTEGER("BigInteger", Arrays.asList("bigint", "int8", "timestamp")),
+    BIGINTEGER("BigInteger", Arrays.asList("bigint", "int8")),
     BOOLEAN("Boolean", Arrays.asList("boolean", "bool")),
     BLOB("Blob", Arrays.asList("bytea"))
     ;

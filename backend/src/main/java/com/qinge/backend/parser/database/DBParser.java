@@ -137,6 +137,8 @@ public abstract class DBParser implements DataBaseParser {
                 dataType = split[0];
             }
 
+            log.info(dataType);
+
 
             try {
                 // 将mysql的数据类型转为java数据类型，并添加全类名
