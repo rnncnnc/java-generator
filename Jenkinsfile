@@ -88,16 +88,39 @@ pipeline {
     // 通知
     post {
         success {
-            emailext body: '''部署成功：${JOB_NAME} \n
-            时间：${date} \n
-            访问地址：http://${server_ip}:${host_port} \n
-            测试报告-前端：https://www.bakistrim.site:12700/dashboard?id=${JOB_NAME}-fronted \n
-            测试报告-后端：https://www.bakistrim.site:12700/dashboard?id=${JOB_NAME}-backend''', subject: '${JOB_NAME}', to: '2769876032@qq.com'
+            emailext body: '''
+            <div>
+                <h1>CI报告</h1>
+                <div>
+                    <h2>Jenkins 运行结果</h2>
+                    <ul>
+                        <li>执行结果：执行成功</li>
+                        <li>项目名：<a href="http://${server_ip}:${host_port}">${JOB_NAME}</a></li>
+                        <li>前端测试结果：<a href="https://www.bakistrim.site:12700/dashboard?id=${JOB_NAME}-fronted">${JOB_NAME}-fronted</a></li>
+                        <li>后端测试结果：<a href="https://www.bakistrim.site:12700/dashboard?id=${JOB_NAME}-backend">${JOB_NAME}-backend</a></li>
+                    </ul>
+
+                    <p>注意：此邮件为Jenkins自动发送，请勿回复！</p>
+                </div>
+            </div>
+            ''', subject: '${JOB_NAME}', to: '2769876032@qq.com'
         }
 
         failure {
-            emailext body: '''部署失败：${JOB_NAME} \n
-            时间：${date}''', subject: '${JOB_NAME}', to: '2769876032@qq.com'
+            emailext body: '''
+            <div>
+                <h1>CI报告</h1>
+                <div>
+                    <h2>Jenkins 运行结果</h2>
+
+                    <ul>
+                        <li>执行结果：执行失败</li>
+                    </ul>
+
+                    <p>注意：此邮件为Jenkins自动发送，请勿回复！</p>
+                </div>
+            </div>
+            ''', subject: '${JOB_NAME}', to: '2769876032@qq.com'
         }
     }
 }
