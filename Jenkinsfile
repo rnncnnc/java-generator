@@ -12,24 +12,6 @@ pipeline {
     }
 
     stages {
-        stage('解析 Tag') {
-            steps {
-                script {
-                    sh 'printenv'
-                    if (env.git_ref) {
-                        // Webhook 触发：从 git_ref 解析（如 refs/tags/v1.0.0 → v1.0.0）
-                        env.tag = env.git_ref.split('/')[2]
-                    } else if (params.tag) {
-                        // 手动参数触发：直接使用手动输入的 Tag
-                        env.tag = params.tag
-                    } else {
-                        error '未检测到 Tag 来源（需 Webhook 触发或手动输入 MANUAL_TAG）'
-                    }
-                    echo "当前 Tag: ${env.tag}"
-                }
-            }
-        }
-
         stage('拉取git仓库代码') {
             steps {
                 checkout scmGit(branches: [[name: '${tag}']], extensions: [], userRemoteConfigs: [[url: 'https://www.bakistrim.site:15700/rnncnnc/JavaGenerator.git']])
