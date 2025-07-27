@@ -12,6 +12,12 @@ pipeline {
     }
 
     stages {
+        stage('使用提取的tag') {
+            steps {
+                sh 'printenv'
+            }
+        }
+
         stage('拉取git仓库代码') {
             steps {
                 checkout scmGit(branches: [[name: '${tag}']], extensions: [], userRemoteConfigs: [[url: 'https://www.bakistrim.site:15700/rnncnnc/JavaGenerator.git']])
