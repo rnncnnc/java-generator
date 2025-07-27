@@ -32,7 +32,7 @@ templateObj:
         - ' * @param query'
         - ' * @return'
         - ' */'
-    - name: selectTest
+    - name: selectIndex
       returnType:
         className: List
         genericParams:

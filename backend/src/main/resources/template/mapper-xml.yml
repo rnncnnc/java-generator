@@ -27,7 +27,7 @@ templateObj:
         - name: sql
           params:
             - key: id
-              value: $(TableName)Test
+              value: $(TableName)Index
           tags:
             - name: List
               params:
@@ -41,7 +41,7 @@ templateObj:
             - 测试数据是否存在
           params:
             - key: id
-              value: select
+              value: selectIndex
             - key: resultType
               value: $(BasePackage).entity.pojo.$(TableName)Pojo
           tags:
