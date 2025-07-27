@@ -99,7 +99,7 @@ pipeline {
                         <li>前端测试结果：<a href="https://www.bakistrim.site:12700/dashboard?id=${JOB_NAME}-fronted">${JOB_NAME}-fronted</a></li>
                         <li>后端测试结果：<a href="https://www.bakistrim.site:12700/dashboard?id=${JOB_NAME}-backend">${JOB_NAME}-backend</a></li>
                     </ul>
-
+                    <br/>
                     <p>注意：此邮件为Jenkins自动发送，请勿回复！</p>
                 </div>
             </div>
@@ -116,7 +116,7 @@ pipeline {
                     <ul>
                         <li>执行结果：执行失败</li>
                     </ul>
-
+                    <br/>
                     <p>注意：此邮件为Jenkins自动发送，请勿回复！</p>
                 </div>
             </div>
