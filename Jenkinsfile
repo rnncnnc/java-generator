@@ -96,7 +96,7 @@ pipeline {
         }
 
         failure {
-            emailext body: '部署失败${JOB_NAME}', subject: 'pipeline', to: '2769876032@qq.com'
+            emailext body: '部署失败${JOB_NAME}', subject: '${JOB_NAME}', to: '2769876032@qq.com'
         }
     }
 }
