@@ -19,6 +19,7 @@ pipeline {
                     // 遍历 env 的所有属性并打印
                     env.getEnvironment().each { key, value ->
                         echo "${key}=${value}"
+                    }
                     if (env.git_ref) {
                         // Webhook 触发：从 git_ref 解析（如 refs/tags/v1.0.0 → v1.0.0）
                         env.tag = env.git_ref.split('/')[2]
