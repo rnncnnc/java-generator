@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'MANUAL_TAG', defaultValue: '', description: '手动输入的 Tag（如 v1.0.0）')
+        string(name: 'tag', defaultValue: '', description: '手动输入的 Tag（如 v1.0.0）')
     }
 
 
@@ -24,9 +24,9 @@ pipeline {
                     if (env.git_ref) {
                         // Webhook 触发：从 git_ref 解析（如 refs/tags/v1.0.0 → v1.0.0）
                         env.tag = env.git_ref.split('/')[2]
-                    } else if (params.MANUAL_TAG) {
+                    } else if (params.tag) {
                         // 手动参数触发：直接使用手动输入的 Tag
-                        env.tag = params.MANUAL_TAG
+                        env.tag = params.tag
                     } else {
                         error '未检测到 Tag 来源（需 Webhook 触发或手动输入 MANUAL_TAG）'
                     }
