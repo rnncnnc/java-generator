@@ -61,7 +61,8 @@ pipeline {
         
         stage('通过docker制作自定义镜像') {
             steps {
-                sh '''rm -rf ./docker/java-generator
+                sh '''docker rmi -f $(docker images | grep "none" | awk '{print $3}')
+                rm -rf ./docker/java-generator
                 mkdir ./docker/java-generator
                 mv ./backend/target/*.jar ./docker/java-generator/backend.jar
                 mv ./fronted/dist ./docker/java-generator
