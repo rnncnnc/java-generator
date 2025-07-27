@@ -65,7 +65,7 @@ templateObj:
         body:
           - 'Query<$(TableName)Pojo> query = new Query<>();'
           - ''
-          - 'List<$(TableName)Pojo> $(TableName)List = $(LTableName)Service.select(query);'
+          - 'List<$(TableName)Pojo> $(LTableName)List = $(LTableName)Service.select(query);'
           - ''
           - 'return Result.success($(TableName)List);'
     - name: insert
