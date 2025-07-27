@@ -36,11 +36,13 @@ pipeline {
         stage('通过sonarqube做前端代码质量检测') {
             steps {
                 sh '''/var/jenkins_home/sonar-scanner/bin/sonar-scanner \\
-                -Dsonar.sources=./fronted \\
+                -Dsonar.sources=./fronted/src \\
                 -Dsonar.projectName=${JOB_NAME}-fronted \\
                 -Dsonar.projectKey=${JOB_NAME}-fronted \\
-                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.js,**/*.spec.js \\
-                -Dsonar.language=js \\
+                -Dsonar.exclusions=**/node_modules/**,** /dist/**,**/*.test.js,**/*.spec.js,**/coverage/** \\
+                -Dsonar.vue.file.suffixes=.vue \\
+				-Dsonar.sourceEncoding=UTF-8 \\
+				-Dsonar.projectVersion=${tag} \\
                 -Dsonar.token=squ_fa0b705d0cf3e1503eed143e9e8d36446ca25146'''
             }
         }
@@ -52,6 +54,7 @@ pipeline {
                 -Dsonar.projectName=${JOB_NAME}-backend \\
                 -Dsonar.projectKey=${JOB_NAME}-backend \\
                 -Dsonar.java.binaries=./backend/target/ \\
+				-Dsonar.projectVersion=${tag} \\
                 -Dsonar.token=squ_fa0b705d0cf3e1503eed143e9e8d36446ca25146'''
             }
         }
