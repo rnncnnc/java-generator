@@ -89,7 +89,8 @@ pipeline {
     // 通知
     post {
         success {
-            emailext body: '部署成功：${JOB_NAME}，
+            emailext body: '部署成功：${JOB_NAME}
+            时间：${date}
             访问地址：http://${server_ip}:${host_port}
             测试报告-前端：https://www.bakistrim.site:12700/dashboard?id=${JOB_NAME}-front
             测试报告-后端：https://www.bakistrim.site:12700/dashboard?id=${JOB_NAME}-backend', subject: 'pipeline', to: '2769876032@qq.com'
