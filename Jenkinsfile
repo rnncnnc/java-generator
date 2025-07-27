@@ -90,7 +90,7 @@ pipeline {
         success {
             emailext body: '''
             <div>
-                <h1>CI报告</h1>
+                <h1>CI报告 ${date}</h1>
                 <div>
                     <h2>Jenkins 运行结果</h2>
                     <ul>
@@ -109,7 +109,7 @@ pipeline {
         failure {
             emailext body: '''
             <div>
-                <h1>CI报告</h1>
+                <h1>CI报告 ${date}</h1>
                 <div>
                     <h2>Jenkins 运行结果</h2>
 
