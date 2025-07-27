@@ -63,7 +63,7 @@ pipeline {
             steps {
                 sh '''rm -rf ./docker/java-generator
                 mkdir ./docker/java-generator
-                mv ./backend/target/*.jar ./docker/java-generator
+                mv ./backend/target/*.jar ./docker/java-generator/backend.jar
                 mv ./fronted/dist ./docker/java-generator
                 docker build ./docker -t ${JOB_NAME}:${tag}'''
             }
