@@ -67,7 +67,7 @@ templateObj:
           - ''
           - 'List<$(TableName)Pojo> $(LTableName)List = $(LTableName)Service.select(query);'
           - ''
-          - 'return Result.success($(TableName)List);'
+          - 'return Result.success($(LTableName)List);'
     - name: insert
       returnType:
         className: Result
