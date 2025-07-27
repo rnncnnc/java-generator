@@ -4,14 +4,14 @@ templateObj:
   type: class
   name: Query
   permission: public
-  packageName: entity.query
+  packageName: query
   generics:
     - name: T
   variables:
     - name: page
       type:
         className: Page
-        packageName: entity.query
+        packageName: query
       permission: private
       comment:
         - '/**'
@@ -20,7 +20,7 @@ templateObj:
     - name: sort
       type:
         className: Sort
-        packageName: entity.query
+        packageName: query
       permission: private
       comment:
         - '/**'

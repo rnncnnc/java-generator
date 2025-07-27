@@ -29,8 +29,8 @@ templateObj:
         className: $(TableName)Service
         packageName: service
         genericParams:
-          - name: $(TableName)Pojo
-            packageName: entity.pojo
+          - name: $(TableName)Entity
+            packageName: entity
       permission: private
       annotations:
         - name: Resource
@@ -38,11 +38,12 @@ templateObj:
     - name: select
       returnType:
         className: Result
-        packageName: entity.vo
+        packageName: common.response
       permission: public
       comment:
         - '/**'
         - ' * 获取数据'
+        - ' * @param query'
         - ' * @return'
         - ' */'
       annotations:
@@ -55,27 +56,35 @@ templateObj:
         - name: GetMapping
           params:
             - value: /select
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: query
+            genericParams:
+              - name: $(TableName)Entity
+                packageName: entity
+          annotations:
+            - name: ModelAttribute
       bodyInfo:
         require:
           - className: Query
-            packageName: entity.query
-          - className: $(TableName)Pojo
-            packageName: entity.pojo
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
           - className: List
         body:
-          - 'Query<$(TableName)Pojo> query = new Query<>();'
-          - ''
-          - 'List<$(TableName)Pojo> $(LTableName)List = $(LTableName)Service.select(query);'
+          - 'List<$(TableName)Entity> $(LTableName)List = $(LTableName)Service.select(query);'
           - ''
           - 'return Result.success($(LTableName)List);'
     - name: insert
       returnType:
         className: Result
-        packageName: entity.vo
+        packageName: common.response
       comment:
         - '/**'
         - ' * 插入数据'
-        - ' * @param pojo'
+        - ' * @param entity'
         - ' * @return'
         - ' */'
       annotations:
@@ -89,22 +98,22 @@ templateObj:
           params:
             - value: /insert
       parameters:
-        - name: pojo
+        - name: entity
           type:
-            className: $(TableName)Pojo
-            packageName: entity.pojo
+            className: $(TableName)Entity
+            packageName: entity
           annotations:
             - name: RequestBody
       bodyInfo:
         require:
           - className: Query
-            packageName: entity.query
-          - className: $(TableName)Pojo
-            packageName: entity.pojo
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
         body:
-          - 'Query<$(TableName)Pojo> query = new Query<>();'
+          - 'Query<$(TableName)Entity> query = new Query<>();'
           - ''
-          - 'query.setPojo(pojo);'
+          - 'query.setPojo(entity);'
           - ''
           - '$(LTableName)Service.insert(query);'
           - ''
@@ -112,7 +121,7 @@ templateObj:
     - name: updateBy$(UFieldName)
       returnType:
         className: Result
-        packageName: entity.vo
+        packageName: common.response
       comment:
         - '/**'
         - ' * 根据$(FieldName)更新数据'
@@ -140,24 +149,24 @@ templateObj:
                 - value: $(FieldName)
         - name: np
           type:
-            className: $(TableName)Pojo
-            packageName: entity.pojo
+            className: $(TableName)Entity
+            packageName: entity
           annotations:
             - name: RequestBody
       bodyInfo:
         require:
           - className: Query
-            packageName: entity.query
-          - className: $(TableName)Pojo
-            packageName: entity.pojo
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
         body:
-          - 'Query<$(TableName)Pojo> query = new Query<>();'
+          - 'Query<$(TableName)Entity> query = new Query<>();'
           - ''
-          - '$(TableName)Pojo $(LTableName)Pojo = new $(TableName)Pojo();'
+          - '$(TableName)Entity $(LTableName)Entity = new $(TableName)Entity();'
           - ''
-          - '$(LTableName)Pojo.set$(UFieldName)($(FieldName));'
+          - '$(LTableName)Entity.set$(UFieldName)($(FieldName));'
           - ''
-          - 'query.setPojo($(LTableName)Pojo);'
+          - 'query.setPojo($(LTableName)Entity);'
           - ''
           - '$(LTableName)Service.update(query, np);'
           - ''
@@ -165,11 +174,11 @@ templateObj:
     - name: delete
       returnType:
         className: Result
-        packageName: entity.vo
+        packageName: common.response
       comment:
         - '/**'
         - ' * 删除数据'
-        - ' * @param pojo'
+        - ' * @param entity'
         - ' * @return'
         - ' */'
       annotations:
@@ -183,22 +192,22 @@ templateObj:
           params:
             - value: /delete
       parameters:
-        - name: pojo
+        - name: entity
           type:
-            className: $(TableName)Pojo
-            packageName: entity.pojo
+            className: $(TableName)Entity
+            packageName: entity
           annotations:
             - name: RequestBody
       bodyInfo:
         require:
           - className: Query
-            packageName: entity.query
-          - className: $(TableName)Pojo
-            packageName: entity.pojo
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
         body:
-          - 'Query<$(TableName)Pojo> query = new Query<>();'
+          - 'Query<$(TableName)Entity> query = new Query<>();'
           - ''
-          - 'query.setPojo(pojo);'
+          - 'query.setPojo(entity);'
           - ''
           - '$(LTableName)Service.delete(query);'
           - ''

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -47,6 +48,7 @@ public enum ClassTypes {
     CHAR("Character", Character.class.getName()),
     OBJECT("Object", Object.class.getName()),
     DATE("Date", Date.class.getName()),
+    LOCALDATETIME("LocalDateTime", LocalDateTime.class.getName()),
     BIGDECIMAL("BigDecimal", java.math.BigDecimal.class.getName()),
     BIGINTEGER("BigInteger", java.math.BigInteger.class.getName()),
     ARRAY("Array", Array.class.getName()),
@@ -111,6 +113,7 @@ public enum ClassTypes {
     REQUESTBODY("RequestBody", RequestBody.class.getName()),
     REQUESTPARAM("RequestParam", RequestParam.class.getName()),
     PATHVARIABLE("PathVariable", PathVariable.class.getName()),
+    MODELATTRIBUTE("ModelAttribute", ModelAttribute.class.getName()),
     CONFIGURATION("Configuration", Configuration.class.getName()),
     BEAN("Bean", Bean.class.getName()),
 

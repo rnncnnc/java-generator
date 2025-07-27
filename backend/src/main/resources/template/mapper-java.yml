@@ -15,6 +15,6 @@ templateObj:
     className: BaseMapper
     packageName: mapper
     genericParams:
-      - name: $(TableName)Pojo
-        packageName: entity.pojo
+      - name: $(TableName)Entity
+        packageName: entity
 

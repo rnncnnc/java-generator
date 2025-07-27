@@ -4,7 +4,7 @@ templateObj:
   type: class
   name: Page
   permission: public
-  packageName: entity.query
+  packageName: query
   variables:
     - name: pageNum
       type:

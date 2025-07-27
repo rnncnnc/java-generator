@@ -4,7 +4,7 @@ templateObj:
   type: class
   name: Sort
   permission: public
-  packageName: entity.query
+  packageName: query
   variables:
     - name: index
       type:

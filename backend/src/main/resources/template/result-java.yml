@@ -4,7 +4,7 @@ templateObj:
   type: class
   name: Result
   permission: public
-  packageName: entity.vo
+  packageName: common.response
   variables:
     - name: code
       type:

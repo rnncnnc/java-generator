@@ -22,7 +22,7 @@ import java.util.List;
 
 
 @Slf4j
-public class PojoBuilder extends JavaBuilder {
+public class EntityBuilder extends JavaBuilder {
 
     /**
      * 写入内容之前进行的操作
@@ -50,7 +50,7 @@ public class PojoBuilder extends JavaBuilder {
                     variableCopy.getAnnotations().add(annotation);
                 }
 
-                if (field.getFieldDataType().equals("Date")) {
+                if (field.getFieldDataType().contains("Date")) {
                     // 添加@JsonFormat注解
                     annotation = new Annotation();
                     annotation.setName("JsonFormat");
@@ -81,7 +81,7 @@ public class PojoBuilder extends JavaBuilder {
                     // 添加参数
                     annotationParam = new AnnotationParam();
                     annotationParam.setKey("pattern");
-                    annotationParam.setValue("yyyy-MM-dd");
+                    annotationParam.setValue("yyyy-MM-dd HH:mm:ss");
 
                     annotationParams.add(annotationParam);
                     annotation.setParams(annotationParams);

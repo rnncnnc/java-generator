@@ -7,8 +7,8 @@ templateObj:
     - className: $(TableName)Service
       packageName: service
       genericParams:
-        - name: $(TableName)Pojo
-          packageName: entity.pojo
+        - name: $(TableName)Entity
+          packageName: entity
   permission: public
   packageName: service.Impl
   annotations:
@@ -26,8 +26,8 @@ templateObj:
       returnType:
         className: List
         genericParams:
-          - name: $(TableName)Pojo
-            packageName: entity.pojo
+          - name: $(TableName)Entity
+            packageName: entity
       permission: public
       annotations:
         - name: Override
@@ -35,10 +35,10 @@ templateObj:
         - name: query
           type:
             className: Query
-            packageName: entity.query
+            packageName: query
             genericParams:
-              - name: $(TableName)Pojo
-                packageName: entity.pojo
+              - name: $(TableName)Entity
+                packageName: entity
       bodyInfo:
         body:
           - 'return $(LTableName)Mapper.select(query);'
@@ -58,10 +58,10 @@ templateObj:
         - name: query
           type:
             className: Query
-            packageName: entity.query
+            packageName: query
             genericParams:
-              - name: $(TableName)Pojo
-                packageName: entity.pojo
+              - name: $(TableName)Entity
+                packageName: entity
       bodyInfo:
         body:
           - '$(LTableName)Mapper.insert(query);'
@@ -80,14 +80,14 @@ templateObj:
         - name: query
           type:
             className: Query
-            packageName: entity.query
+            packageName: query
             genericParams:
-              - name: $(TableName)Pojo
-                packageName: entity.pojo
+              - name: $(TableName)Entity
+                packageName: entity
         - name: np
           type:
-            className: $(TableName)Pojo
-            packageName: entity.pojo
+            className: $(TableName)Entity
+            packageName: entity
       bodyInfo:
         body:
           - '$(LTableName)Mapper.update(query, np);'
@@ -107,10 +107,10 @@ templateObj:
         - name: query
           type:
             className: Query
-            packageName: entity.query
+            packageName: query
             genericParams:
-              - name: $(TableName)Pojo
-                packageName: entity.pojo
+              - name: $(TableName)Entity
+                packageName: entity
       bodyInfo:
         body:
           - '$(LTableName)Mapper.delete(query) ;'

@@ -1,9 +1,9 @@
 fileType: java
-classType: pojo
+classType: entity
 templateObj:
   type: class
-  name: $(TableName)Pojo
-  packageName: entity.pojo
+  name: $(TableName)Entity
+  packageName: entity
   permission: public
   comment:
     - '/**'

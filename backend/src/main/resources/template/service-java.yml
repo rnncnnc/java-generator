@@ -17,7 +17,7 @@ templateObj:
         - name: query
           type:
             className: Query
-            packageName: entity.query
+            packageName: query
             genericParams:
               - name: T
       comment:
@@ -33,7 +33,7 @@ templateObj:
         - name: query
           type:
             className: Query
-            packageName: entity.query
+            packageName: query
             genericParams:
               - name: T
       comment:
@@ -48,7 +48,7 @@ templateObj:
         - name: query
           type:
             className: Query
-            packageName: entity.query
+            packageName: query
             genericParams:
               - name: T
         - name: np
@@ -68,7 +68,7 @@ templateObj:
         - name: query
           type:
             className: Query
-            packageName: entity.query
+            packageName: query
             genericParams:
               - name: T
       comment:
