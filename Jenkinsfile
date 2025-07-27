@@ -2,14 +2,10 @@ pipeline {
     // 指定任务在哪个集群节点中执行
     agent any
 
-    script {
-        def ref = "${env.git_ref}"
-        env.tag = ref.split('/')[2]
-    }
 
     // 声明全局变量，方便后面使用
     environment {
-        tag = "${env.git_tag_name}"
+        tag = "${env.GIT_TAG_NAME}"
         harborUser = 'admin'
         harborPasswd = 'secet3157'
         harborAddress = '192.168.0.65:880'
