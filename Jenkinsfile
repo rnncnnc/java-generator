@@ -2,11 +2,6 @@ pipeline {
     // 指定任务在哪个集群节点中执行
     agent any
 
-    parameters {
-        string(name: 'tag', defaultValue: '', description: '手动输入的 Tag（如 v1.0.0）')
-    }
-
-
     // 声明全局变量，方便后面使用
     environment {
         tag = ""
