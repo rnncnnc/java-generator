@@ -15,7 +15,7 @@ pipeline {
         stage('解析 Tag') {
             steps {
                 script {
-                    echo "${env.git_ref}"
+                    echo "${env.tag}"
                     if (env.git_ref) {
                         // Webhook 触发：从 git_ref 解析（如 refs/tags/v1.0.0 → v1.0.0）
                         env.tag = env.git_ref.split('/')[2]
