@@ -12,7 +12,7 @@ log() {
 cleanup() {
     log "收到停止信号，正在关闭服务..."
     
-    # 先停止Java进程（避免Nginx关闭后仍有请求）
+    # 先停止Java进程(避免Nginx关闭后仍有请求)
     if [ -n "$JAVA_PID" ] && kill -0 "$JAVA_PID" 2>/dev/null; then
         log "停止Java进程($JAVA_PID)..."
         kill -TERM "$JAVA_PID"
@@ -37,13 +37,13 @@ trap cleanup SIGINT SIGTERM SIGQUIT
 log "启动Nginx服务..."
 nginx -g 'daemon off;' &
 NGINX_PID=$!
-log "Nginx已启动，PID: $NGINX_PID"
+log "Nginx已启动, PID: $NGINX_PID"
 
 # 启动Java应用
 log "启动Java服务..."
 java -jar backend.jar &
 JAVA_PID=$!
-log "Java已启动，PID: $JAVA_PID"
+log "Java已启动, PID: $JAVA_PID"
 
 # 等待所有子进程
 wait -n $NGINX_PID $JAVA_PID
