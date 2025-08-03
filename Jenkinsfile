@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('拉取git仓库代码') {
             steps {
-                checkout scmGit(branches: [[name: '${tag}']], extensions: [], userRemoteConfigs: [[url: 'https://www.bakistrim.site:15700/rnncnnc/JavaGenerator.git']])
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'gitea', url: 'https://www.bakistrim.site:15700/rnncnnc/JavaGenerator.git']])
             }
         }
         
