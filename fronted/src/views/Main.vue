@@ -1,12 +1,73 @@
 <script setup>
 import DataBaseForm from '@/components/DataBaseForm.vue'
+import InfoSelect from '@/components/InfoSelect.vue'
 
+import { ref, reactive, getCurrentInstance } from 'vue'
+
+const dataBaseFormRef = ref()
+const infoSelectRef = ref()
+
+const activeTab = ref('1')
+
+// 获取数据库信息完毕
+const handleFinished = (data) => {
+  activeTab.value = '2'
+
+  infoSelectRef.value.setTableList(data)
+}
+
+// 取消生成
+const handleCancel = () => {
+  activeTab.value = '1'
+}
+
+// 提交生成
+const handleSubmit = () => {
+  activeTab.value = '3'
+}
+
+
+// 完成
+const handleOver = () => {
+  activeTab.value = '1'
+  infoSelectRef.value.clean()
+  dataBaseFormRef.value.clean()
+}
 </script>
 
 <template>
     <div class="main">
-      <h1 class="title">Java 代码生成器</h1>
-      <DataBaseForm />
+      <div class="processer">
+        <el-steps style="width: 80%" :active="activeTab" finish-status="success">
+          <el-step title="Step 1" />
+          <el-step title="Step 2" />
+          <el-step title="Step 3" />
+        </el-steps>
+      </div>
+      <div class="tabs">
+        <el-tabs tab-position="left" style="height: 100%" :stretch="true" v-model="activeTab">
+          <el-tab-pane label="填写数据库信息" name="1">
+            <DataBaseForm ref="dataBaseFormRef" @finished="handleFinished" />
+          </el-tab-pane>
+          <el-tab-pane label="选择要生成的表" name="2">
+            <InfoSelect ref="infoSelectRef" @cancel="handleCancel" @submit="handleSubmit" />
+          </el-tab-pane>
+          <el-tab-pane label="完成" name="3">
+              <el-result title="生成成功" sub-title="恭喜您，代码已生成">
+                <template #icon>
+                  <el-image
+                    style="width: 500px; height: 500px"
+                    fit="cover"
+                    src="https://www.bakistrim.site:5231/images/2025/08/03/wink.jpg"
+                  />
+                </template>
+                <template #extra>
+                  <el-button type="primary" @click="handleOver">Back</el-button>
+                </template>
+              </el-result>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
 </template>
 
@@ -15,7 +76,7 @@ import DataBaseForm from '@/components/DataBaseForm.vue'
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
  // ... 其他保持不变的样式 ...
   width: calc(100% - 2px); // 补偿边框宽度
@@ -26,8 +87,17 @@ import DataBaseForm from '@/components/DataBaseForm.vue'
   border-radius: 10px;
   box-shadow: 0 0 10px #ccc;
 
-  .title {
-    font-size: 60px;
+  .processer {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tabs {
+    width: 100%;
+    height: 80%;
   }
 }
 </style>

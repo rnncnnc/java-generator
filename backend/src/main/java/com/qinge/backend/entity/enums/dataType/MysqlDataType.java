@@ -11,8 +11,7 @@ import java.util.List;
 
 
 public enum MysqlDataType {
-    DATETIME("Long", Arrays.asList("datetime", "timestamp")),
-    DATE("Date", Arrays.asList("date")),
+    DATETIME("Date", Arrays.asList("date", "datetime", "timestamp")),
     BIGDECIMAL("BigDecimal", Arrays.asList("decimal", "double", "float")),
     STRING("String", Arrays.asList("char", "varchar", "text", "meidumtext", "longtext")),
     INTEGER("Integer", Arrays.asList("int", "tinyint")),

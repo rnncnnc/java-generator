@@ -1,6 +1,6 @@
 package com.qinge.backend.service;
 
-import com.qinge.backend.entity.BaseInfo;
+import com.qinge.backend.dto.BaseInfo;
 
 /**
  * @Data: 2025/5/30 15:13

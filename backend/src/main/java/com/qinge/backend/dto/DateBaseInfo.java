@@ -1,13 +1,13 @@
-package com.qinge.backend.entity;
+package com.qinge.backend.dto;
 
 /**
  * @Data: 2025/5/30 19:06
  * @Author: Lc
- * @Description:
+ * @Description: 数据库基本信息
  */
 
 
-public class BaseInfo {
+public class DateBaseInfo {
 
     // 数据库类型
     private String dbType;
@@ -21,12 +21,6 @@ public class BaseInfo {
     // 数据库密码
     private String password;
 
-    // 项目组ID
-    private String groupId;
-
-    // 项目ID
-    private String artifactId;
-
     // 临时目录
     private String tempPath;
 
@@ -36,7 +30,7 @@ public class BaseInfo {
     // 字段中间的分隔符
     private String fieldSeparator;
 
-    public BaseInfo() {
+    public DateBaseInfo() {
     }
 
     public String getFieldSeparator() {
@@ -85,22 +79,6 @@ public class BaseInfo {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
     }
 
     public String getTempPath() {

@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public enum PostgresqlDataType {
-    LOCALDATETIME("LocalDateTime", Arrays.asList("date", "timestamp without time zone", "timestamp", "timestamptz")),
+    LOCALDATETIME("Date", Arrays.asList("date", "timestamp without time zone", "timestamp", "timestamptz")),
     BIGDECIMAL("BigDecimal", Arrays.asList("numeric", "real", "double precision")),
     STRING("String", Arrays.asList("char", "varchar", "text", "bpchar", "citext", "character varying")),
     INTEGER("Integer", Arrays.asList("int", "integer", "smallint", "int2", "int4")),

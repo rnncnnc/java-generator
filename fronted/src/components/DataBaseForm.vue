@@ -1,6 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { download } from '@/utils/request'
+import { getTableList } from '@/api/database'
+
+import { defineEmits } from 'vue'
+import { useIndexStore } from '@/store/index'
+
 
 const formRef = ref()
 const form = ref({
@@ -10,10 +14,9 @@ const form = ref({
   schema: '',
   username: '',
   password: '',
-  group: '',
-  artifact: '',
+  basePackage: '',
   tablePrefix: '',
-  fieldSeparator: ''
+  fieldSeparator: '',
 })
 
 const rules = ref({
@@ -37,11 +40,8 @@ const rules = ref({
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' }
   ],
-  group: [
-    { required: true, message: '请输入groupId', trigger: 'blur' }
-  ],
-  artifact: [
-    { required: true, message: '请输入artifactId', trigger: 'blur' }
+  basePackage: [
+    { required: true, message: '请输入基础包名', trigger: 'blur' }
   ]
 })
 
@@ -65,6 +65,8 @@ const changeDatabase = (val) => {
   }
 }
 
+const emit = defineEmits(['finished'])
+
 // 提交表单
 const submitForm = async () => {
   const valid = await formRef.value.validate()
@@ -79,18 +81,40 @@ const submitForm = async () => {
     dbUrl: dbUrl,
     username: form.value.username,
     password: form.value.password,
-    groupId: form.value.group,
-    artifactId: form.value.artifact,
     tablePrefix: form.value.tablePrefix,
     fieldSeparator: form.value.fieldSeparator
   }
 
-  download('/api/builder', params)
+  const indexStore = useIndexStore()
+  indexStore.setBasePackage(form.value.basePackage)
+
+  getTableList(params).then(res => {
+    emit('finished', res.data)
+
+    
+  })
 }
+
+defineExpose({
+  clean: () => {
+    form.value = {
+      database: '',
+      host: '',
+      port: '',
+      schema: '',
+      username: '',
+      password: '',
+      basePackage: '',
+      tablePrefix: '',
+      fieldSeparator: '',
+    }
+  }
+})
 </script>
 
 <template>
-    <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" style="max-width: 600px">
+    <div class="box">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" style="max-width: 600px">
         <el-form-item label="database" prop="database">
           <el-select
             v-model="form.database"
@@ -119,13 +143,10 @@ const submitForm = async () => {
           <el-input v-model="form.username" placeholder="请输入用户名"/>
         </el-form-item>
         <el-form-item label="password" prop="password">
-          <el-input v-model="form.password" placeholder="请输入密码"/>
+          <el-input v-model="form.password" type="password" placeholder="请输入密码"/>
         </el-form-item>
-        <el-form-item label="group" prop="group">
-          <el-input v-model="form.group" placeholder="请输入groupId"/>
-        </el-form-item>
-        <el-form-item label="artifact" prop="artifact">
-          <el-input v-model="form.artifact" placeholder="请输入artifactId"/>
+        <el-form-item label="base package" prop="basePackage">
+          <el-input v-model="form.basePackage" placeholder="请输入基础包名"/>
         </el-form-item>
         <el-form-item label="table prefix" prop="tablePrefix">
           <el-input v-model="form.tablePrefix" placeholder="请输入表前缀"/>
@@ -137,8 +158,15 @@ const submitForm = async () => {
             <el-button type="primary" @click="submitForm" style="width: 100%;">生成代码</el-button>
         </el-form-item>
       </el-form>
+    </div>
 </template>
 
 <style lang="scss" scoped>
-
+.box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
 </style>

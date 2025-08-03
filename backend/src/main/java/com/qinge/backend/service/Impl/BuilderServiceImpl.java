@@ -1,12 +1,10 @@
 package com.qinge.backend.service.Impl;
 
 import com.qinge.backend.builder.FileBuilder;
-import com.qinge.backend.connector.DBConnector;
-import com.qinge.backend.entity.BaseInfo;
+import com.qinge.backend.dto.BaseInfo;
 import com.qinge.backend.entity.table.Table;
 import com.qinge.backend.entity.template.Template;
 import com.qinge.backend.entity.template.object.FileObject;
-import com.qinge.backend.parser.database.DBParser;
 import com.qinge.backend.parser.file.ObjectParser;
 import com.qinge.backend.service.BuilderService;
 import com.qinge.backend.utils.ClassTools;
@@ -48,14 +46,14 @@ public class BuilderServiceImpl implements BuilderService {
 
         // 基础包名
         String temPath = baseInfo.getTempPath();
-        String basePackage = baseInfo.getGroupId() + "." + baseInfo.getArtifactId();
+        String basePackage = baseInfo.getBasePackage();
 
         // 创建临时目录
         FileTools.createDir(temPath);
         log.info("创建临时目录成功：" + temPath);
 
         // 解析数据库
-        List<Table> tableList = getTableList(baseInfo);
+        List<Table> tableList = baseInfo.getTableList();
 
         // 构建文件
         buildClass(basePackage, temPath, tableList);
@@ -117,40 +115,7 @@ public class BuilderServiceImpl implements BuilderService {
         }
     }
 
-    /**
-     * 解析数据库信息
-     * @param baseInfo
-     * @return
-     */
-    private List<Table> getTableList(BaseInfo baseInfo) throws Exception {
 
-        String dbType = baseInfo.getDbType();
-
-        // 获取解析器的全类名
-        String connectorClassName = DBConnector.class.getName().replace("DB", StringTools.firstToUppercase(dbType.toLowerCase()));
-
-        // 构造连接器对象
-        DBConnector connector = ClassTools.buildClassByFullName(connectorClassName);
-        ClassTools.setFieldValue(connector, "url", baseInfo.getDbUrl());
-        ClassTools.setFieldValue(connector, "username", baseInfo.getUsername());
-        ClassTools.setFieldValue(connector, "password", baseInfo.getPassword());
-
-        // 获取数据库解析器
-        String parserClassName = DBParser.class.getName().replace("DB", StringTools.firstToUppercase(dbType.toLowerCase()));
-
-        // 构建数据库解析器对象
-        DBParser parser = ClassTools.buildClassByFullName(parserClassName);
-        ClassTools.setFieldValue(parser, "connector", connector);
-        ClassTools.setFieldValue(parser, "tablePrefix", baseInfo.getTablePrefix());
-        ClassTools.setFieldValue(parser, "fieldSeparator", baseInfo.getFieldSeparator());
-
-        // 解析数据库
-        List<Table> tableList = parser.parseTableFromDB();
-
-        log.info("解析数据库成功" + baseInfo.getDbType());
-
-        return tableList;
-    }
 
 
     /**

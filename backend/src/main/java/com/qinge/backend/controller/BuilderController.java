@@ -1,8 +1,12 @@
 package com.qinge.backend.controller;
 
+import com.qinge.backend.dto.BaseInfo;
 import com.qinge.backend.entity.constants.ClassDir;
-import com.qinge.backend.entity.BaseInfo;
+import com.qinge.backend.dto.DateBaseInfo;
+import com.qinge.backend.entity.table.Table;
+import com.qinge.backend.response.Result;
 import com.qinge.backend.service.BuilderService;
+import com.qinge.backend.service.TableService;
 import com.qinge.backend.utils.FileTools;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * @Data: 2025/6/3 13:05
@@ -29,6 +34,23 @@ public class BuilderController {
     @Resource
     private BuilderService builderService;
 
+    @Resource
+    private TableService tableService;
+
+    /**
+     * 获取数据库表列表
+     * @param baseInfo
+     * @return
+     */
+    @Operation(summary = "获取数据库表列表", description = "根据数据库获取表列表")
+    @PostMapping("/table/list")
+    public Result getTableList(@RequestBody DateBaseInfo baseInfo) throws Exception {
+        List<Table> tableList = tableService.getTableList(baseInfo);
+
+
+        return Result.success(tableList);
+    }
+
 
     /**
      * 获取数据
@@ -37,15 +59,19 @@ public class BuilderController {
     @Operation(summary = "java代码生成器", description = "根据数据库构建java代码")
     @PostMapping("/builder")
     public void builder(@RequestBody BaseInfo baseInfo, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // 创建临时目录
-        String temPath = ClassDir.TEMP_DIR + File.separator + "java-" + baseInfo.getArtifactId();
-        baseInfo.setTempPath(temPath);
 
+        String[] strs = baseInfo.getBasePackage().split("\\.");
+        String artifactId = strs[strs.length - 1];
+
+
+        // 创建临时目录
+        String temPath = ClassDir.TEMP_DIR + File.separator + "java-" + artifactId;
+        baseInfo.setTempPath(temPath);
         log.info(baseInfo.toString());
 
         builderService.buildFile(baseInfo);
 
-        String zipPath = FileTools.zipFiles(temPath, baseInfo.getArtifactId());
+        String zipPath = FileTools.zipFiles(temPath, artifactId);
 
         // 压缩包路径
         File file = new File(zipPath);
