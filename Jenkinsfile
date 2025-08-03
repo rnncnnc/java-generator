@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('拉取git仓库代码') {
             steps {
-                checkout scmGit(branches: [[name: '${tag}']], extensions: [], userRemoteConfigs: [[url: 'https://www.bakistrim.site:15700/rnncnnc/JavaGenerator.git']])
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'gitea', url: 'https://www.bakistrim.site:15700/rnncnnc/JavaGenerator.git']])
             }
         }
         
@@ -80,6 +80,8 @@ pipeline {
         stage('通过 publish over ssh 通知目标服务器') {
             steps {
                 sshPublisher(publishers: [sshPublisherDesc(configName: 'Server', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: "deploy.sh $harborAddress $harborRepo $JOB_NAME $tag $host_port $container_port", execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+
+                echo "deploy.sh $harborAddress $harborRepo $JOB_NAME $tag $host_port $container_port"
             }
         }
     
