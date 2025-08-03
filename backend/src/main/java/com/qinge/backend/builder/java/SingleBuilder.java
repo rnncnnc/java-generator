@@ -14,6 +14,9 @@ public class SingleBuilder extends JavaBuilder {
 
     @Override
     protected JavaClass beforeWrite(JavaClass javaClass) throws JsonProcessingException {
+
+        // TODO 单个文件替换关键词
+
         return javaClass;
     }
 }

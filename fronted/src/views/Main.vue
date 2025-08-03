@@ -2,7 +2,7 @@
 import DataBaseForm from '@/components/DataBaseForm.vue'
 import InfoSelect from '@/components/InfoSelect.vue'
 
-import { ref, reactive, getCurrentInstance } from 'vue'
+import { ref } from 'vue'
 
 const dataBaseFormRef = ref()
 const infoSelectRef = ref()
@@ -45,7 +45,7 @@ const handleOver = () => {
         </el-steps>
       </div>
       <div class="tabs">
-        <el-tabs tab-position="left" style="height: 100%" :stretch="true" v-model="activeTab">
+        <el-tabs tab-position="left" style="height: auto" :stretch="true" v-model="activeTab">
           <el-tab-pane label="填写数据库信息" name="1">
             <DataBaseForm ref="dataBaseFormRef" @finished="handleFinished" />
           </el-tab-pane>
@@ -56,7 +56,7 @@ const handleOver = () => {
               <el-result title="生成成功" sub-title="恭喜您，代码已生成">
                 <template #icon>
                   <el-image
-                    style="width: 500px; height: 500px"
+                    style="width: 400px; height: 400px"
                     fit="cover"
                     src="https://www.bakistrim.site:5231/images/2025/08/03/wink.jpg"
                   />
@@ -96,8 +96,10 @@ const handleOver = () => {
   }
 
   .tabs {
+    overflow: auto;
+    overflow-x: hidden;
     width: 100%;
-    height: 80%;
+    height: 80vh;
   }
 }
 </style>

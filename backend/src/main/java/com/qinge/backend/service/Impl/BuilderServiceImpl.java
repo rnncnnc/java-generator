@@ -33,16 +33,6 @@ public class BuilderServiceImpl implements BuilderService {
      */
     @Override
     public void buildFile(BaseInfo baseInfo) throws Exception {
-        // TODO 移到controller层
-        // BaseInfo baseInfo = new BaseInfo();
-        // baseInfo.setDbType("postgresql");
-        // baseInfo.setDbUrl("jdbc:postgresql://192.168.0.16:5432/fiction");
-        // baseInfo.setUsername("root");
-        // baseInfo.setPassword("315766");
-        // baseInfo.setGroupId("com.qinge");
-        // baseInfo.setArtifactId("playerbackend");
-        // // baseInfo.setTablePrefix("tb_");
-        // baseInfo.setFieldSeparator("_");
 
         // 基础包名
         String temPath = baseInfo.getTempPath();

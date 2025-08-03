@@ -44,7 +44,7 @@ const handleSubmit = () => {
     }
 
     downloadFiles(params).then(res => {
-        ElMessage.success('生成成功')
+        ElMessage.success('生成代码成功')
         emit("submit")
     })
     
@@ -70,6 +70,7 @@ defineExpose({
 <template>
     <div class="table-box">
         <el-table
+            max-height="650"
             :data="tableList"
             :border="false"
             :preserve-expanded-content="false"

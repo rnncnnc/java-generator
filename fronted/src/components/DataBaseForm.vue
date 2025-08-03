@@ -5,6 +5,8 @@ import { getTableList } from '@/api/database'
 import { defineEmits } from 'vue'
 import { useIndexStore } from '@/store/index'
 
+import { ElMessage } from 'element-plus'
+
 
 const formRef = ref()
 const form = ref({
@@ -89,9 +91,11 @@ const submitForm = async () => {
   indexStore.setBasePackage(form.value.basePackage)
 
   getTableList(params).then(res => {
-    emit('finished', res.data)
+    ElMessage.success('获取数据库信息成功')
 
-    
+    emit('finished', res.data)
+  }).catch(err => {
+    console.log(err)
   })
 }
 

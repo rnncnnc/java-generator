@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { saveAs } from 'file-saver'
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 
 const request = axios.create({
   timeout: 100000
@@ -29,6 +29,10 @@ request.interceptors.response.use(function(res) {
     loadingInstance && loadingInstance.close()
 
     if (res.data.code === 0) {
+        
+        // 错误提醒
+        ElMessage.error(res.data.msg)
+
         return Promise.reject()
     }
 
