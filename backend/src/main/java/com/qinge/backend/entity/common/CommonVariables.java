@@ -1,5 +1,7 @@
 package com.qinge.backend.entity.common;
 
+import com.qinge.backend.utils.StringTools;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,7 +21,7 @@ public class CommonVariables {
     }
 
     public String getBasePackage() {
-        return basePackage;
+        return StringTools.isEmpty(basePackage) ? "com.qinge.example" : basePackage;
     }
 
     public void setBasePackage(String basePackage) {

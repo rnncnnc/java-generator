@@ -91,8 +91,6 @@ public class BuilderServiceImpl implements BuilderService {
             // 获取模板类型
             FileObject fileObject = template.getTemplateObj();
 
-            // 设置基础包名
-            fileBuilder.setBasePackage(baseInfo.getBasePackage());
             // 设置临时文件夹
             fileBuilder.setTemPath(baseInfo.getTempPath());
 

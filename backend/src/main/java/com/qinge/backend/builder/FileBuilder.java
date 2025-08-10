@@ -24,9 +24,6 @@ import java.util.Set;
 @Slf4j
 public abstract class FileBuilder implements Builder {
 
-    // 基础包名
-    protected String basePackage;
-
     // 临时目录
     protected String temPath;
 
@@ -56,12 +53,10 @@ public abstract class FileBuilder implements Builder {
             java.lang.reflect.Method method = KeywordMethods.getByName(key);
             if (method != null) {
                 try {
-                    System.out.println(source);
                     String value = ((String) method.invoke(source)).trim();
                     keywrodMap.put(key, value);
-                } catch (InvocationTargetException | IllegalAccessException | NullPointerException e) {
-                    log.error("替换关键字失败: {}", key);
-                    throw new RuntimeException(e);
+                } catch (Exception e) {
+                    log.error("替换关键字失败: {}, 异常信息: {}", key, e.getMessage());
                 }
             }
         }
@@ -81,14 +76,6 @@ public abstract class FileBuilder implements Builder {
     abstract public String build(FileObject fileObj) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException;
 
     public FileBuilder() {
-    }
-
-    public String getBasePackage() {
-        return basePackage;
-    }
-
-    public void setBasePackage(String basePackage) {
-        this.basePackage = basePackage;
     }
 
     public String getTemPath() {

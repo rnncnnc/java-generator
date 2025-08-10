@@ -503,7 +503,7 @@ public abstract class JavaBuilder extends FileBuilder {
     protected void writeImport(StringBuilder builder, JavaClass javaClass) {
 
         // 设置包名
-        String packageName = basePackage + "." + javaClass.getPackageName();
+        String packageName = commonVariables.getBasePackage() + "." + javaClass.getPackageName();
         builder.append("package " + packageName + ";\n");
 
         // 存储创建的类
@@ -621,7 +621,7 @@ public abstract class JavaBuilder extends FileBuilder {
             otherClass.add(classInfo.getClassName());
         } else if (!StringTools.isTrue(classInfo.getGeneric())){
             // 如果有包名 则是创建的类
-            baseClass.add("import " + basePackage + "." + classInfo.getPackageName() + "." + classInfo.getClassName() + ";\n");
+            baseClass.add("import " + commonVariables.getBasePackage() + "." + classInfo.getPackageName() + "." + classInfo.getClassName() + ";\n");
         }
 
         // 获取泛型中需要导入的类
@@ -664,7 +664,7 @@ public abstract class JavaBuilder extends FileBuilder {
                 if (StringTools.isEmpty(generic.getPackageName())) {
                     otherClass.add(generic.getType());
                 } else {
-                    baseClass.add("import " + basePackage + "." + generic.getPackageName() + "." + generic.getType() + ";\n");
+                    baseClass.add("import " + commonVariables.getBasePackage() + "." + generic.getPackageName() + "." + generic.getType() + ";\n");
                 }
             }
         }
@@ -687,7 +687,7 @@ public abstract class JavaBuilder extends FileBuilder {
                 if (StringTools.isEmpty(genericParam.getPackageName())) {
                     otherClass.add(genericParam.getName());
                 } else {
-                    baseClass.add("import " + basePackage + "." + genericParam.getPackageName() + "." + genericParam.getName() + ";\n");
+                    baseClass.add("import " + commonVariables.getBasePackage() + "." + genericParam.getPackageName() + "." + genericParam.getName() + ";\n");
                 }
             }
         }
