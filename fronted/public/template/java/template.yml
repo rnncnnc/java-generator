@@ -24,14 +24,14 @@ templateObj: # 模板对象属性
       - name: UserEntity # 自建类， 带上包名
         packageName: entity
   implementsList: # 该类实现的接口
-    className: BaseController | T # 接口名名
-    packageName: controller | null # 此类的包名，若是自建类，则填写基础包名(com.xxx.xxx)外的名字，不是则不填
-    isGeneric: false | true # 继承的类中，是否需要带上泛型，如：extends BaseController<T, UserEntity>
-    genericParams: # 此类的泛型
-      - name: T 
-        packageName: null
-      - name: UserEntity # 自建类， 带上包名
-        packageName: entity
+    - className: BaseController | T # 接口名名
+      packageName: controller | null # 此类的包名，若是自建类，则填写基础包名(com.xxx.xxx)外的名字，不是则不填
+      isGeneric: false | true # 继承的类中，是否需要带上泛型，如：extends BaseController<T, UserEntity>
+      genericParams: # 此类的泛型
+        - name: T 
+          packageName: null
+        - name: UserEntity # 自建类， 带上包名
+          packageName: entity
   exceptions: # 该类抛出的异常
     - className: Exception # 异常名
       packageName: exception # 若是自建类 填写包名
@@ -45,23 +45,23 @@ templateObj: # 模板对象属性
     - name: Operation # 注解名
       params:
         - key: summary # 注解的参数名
-          value: ”注册“ # 参数值
+          value: 注册 # 参数值
     - name: PostMapping
       params:
         - key: null # 可以没有参数名
-          value: "/register" # 参数值
+          value: /register # 参数值
   variables: # 此类内的变量
     - name: usersService # 变量名
       permission: public | default(无权限修饰符) | ... # 权限修饰符
       type:  # 变量的类型 Result<UserEntity, T> 这里的T一般是从类继承过来的变量
-      className: Result # 类型名
-      packageName: common.response # 自建类的包名
-      isGeneric: true # 是否是泛型
-      genericParams: # 泛型的参数
-        - name: UserEntity # 参数名
-          packageName: entity # 自建类的包名
-        - name: T
-          packageName: null
+        className: Result # 类型名
+        packageName: common.response # 自建类的包名
+        isGeneric: true # 是否是泛型
+        genericParams: # 泛型的参数
+          - name: UserEntity # 参数名
+            packageName: entity # 自建类的包名
+          - name: T
+            packageName: null
       comment: # 变量的注释
         - '/**'
         - '* @Description: id'
@@ -76,14 +76,14 @@ templateObj: # 模板对象属性
   methods: # 此类内的方法
     - name: select # 方法名
       returnType: # 返回值类型 Result<UserEntity, T>
-      className: Result # 类型名
-      packageName: common.response # 自建类的包名
-      isGeneric: true # 是否是泛型
-      genericParams: # 泛型的参数
-        - name: UserEntity # 参数名
-          packageName: entity # 自建类的包名
-        - name: T
-          packageName: null
+        className: Result # 类型名
+        packageName: common.response # 自建类的包名
+        isGeneric: true # 是否是泛型
+        genericParams: # 泛型的参数
+          - name: UserEntity # 参数名
+            packageName: entity # 自建类的包名
+          - name: T
+            packageName: null
       permission: public | default(无权限修饰符) | ... # 权限修饰符
       generics: # 方法上的泛型列表 <T extends UserEntity, E>
         - name: T # 泛型名
@@ -113,12 +113,12 @@ templateObj: # 模板对象属性
       parameters: # 方法参数列表
         - name: query # 方法名
           type: # 方法类型
-          className: Query # 类型名
-          packageName: query # 自建类的包名
-          isGeneric: true # 是否是泛型
-          genericParams: # 类的泛型
-            - name: UserEntity # 泛型名
-              packageName: entity # 自建类的包名
+            className: Query # 类型名
+            packageName: query # 自建类的包名
+            isGeneric: true # 是否是泛型
+            genericParams: # 类的泛型
+              - name: UserEntity # 泛型名
+                packageName: entity # 自建类的包名
           annotations: # 方法参数的注解
             - name: RequestHeader
               params: # 注解参数

@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { getTableList } from '@/api/database'
 
-import { defineEmits } from 'vue'
 import { useIndexStore } from '@/store/index'
 
 import { ElMessage } from 'element-plus'

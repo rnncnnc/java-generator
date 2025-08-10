@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -49,6 +50,38 @@ public class BuilderController {
 
 
         return Result.success(tableList);
+    }
+
+
+    /**
+     * 预览
+     * @param baseInfo
+     * @return
+     */
+    @Operation(summary = "预览", description = "根据数据库构建java代码")
+    @PostMapping("/preview")
+    public Result preview(@RequestBody BaseInfo baseInfo) throws Exception {
+
+        log.info(baseInfo.toString());
+        String[] strs = baseInfo.getBasePackage().split("\\.");
+        String artifactId = strs[strs.length - 1];
+
+
+        // 创建临时目录
+        String temPath = ClassDir.TEMP_DIR + File.separator + "java-" + artifactId;
+        baseInfo.setTempPath(temPath);
+        log.info(baseInfo.toString());
+
+        String filePath = builderService.buildFile(baseInfo);
+
+        log.info(filePath);
+
+        try (InputStream inputStream = new FileInputStream(filePath)) {
+
+            return Result.success(new String(inputStream.readAllBytes()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

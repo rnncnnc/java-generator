@@ -13,14 +13,25 @@ public class FileObj {
 
     private String name;
 
+    private String path;
+
     private List<FileObj> children;
 
     public FileObj() {
     }
 
-    public FileObj(String name, List<FileObj> children) {
+    public FileObj(String name, String path, List<FileObj> children) {
         this.name = name;
+        this.path = path;
         this.children = children;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getName() {
@@ -43,6 +54,7 @@ public class FileObj {
     public String toString() {
         return "FileObj{" +
                 "name='" + name + '\'' +
+                ", path='" + path + '\'' +
                 ", children=" + children +
                 '}';
     }

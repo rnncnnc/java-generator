@@ -1,8 +1,7 @@
 <script setup>
-import { defineEmits, ref } from "vue"
+import { ref } from "vue"
 import { ElMessage } from "element-plus"
 
-import { downloadFiles } from "@/api/database"
 import { useIndexStore } from "@/store/index"
 
 const tableList = ref([])
@@ -23,31 +22,18 @@ const handleSelectionChange = (val) => {
 const emit = defineEmits(["cancel", "submit"])
 
 
+
+
 // 处理提交
 const handleSubmit = () => {
+
+
     if (multipleSelection.value.length === 0) {
         ElMessage.error('请选择要生成的表')
         return
     }
 
-    console.log(multipleSelection.value);
-    const indexStore = useIndexStore()
-    const basePackage = indexStore.getBasePackage
-
-    console.log(basePackage);
-    
-
-
-    const params = {
-        basePackage: basePackage,
-        tableList: multipleSelection.value
-    }
-
-    downloadFiles(params).then(res => {
-        ElMessage.success('生成代码成功')
-        emit("submit")
-    })
-    
+    emit("submit", multipleSelection.value)
 }
 
 // 处理取消
@@ -96,7 +82,7 @@ defineExpose({
         </el-table>
 
         <div class="btn-group">
-            <el-button type="primary" @click="handleSubmit">生成</el-button>
+            <el-button type="primary" @click="handleSubmit">确定</el-button>
             <el-button type="danger" @click="handleCancel">取消</el-button>
         </div>
     </div>

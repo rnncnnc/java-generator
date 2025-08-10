@@ -14,3 +14,12 @@ export function getTableList(data) {
 export function downloadFiles(data) {
     return download('/api/build/builder', data)
 }
+
+export function preview(data) {
+    return request({
+        url: '/api/build/preview',
+        method: 'post',
+        data
+    })
+
+}

@@ -1,0 +1,18 @@
+# 可以在模板文件中 通过 $(xxx) 的方式引入数据库的字段 具体的字段名如下所示
+Table: # 分类
+	TableName # 表名
+	LTableName # 首字母小写的表名
+	TableOriginName # 数据库内的原始表名
+	TableComment # 数据库的注释
+	BasePackage	# 生成的类的基础包名
+	DateTime # 当前时间
+Field:
+	FieldName # 字段名
+	FieldColumn # 数据库内的原始字段名
+	FieldDataType # 字段的类型 java
+	FieldKey # 字段属性 Primary ...
+	FieldComment # 字段的注释
+Index:
+	IndexName # 索引名
+	IndexField # 索引关联的字段名
+	IndexColumn # 索引关联的字段的数据库内的原始名称

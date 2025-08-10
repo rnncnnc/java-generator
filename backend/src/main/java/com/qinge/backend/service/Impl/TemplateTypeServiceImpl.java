@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Data: 2025/8/9 16:06
@@ -40,7 +41,7 @@ public class TemplateTypeServiceImpl implements TemplateTypeService {
             throw new RuntimeException("模板目录下没有模板类型");
         }
 
-        return FileTools.readDir(templateDir);
+        return FileTools.readDirWithoutPath(templateDir);
     }
 
     /**

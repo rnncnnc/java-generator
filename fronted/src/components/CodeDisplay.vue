@@ -1,6 +1,7 @@
 <template>
   <div class="editor-container">
     <MonacoEditor
+      ref="editorRef"
       v-model:value="codeContent"
       :language="props.currentLanguage"
       :options="editorOptions"
@@ -31,7 +32,7 @@ const editorOptions = ref({
     lineNumbers: 'on',
     folding: true,
     lineDecorationsWidth: 10,
-    lineNumbersMinChars: 5,
+    lineNumbersMinChars: 2,
     roundedSelection: false,
     scrollbar: {
         vertical: 'visible', // 始终显示垂直滚动条
@@ -61,17 +62,30 @@ const changeLanguage = (lang) => {
 
 
     if (currentLang.value === 'java') {
-        // TODO 发送请求获取java代码
+        editorOptions.readOnly = true
+        codeContent.value = javaCode.value
     } else if (currentLang.value === 'yml') {
         contentInit.value = true
+        editorOptions.readOnly = false
+        codeContent.value = ymlCode.value
     }
 
-
-    // 根据语言设置对应示例内容
-    codeContent.value = currentLang.value === 'yml' ? ymlCode.value : javaCode.value;
-
-    
+    scrollToTop()
 };
+
+const editorRef = ref()
+
+// 滚动到顶部的方法
+const scrollToTop = () => {
+  if (editorRef.value && editorRef.value.editor) {
+
+    editorRef.value.editor.setScrollPosition({ scrollTop: 0 })
+    // const editorDom = editorRef.value.editor.getDomNode();
+    // if (editorDom) {
+    //   editorDom.scrollTop = 0;
+    // }
+  }
+}
 
 
 // 将JSON转换为YAML
@@ -100,13 +114,15 @@ const contentInit = ref(false)
 watch(() => props.template, (newVal) => {
     nextTick(() => {
         if (currentLang.value === 'yml') {
-            convertJsonToYaml()
-            codeContent.value = ymlCode.value
-            contentInit.value = true
+          convertJsonToYaml()
+          codeContent.value = ymlCode.value
+          contentInit.value = true
         } else if (currentLang.value === 'java') {
-            javaCode.value = props.template
-            codeContent.value = javaCode.value
+          javaCode.value = newVal
+          codeContent.value = javaCode.value
         }
+
+        scrollToTop()
     })
 }, {
     immediate: true
@@ -120,11 +136,11 @@ watch(() => codeContent.value, (newVal) => {
     contentInit.value = false
   } else {
     if (currentLang.value === 'yml') {
-        ymlCode.value = newVal
+      ymlCode.value = newVal
+      emits('update', newVal)
     } else if (currentLang.value === 'java') {
-        javaCode.value = newVal
+      javaCode.value = newVal
     }
-    emits('update', newVal)
   }
 })
 

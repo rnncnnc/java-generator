@@ -36,11 +36,13 @@ public abstract class JavaBuilder extends FileBuilder {
      * @throws IOException
      */
     @Override
-    public void build(FileObject fileObj) throws IOException {
+    public String build(FileObject fileObj) throws IOException {
         JavaClass javaClass = (JavaClass) fileObj;
 
         // 写入内容之前进行的操作
-        javaClass = beforeWrite(javaClass);
+        if (table != null) {
+            javaClass = beforeWrite(javaClass);
+        }
 
         String filePath = temPath + File.separator + javaClass.getPackageName().replace(".", File.separator) + File.separator + javaClass.getName() + ".java";
 
@@ -59,6 +61,7 @@ public abstract class JavaBuilder extends FileBuilder {
         Files.write(Paths.get(filePath), content.getBytes());
         log.info("写入文件成功: " + javaClass.getName());
 
+        return filePath;
     }
 
     /**
@@ -67,10 +70,21 @@ public abstract class JavaBuilder extends FileBuilder {
      */
     protected JavaClass beforeWrite(JavaClass javaClass) throws JsonProcessingException {
         // 深拷贝类
-        JavaClass javaClassUsed = ClassTools.deepCopy(javaClass);
+        // 替换table关键字
+        JavaClass javaClassUsed = null;
+        javaClassUsed = ClassTools.deepCopy(javaClass);
+        JavaClass javaClassReplaceTable = replaceKeyword(javaClassUsed, table);
+
+        // 替换field关键字
+        javaClassUsed = ClassTools.deepCopy(javaClassReplaceTable);
+        JavaClass javaClassReplaceField = replaceKeyword(javaClassUsed, table.getFields().get(0));
+
+        // 替换index关键字
+        javaClassUsed = ClassTools.deepCopy(javaClassReplaceField);
+        JavaClass javaClassReplaceIndex = replaceKeyword(javaClassUsed, table.getIndexs().get(0));
 
         // 返回替换关键词后的类
-        return replaceKeyword(javaClassUsed, table);
+        return javaClassReplaceIndex;
     };
 
     /**

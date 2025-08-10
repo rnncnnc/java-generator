@@ -2,6 +2,8 @@ package com.qinge.backend.service.Impl;
 
 import com.qinge.backend.builder.FileBuilder;
 import com.qinge.backend.dto.BaseInfo;
+import com.qinge.backend.dto.TemplateDto;
+import com.qinge.backend.entity.common.FileObj;
 import com.qinge.backend.entity.constants.ClassDir;
 import com.qinge.backend.entity.table.Table;
 import com.qinge.backend.entity.template.Template;
@@ -34,35 +36,38 @@ public class BuilderServiceImpl implements BuilderService {
      * mysql构建项目
      */
     @Override
-    public void buildFile(BaseInfo baseInfo) throws Exception {
-
-        // 基础包名
-        String temPath = baseInfo.getTempPath();
-        String basePackage = baseInfo.getBasePackage();
+    public String buildFile(BaseInfo baseInfo) throws Exception {
 
         // 创建临时目录
-        FileTools.createDir(temPath);
-        log.info("创建临时目录成功：" + temPath);
-
-        // 解析数据库
-        List<Table> tableList = baseInfo.getTableList();
+        FileTools.createDir(baseInfo.getTempPath());
+        log.info("创建临时目录成功：" + baseInfo.getTempPath());
 
         // 构建文件
-        buildClass(basePackage, temPath, tableList);
+        return buildClass(baseInfo);
     }
 
     /**
      * 构建文件
-     * @param basePackage
-     * @param temPath
-     * @param tableList
+     * @param baseInfo
      * @throws Exception
      */
-    private void buildClass(String basePackage, String temPath, List<Table> tableList) throws Exception {
+    private String buildClass(BaseInfo baseInfo) throws Exception {
 
-        // TODO 根据分类获取不同类别的模板
+        TemplateDto templateDto = baseInfo.getTemplate();
+
+        List<Template> templateList = null;
+
         // 解析模板
-        List<Template> templateList = getAllTemplate(ClassDir.TEMPLATE_DIR + File.separator + "example");
+        // 若没有模板文件名，则全部生成文件，否则，只生成指定文件
+        if (StringTools.isEmpty(templateDto.getFile())) {
+            templateList = getAllTemplate(ClassDir.TEMPLATE_DIR + File.separator + templateDto.getType());
+        } else {
+            templateList = new ArrayList<>();
+            templateList.add(parseTemplate(ClassDir.TEMPLATE_DIR + File.separator + templateDto.getType() + File.separator + templateDto.getFile()));
+        }
+
+        // 生成文件的路径，只用于生成单个文件的场景
+        String filePath = "";
 
         for (Template template : templateList) {
             // 获取文件类型
@@ -83,29 +88,36 @@ public class BuilderServiceImpl implements BuilderService {
             FileObject fileObject = template.getTemplateObj();
 
             // 设置基础包名
-            fileBuilder.setBasePackage(basePackage);
+            fileBuilder.setBasePackage(baseInfo.getBasePackage());
             // 设置临时文件夹
-            fileBuilder.setTemPath(temPath);
+            fileBuilder.setTemPath(baseInfo.getTempPath());
 
             // 只需要构建一个文件
             if (classType.equals("single")) {
                 // 构建文件
-                fileBuilder.build(fileObject);
+                filePath = fileBuilder.build(fileObject);
             } else {
-                // 根据数据库创建多个文件
-                for (Table table : tableList) {
+                // 如果数据库信息为空，则直接生成
+                if (baseInfo.getTableList() == null || baseInfo.getTableList().isEmpty()){
+                    filePath = fileBuilder.build(fileObject);
+                } else {
+                    // 根据数据库创建多个文件
+                    for (Table table : baseInfo.getTableList()) {
 
-                    table.setBasePackage(basePackage);
+                        table.setBasePackage(baseInfo.getBasePackage());
 
-                    // 将table赋值给fileBuilder
-                    ClassTools.setFieldValue(fileBuilder, "table", table);
+                        // 将table赋值给fileBuilder
+                        ClassTools.setFieldValue(fileBuilder, "table", table);
 
-                    // 构建文件
-                    fileBuilder.build(fileObject);
+                        // 构建文件
+                        filePath = fileBuilder.build(fileObject);
+                    }
                 }
             }
 
         }
+
+        return filePath;
     }
 
 
@@ -117,12 +129,12 @@ public class BuilderServiceImpl implements BuilderService {
      * @return
      * @throws IOException
      */
-    private List<Template> getAllTemplate(String filePath) throws IOException, ClassNotFoundException {
-        List<String> pathList = FileTools.getResourcesFiles(filePath);
+    private List<Template> getAllTemplate(String filePath) throws IOException {
+        List<FileObj> fileObjList = FileTools.readDir(new File(filePath));
         List<Template> templateList = new ArrayList<>();
 
-        for (String path : pathList) {
-            Template template = parseTemplate(path);
+        for (FileObj fileObj : fileObjList) {
+            Template template = parseTemplate(fileObj.getPath());
 
             templateList.add(template);
         }
@@ -137,8 +149,12 @@ public class BuilderServiceImpl implements BuilderService {
      * @throws IOException
      */
     private Template parseTemplate(String fileName) throws IOException {
+
+        String fileStr[] = fileName.split("-");
+        String fileType = fileStr[fileStr.length - 1].split("\\.")[0];
+
         // 获取要解析的模板的类型
-        String type = StringTools.firstToUppercase(fileName.split("-")[1].split("\\.")[0]);
+        String type = StringTools.firstToUppercase(fileType);
 
         // 获取解析器的全类名
         String fullClassName = ObjectParser.class.getName().replace("Object", type);

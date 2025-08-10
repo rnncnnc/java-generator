@@ -17,15 +17,26 @@ public class BaseInfo {
 
     private List<Table> tableList;
 
+    private TemplateDto templateDto;
+
     private String tempPath;
 
-    public BaseInfo(String basePackage, List<Table> tableList, String tempPath) {
+    public BaseInfo(String basePackage, List<Table> tableList, TemplateDto templateDto, String tempPath) {
         this.basePackage = basePackage;
         this.tableList = tableList;
+        this.templateDto = templateDto;
         this.tempPath = tempPath;
     }
 
     public BaseInfo() {
+    }
+
+    public TemplateDto getTemplate() {
+        return templateDto;
+    }
+
+    public void setTemplate(TemplateDto templateDto) {
+        this.templateDto = templateDto;
     }
 
     public String getTempPath() {
@@ -57,6 +68,7 @@ public class BaseInfo {
         return "BaseInfoDTO{" +
                 "basePackage='" + basePackage + '\'' +
                 ", tableList=" + tableList +
+                ", template=" + templateDto +
                 ", tempPath='" + tempPath + '\'' +
                 '}';
     }

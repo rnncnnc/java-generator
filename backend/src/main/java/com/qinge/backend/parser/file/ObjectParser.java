@@ -2,8 +2,10 @@ package com.qinge.backend.parser.file;
 
 import com.qinge.backend.entity.template.Template;
 import com.qinge.backend.entity.template.object.FileObject;
+import com.qinge.backend.utils.FileTools;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -24,7 +26,7 @@ public abstract class ObjectParser implements FileParser {
      */
     public Template parseFromYml(String ymlFilePath) throws IOException {
         // 1. 读取 YAML 文件
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(ymlFilePath)) {
+        try (InputStream inputStream = new FileInputStream(ymlFilePath)) {
             if (inputStream == null) {
                 throw new IOException("YAML 文件未找到: " + ymlFilePath);
             }

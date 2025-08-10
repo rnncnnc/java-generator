@@ -1,6 +1,6 @@
 package com.qinge.backend.service;
 
-import com.qinge.backend.dto.Template;
+import com.qinge.backend.dto.TemplateDto;
 
 import java.util.Map;
 
@@ -23,9 +23,9 @@ public interface TemplateService {
 
     /**
      * 添加模板文件
-     * @param template 模板文件
+     * @param templateDto 模板文件
      */
-    void addTemplateFile(Template template);
+    void addTemplateFile(TemplateDto templateDto);
 
     /**
      * 删除模板文件
@@ -38,9 +38,9 @@ public interface TemplateService {
      * 更新模板文件
      * @param type 模板类型
      * @param file 模板文件名
-     * @param template 模板文件
+     * @param templateDto 模板文件
      */
-    void updateTemplateFile(String type, String file, Template template);
+    void updateTemplateFile(String type, String file, TemplateDto templateDto);
 
     /**
      * 重置模板

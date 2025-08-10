@@ -25,13 +25,21 @@ const handleCancel = () => {
   activeTab.value = 1
 }
 
+
+const tableList = ref([])
+
+
 // 提交生成
-const handleSubmit = () => {
+const handleSubmit = (tables) => {
   activeTab.value = 3
+
+  tableList.value = tables
 }
 
 // step 3 预览
-const ymlParserRef = ref()
+const handleGenerate = () => {
+  activeTab.value = 4
+}
 
 
 // step4 生成代码
@@ -47,16 +55,16 @@ const handleOver = () => {
     <div class="main">
       <div class="tabs">
         <el-tabs tab-position="left" style="height: auto" :stretch="true" v-model="activeTab">
-          <el-tab-pane label="填写数据库信息" :name="1">
+          <el-tab-pane label="填写信息" :name="1">
             <DataBaseForm ref="dataBaseFormRef" @finished="handleFinished" />
           </el-tab-pane>
-          <el-tab-pane label="选择要生成的表" :name="2">
+          <el-tab-pane label="选择数据表" :name="2">
             <InfoSelect ref="infoSelectRef" @cancel="handleCancel" @submit="handleSubmit" />
           </el-tab-pane>
-          <el-tab-pane label="预览" :name="3">
-            <Preview />
+          <el-tab-pane label="预览文件" :name="3">
+            <Preview :tableList="tableList" @generate="handleGenerate" />
           </el-tab-pane>
-          <el-tab-pane label="完成" :name="4">
+          <el-tab-pane label="完成生成" :name="4">
               <el-result title="生成成功" sub-title="恭喜您，代码已生成">
                 <template #icon>
                   <el-image

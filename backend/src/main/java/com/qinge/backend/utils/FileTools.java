@@ -217,15 +217,40 @@ public class FileTools {
 
             for (File file : files) {
                 if (file.isDirectory()) {
-                    result.add(new FileObj(file.getName(), readDir(file)));
+                    result.add(new FileObj(file.getName(), file.getPath(), readDir(file)));
                 } else {
-                    result.add(new FileObj(file.getName(), null));
+                    result.add(new FileObj(file.getName(), file.getPath(), null));
                 }
             }
         }
         return result;
     }
 
+    /**
+     * 读取目录下的所有文件和文件夹
+     * @param dir 目录对象
+     * @return 文件对象列表
+     */
+    public static List<FileObj> readDirWithoutPath(File dir) {
+        List<FileObj> result = new ArrayList<>();
+
+
+        if (dir.exists() && dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (files == null) {
+                return result;
+            }
+
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    result.add(new FileObj(file.getName(), null, readDirWithoutPath(file)));
+                } else {
+                    result.add(new FileObj(file.getName(), null, null));
+                }
+            }
+        }
+        return result;
+    }
 
     /**
      * 使用 NIO 方式修改文件夹名称（推荐）

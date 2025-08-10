@@ -1,8 +1,7 @@
 package com.qinge.backend.service.Impl;
 
-import com.qinge.backend.dto.Template;
+import com.qinge.backend.dto.TemplateDto;
 import com.qinge.backend.entity.constants.ClassDir;
-import com.qinge.backend.response.Result;
 import com.qinge.backend.service.TemplateService;
 import com.qinge.backend.utils.FileTools;
 import com.qinge.backend.utils.StringTools;
@@ -64,28 +63,28 @@ public class TemplateServiceImpl implements TemplateService {
 
     /**
      * 添加模板文件
-     * @param template 模板文件
+     * @param templateDto 模板文件
      */
     @Override
-    public void addTemplateFile(Template template) {
+    public void addTemplateFile(TemplateDto templateDto) {
 
         // 检查模板类型是否存在
-        File typeDir = new File(ClassDir.TEMPLATE_DIR + File.separator + template.getType());
+        File typeDir = new File(ClassDir.TEMPLATE_DIR + File.separator + templateDto.getType());
         if (!typeDir.exists()) {
-            log.error("模板类型不存在,{}", template.getType());
+            log.error("模板类型不存在,{}", templateDto.getType());
             throw new RuntimeException("模板类型不存在");
         }
 
         // 检查模板文件是否存在
-        File templateFile = new File(typeDir, template.getFile());
+        File templateFile = new File(typeDir, templateDto.getFile());
         if (templateFile.exists()) {
-            log.error("模板文件已存在,{}/{}", template.getType(), template.getFile());
+            log.error("模板文件已存在,{}/{}", templateDto.getType(), templateDto.getFile());
             throw new RuntimeException("模板文件已存在");
         }
 
         // 创建模板文件
-        if (!FileTools.createFileAndSetContent(templateFile, template.getContent())) {
-            log.error("创建模板文件失败,{}/{}", template.getType(), template.getFile());
+        if (!FileTools.createFileAndSetContent(templateFile, templateDto.getContent())) {
+            log.error("创建模板文件失败,{}/{}", templateDto.getType(), templateDto.getFile());
             throw new RuntimeException("创建模板文件失败");
         }
     }
@@ -114,7 +113,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public void updateTemplateFile(String type, String file, Template template) {
+    public void updateTemplateFile(String type, String file, TemplateDto templateDto) {
         // 检查模板类型是否存在
         File typeDir = new File(ClassDir.TEMPLATE_DIR + File.separator + type);
         if (!typeDir.exists()) {
@@ -129,21 +128,21 @@ public class TemplateServiceImpl implements TemplateService {
             throw new RuntimeException("模板文件不存在");
         }
 
-        if (!StringTools.isEmpty(template.getContent())) {
+        if (!StringTools.isEmpty(templateDto.getContent())) {
             // 更新模板文件内容
-            if (!FileTools.createFileAndSetContent(templateFile, template.getContent())) {
+            if (!FileTools.createFileAndSetContent(templateFile, templateDto.getContent())) {
                 log.error("更新模板文件内容失败,{}/{}", type, file);
                 throw new RuntimeException("更新模板文件内容失败");
             }
         }
 
-        if (!StringTools.isEmpty(template.getFile())) {
+        if (!StringTools.isEmpty(templateDto.getFile())) {
 
-            File newFile = new File(typeDir, template.getFile());
+            File newFile = new File(typeDir, templateDto.getFile());
 
             // 检查新文件是否已存在（避免覆盖）
             if (newFile.exists()) {
-                log.error("新文件已存在,{}/{}", type, template.getFile());
+                log.error("新文件已存在,{}/{}", type, templateDto.getFile());
                 throw new IllegalArgumentException("新文件已存在，避免覆盖: " + newFile.getName());
             }
 
@@ -153,7 +152,7 @@ public class TemplateServiceImpl implements TemplateService {
                 System.out.println(new String(bytes));
 
                 if (!FileTools.createFileAndSetContent(newFile, new String(bytes))) {
-                    log.error("更新模板文件内容失败,{}/{}", type, template.getFile());
+                    log.error("更新模板文件内容失败,{}/{}", type, templateDto.getFile());
                     throw new RuntimeException("更新模板文件内容失败");
                 }
 
@@ -170,9 +169,9 @@ public class TemplateServiceImpl implements TemplateService {
             templateFile = newFile;
         }
 
-        if (!StringTools.isEmpty(template.getType())) {
+        if (!StringTools.isEmpty(templateDto.getType())) {
             // 更新模板文件类型
-            if (!FileTools.moveFile(templateFile.getPath(), ClassDir.TEMPLATE_DIR + File.separator + template.getType())) {
+            if (!FileTools.moveFile(templateFile.getPath(), ClassDir.TEMPLATE_DIR + File.separator + templateDto.getType())) {
                 log.error("更新模板文件类型失败,{}/{}", type, file);
                 throw new RuntimeException("更新模板文件类型失败");
             }

@@ -7,6 +7,7 @@ import { createPinia } from 'pinia'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+// 配置 Monaco Editor 的 worker
 
 const pinia = createPinia()
 const app = createApp(App)

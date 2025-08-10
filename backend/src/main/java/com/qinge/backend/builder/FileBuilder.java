@@ -46,7 +46,7 @@ public abstract class FileBuilder implements Builder {
 
         // 将关键字替换为对应的值
         for (String key : keys) {
-            if (!sourceType.equals(Table.class.getSimpleName()) && !key.contains(sourceType)) {
+            if (!key.contains(sourceType)) {
                 continue;
             }
 
@@ -56,7 +56,7 @@ public abstract class FileBuilder implements Builder {
                     System.out.println(source);
                     String value = ((String) method.invoke(source)).trim();
                     keywrodMap.put(key, value);
-                } catch (InvocationTargetException | IllegalAccessException e) {
+                } catch (InvocationTargetException | IllegalAccessException | NullPointerException e) {
                     log.error("替换关键字失败: {}", key);
                     throw new RuntimeException(e);
                 }
@@ -75,7 +75,7 @@ public abstract class FileBuilder implements Builder {
      * 构建文件
      */
     @Override
-    abstract public void build(FileObject fileObj) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException;
+    abstract public String build(FileObject fileObj) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException;
 
     public FileBuilder() {
     }

@@ -1,6 +1,6 @@
 package com.qinge.backend.controller;
 
-import com.qinge.backend.dto.Template;
+import com.qinge.backend.dto.TemplateDto;
 import com.qinge.backend.entity.common.FileObj;
 import com.qinge.backend.response.Result;
 import com.qinge.backend.service.TemplateService;
@@ -112,14 +112,14 @@ public class TemplateController {
     /**
      * 添加模板文件
      *
-     * @param template 模板信息
+     * @param templateDto 模板信息
      * @return 结果
      */
     @Operation(summary = "添加模板文件", description = "添加模板文件")
     @PostMapping("/addTemplateFile")
-    public Result addTemplateFile(@RequestBody Template template) {
+    public Result addTemplateFile(@RequestBody TemplateDto templateDto) {
 
-        templateService.addTemplateFile(template);
+        templateService.addTemplateFile(templateDto);
 
         return Result.success("添加模板文件成功");
     }
@@ -145,14 +145,14 @@ public class TemplateController {
      * 更新模板文件
      * @param type 模板类型
      * @param file 模板文件名
-     * @param template 模板信息
+     * @param templateDto 模板信息
      * @return 结果
      */
     @Operation(summary = "更新模板文件", description = "更新模板文件")
     @PutMapping("/updateTemplateFile/{type}/{file}")
-    public Result updateTemplateFile(@PathVariable("type") String type, @PathVariable("file") String file, @RequestBody Template template) {
+    public Result updateTemplateFile(@PathVariable("type") String type, @PathVariable("file") String file, @RequestBody TemplateDto templateDto) {
 
-        templateService.updateTemplateFile(type, file, template);
+        templateService.updateTemplateFile(type, file, templateDto);
 
         return Result.success("更新模板文件成功");
     }

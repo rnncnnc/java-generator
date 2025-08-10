@@ -1,20 +1,37 @@
 <script setup>
 import { getTemplateList, getTemplateContent, resetTemplate, addTemplateType, addTemplateFile, deleteTemplateType, updateTemplateType, deleteTemplateFile, updateTemplateName, updateTemplateContent } from '@/api/template'
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch, defineProps } from 'vue'
+import { downloadFiles } from "@/api/database"
+
+import { preview } from '@/api/database'
+
 
 import CodeDisplay from './CodeDisplay.vue'
 import yaml from 'js-yaml'
 
 import { options } from '@/assets/common'
+import { useIndexStore } from "@/store/index"
 
+import MonacoEditor from 'monaco-editor-vue3';
+import * as monaco from 'monaco-editor';
 
 import {
   Switch,
   RefreshLeft,
   Plus,
-  Edit
+  Edit,
+  Discount
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
+
+const props = defineProps({
+    tableList: {
+        type: Array,
+        default: []
+    }
+})
+
 
 
 const menuItem = ref([])
@@ -26,8 +43,8 @@ onMounted(() => {
 
 
 // 获取模板列表
-const getList = () => {
-    getTemplateList().then(res => {
+const getList = async () => {
+    await getTemplateList().then(res => {
         menuItem.value = res.data
 
         menuItem.value.map(item => {
@@ -35,15 +52,19 @@ const getList = () => {
             item.children.map(child => {
                 child.edit = false
                 child.clearName = child.name.split('-')[0]
+                child.type = child.name.split('-')[1].split('.')[0]
             })
         })
+
+        if (currentTemplateType.value.trim() === '') {
+            currentTemplateType.value = menuItem.value[0].name
+        }
 
 
         ElMessage({
             message: '获取模板列表成功',
             type: 'success'
         })
-
     }).catch(err => {
         ElMessage({
             message: '获取模板列表失败',
@@ -56,38 +77,52 @@ const getList = () => {
 // 模板内容
 const template = ref('')
 
-
+// 模板修改后的内容
 const changeData = ref('')
 
+// 处理模板修改事件
 const handleContentUpdate = (newVal) => {
     changeData.value = newVal
-    
 }
 
+// 当前选择的类型
 const currentTemplateType = ref('')
+// 当前选择的文件
 const currentTemplateFile = ref('')
+
+// 自动保存
+const autoSave = ref(false)
 
 // 获取对应的模板内容
 const handleClick = async (type, file) => {
-
-    // TODO 判断文件是否更改
     if (changeData.value.trim() !== '') {
-        await ElMessageBox.confirm('当前页面未保存，是否保存内容？')
-        .then(() => {
-        // 确认保存
+        // 自动保存
+        if (autoSave.value) {
             handleSave()
-        })
-        .catch(() => {
-            changeData.value = ''
-        })
+        } else {
+            await ElMessageBox.confirm('当前页面未保存，是否保存内容？')
+            .then(() => {
+            // 确认保存
+                handleSave()
+            })
+            .catch(() => {
+                changeData.value = ''
+            })
+        }
     }
-
-    getTemplateContent(type, file).then(res => {
-        template.value = JSON.stringify(res.data)
-    })
 
     currentTemplateType.value = type
     currentTemplateFile.value = file
+
+    
+
+    if (lang.value === 'java') {
+        parseToJava()
+    } else if (lang.value === 'yml') {
+        getTemplateContent(type, file).then(res => {
+            template.value = JSON.stringify(res.data)
+        })
+    }
 }
 
 // 保存内容
@@ -133,6 +168,7 @@ onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown);
 });
 
+// 当前显示的语言
 const lang = ref('yml')
 
 const codeDisplay = ref()
@@ -149,19 +185,58 @@ const handleChangeLang = async () => {
         })
     }
 
+    if (currentTemplateFile.value.trim() === '' || currentTemplateType.value.trim() === '') {
+        ElMessage({
+            message: '请先选择模板',
+            type: 'error'
+        })
+
+        return
+    }
+
+
     lang.value = lang.value === 'yml' ? 'java' : 'yml'
+
+
+    if (lang.value === 'java') {
+        parseToJava()
+    }
+
     codeDisplay.value.changeLanguage(lang.value)
 
-    ElMessage({
-        message: '切换成功,当前语言为:' + lang.value,
-        type: 'success'
-    })
+}
 
+// 解析为java
+const parseToJava = () => {
+    const indexStore = useIndexStore()
+    const basePackage = indexStore.getBasePackage
+
+    let tempTableList = null
+
+    if (props.tableList.length !== 0) {
+        tempTableList = [props.tableList[0]]
+    }
+
+    const params = {
+        tableList: tempTableList,
+        template: {
+            type: currentTemplateType.value,
+            file: currentTemplateFile.value
+        },
+        basePackage: basePackage
+    }
+
+    // 获取预览文件
+    preview(params).then(res => {
+        template.value = res.data
+    })
 }
 
 // 重置模板
 const handleReset = () => {
     resetTemplate().then(res => {
+        getList()
+
         ElMessage({
             message: '重置成功',
             type: 'success'
@@ -178,9 +253,11 @@ const handleReset = () => {
 // 激活的菜单项
 const activeIndex = ref('')
 
-
+// 类型弹出框是否显示
 const typePopVisible = ref(false)
+// 类型input输入
 const templateType = ref('')
+
 // 添加模板分类
 const handleAddTemplateType = () => {
     if (!templateType.value.trim()) {
@@ -236,29 +313,29 @@ const handleDeleteTemplateType = (item) => {
 
 }
 
+// 模板字段弹窗是否显示
+const templateFieldDialogVisible = ref(false)
 
-const drawVisiable = ref(false)
-
+// 选择框数组
 const fileTypes = ref(options)
 const classTypes = ref([])
 
+// 表单选项
 const filename = ref('')
 const fileType = ref('')
 const classType = ref('')
 
-const currentType = ref('')
-
-// 打开抽屉
-const handleOpenDrawer = (item, index) => {
-    currentType.value = item.name
-    drawVisiable.value = true
+// 打开弹窗
+const handleOpenTemplateFieldDialog = (item, index) => {
+    currentTemplateType.value = item.name
+    templateFieldDialogVisible.value = true
     // 加载模板内容
 
 }
 
-// 关闭抽屉
-const handleCloseDrawer = () => {
-    drawVisiable.value = false
+// 关闭弹窗
+const handleCloseTemplateFieldDialog = () => {
+    templateFieldDialogVisible.value = false
     filename.value = ''
     fileType.value = ''
     classType.value = ''
@@ -295,20 +372,25 @@ const handleAddTemplate = async () => {
     const content = await loadTemplate(fileType.value, classType.value)
 
     const params = {
-        type: currentType.value,
+        type: currentTemplateType.value,
         file: filename.value.trim() + '-' + fileType.value + '.yml',
         content: content
     }
 
-    addTemplateFile(params).then(res => {
+    addTemplateFile(params).then(async res => {
 
-        getList()
+        await getList()
+
+        // 刷新菜单索引
+        updateMenuIndex(currentTemplateType.value, filename.value)
 
         ElMessage({
             message: '添加成功',
             type: 'success'
         })
 
+        // 关闭弹窗并清空数据
+        handleCloseTemplateFieldDialog()
     }).catch(err => {
         ElMessage({
             message: '添加失败',
@@ -316,8 +398,33 @@ const handleAddTemplate = async () => {
         })
 
     })
+}
 
-    handleCloseDrawer()
+// 更新当前的菜单索引
+const updateMenuIndex = (type, file) => {
+    let typeIndex = 0
+    let fileIndex = 0
+
+    let filename = ''
+
+    // 遍历找出当前文件的索引
+    for(let i = 0; i < menuItem.value.length; i++) {
+        if (menuItem.value[i].name === type) {
+            typeIndex = i
+
+            for (let j = 0; j < menuItem.value[i].children.length; j++) {
+                if (menuItem.value[i].children[j].clearName === file) {
+                    fileIndex = j
+                    filename = menuItem.value[i].children[j].name
+                }
+            }
+        }
+    }
+
+    activeIndex.value = `${String(typeIndex)}-${String(fileIndex)}`
+
+    // 获取模板内容
+    handleClick(type, filename)
 }
 
 
@@ -331,9 +438,6 @@ const handleSelectorChange = (item) => {
             classTypes.value = element.classType
         }
     }
-
-    
-
 }
 
 // 加载模板
@@ -508,13 +612,119 @@ const handleTemplateChange = (item, subItem) => {
     item.edit = false
 }
 
+// 生成对话框是否显示
+const generateDialogVisible = ref(false)
+
+const emits = defineEmits(['generate'])
+
+// 生成文件
+const handleGenerate = () => {
+
+    const indexStore = useIndexStore()
+    const basePackage = indexStore.getBasePackage
+
+
+    const params = {
+        basePackage: basePackage,
+        tableList: props.tableList,
+        template: {
+            type: currentTemplateType.value
+        }
+    }
+
+    downloadFiles(params).then(res => {
+        generateDialogVisible.value = false
+
+        emits('generate')
+
+        ElMessage.success('生成代码成功')
+    })
+}
+
+
+// 抽屉显示
+const drawVisiable = ref(false)
+
+const parseData = ref([])
+
+const codeContent = ref("1111")
+const activeName = ref('')
+
+const editorOptions = ref({
+   automaticLayout: true, // 自动适应容器大小
+    minimap: { enabled: false }, // 显示缩略图
+    scrollBeyondLastLine: true,
+    fontSize: 12,
+    lineNumbers: 'on',
+    folding: true,
+    lineDecorationsWidth: 10,
+    lineNumbersMinChars: 5,
+    roundedSelection: false,
+    scrollbar: {
+        vertical: 'visible', // 始终显示垂直滚动条
+        horizontal: 'visible', // 始终显示水平滚动条
+        verticalScrollbarSize: 10, // 垂直滚动条宽度
+        horizontalScrollbarSize: 10 // 水平滚动条高度
+    },
+    theme: 'vs', // 使用深色主题
+    readOnly: true
+});
+
+// 处理抽屉打开事件,显示解析文件
+const handleOpenDrawer = async () => {
+    drawVisiable.value = true
+
+    const specialInfo = await fetch(`/template/SpecialFieldExplain.exp`)
+    const specialData = await specialInfo.text()
+    parseData.value.push({
+        fileType: 'SpecialFieldExplain',
+        content: specialData
+    })
+
+    for (let i = 0; i < fileTypes.value.length; i++) {
+        
+        const res = await fetch(`/template/${fileTypes.value[i].fileType}/template.yml`)
+        const data = await res.text()
+
+        const obj = {
+            fileType: fileTypes.value[i].fileType,
+            content: data
+        }
+        
+        parseData.value.push(obj)
+    }
+
+    activeName.value = 'SpecialFieldExplain'
+    codeContent.value = specialData
+}
+
+// 编辑器实例对象
+const editorRef = ref()
+
+// 点击tab事件,更新codeContent内容
+const handleDrawerTabClick = (tab) => {
+    parseData.value.forEach(item => {
+        if (item.fileType === tab.props.name) {
+            codeContent.value = item.content
+        }
+    })
+
+    editorRef.value.editor.setScrollPosition({ scrollTop: 0 })
+}
+
 </script>
 
 <template>
     <div class="main-box">
         <div class="left-menu">
             <div class="preview">
-                <h2 class="title">预览模板</h2>
+                <div class="header">
+                    <h2 class="title">预览模板</h2>
+                    <el-checkbox v-model="autoSave" label="as" size="large" />
+                    <el-button type="info" size="normal" @click="handleOpenDrawer" :icon="Discount" circle ></el-button>
+
+                    <el-button type="primary" size="large" @click="generateDialogVisible = true">GENERATE</el-button>
+                </div>
                 
                 <div class="btn-group">
                     <el-button type="danger" :icon="RefreshLeft" size="small" @click="handleReset">重置</el-button>
@@ -559,7 +769,7 @@ const handleTemplateChange = (item, subItem) => {
 
 
                                 <div class="sub-menu-item-btn">
-                                    <el-icon @click.stop.prevent="handleOpenDrawer(item, String(index))"><Plus /></el-icon>
+                                    <el-icon @click.stop.prevent="handleOpenTemplateFieldDialog(item, String(index))"><Plus /></el-icon>
 
                                     <el-popconfirm
                                         :width="200"
@@ -577,32 +787,35 @@ const handleTemplateChange = (item, subItem) => {
                             </div>
                         </template>
 
-                        <template v-for="(subItem, subIndex) in item.children" :key="subIndex">
-                            <el-menu-item :index="`${String(index)}-${String(subIndex)}`" @click="handleClick(item.name, subItem.name)">
-                                <template #title>
-                                    <div class="menu-item">
-                                        <el-input ref="templateInput" v-model="changeTemplate" @click.stop.prevent @blur="handleTemplateChange(item, subItem)" style="width: 100px" placeholder="请输入模板类名..." v-if="subItem.edit" />
-                                        
-                                        <p class="template-name" @click.stop.prevent="handleEditTemplate(subItem)" v-else>{{subItem.clearName}}</p>
+                        <template v-for="(type, typeIndex) in fileTypes" :key="typeIndex">
+                            <el-menu-item-group :title="type.fileType" >
+                                <template v-for="(subItem, subIndex) in item.children" :key="subIndex">
+                                    <el-menu-item :index="`${String(index)}-${String(subIndex)}`" @click="handleClick(item.name, subItem.name)" v-if="subItem.type === type.fileType">
+                                        <template #title>
+                                            <div class="menu-item">
+                                                <el-input ref="templateInput" v-model="changeTemplate" @click.stop.prevent @blur="handleTemplateChange(item, subItem)" style="width: 100px" placeholder="请输入模板类名..." v-if="subItem.edit" />
+                                                
+                                                <p class="template-name" @click.stop.prevent="handleEditTemplate(subItem)" v-else>{{subItem.clearName}}</p>
 
-                                        <el-popconfirm
-                                            :width="200"
-                                            class="box-item"
-                                            :title="`确认删除${subItem.name}吗？`"
-                                            placement="right"
-                                            @confirm="handleDeleteTemplate(item, subItem)"
+                                                <el-popconfirm
+                                                    :width="200"
+                                                    class="box-item"
+                                                    :title="`确认删除${subItem.name}吗？`"
+                                                    placement="right"
+                                                    @confirm="handleDeleteTemplate(item, subItem)"
 
-                                        >
-                                            <template #reference>
-                                                <el-icon @click.stop.prevent><Delete /></el-icon>
-                                            </template>
-                                        </el-popconfirm>
-                                    </div>
+                                                >
+                                                    <template #reference>
+                                                        <el-icon @click.stop.prevent><Delete /></el-icon>
+                                                    </template>
+                                                </el-popconfirm>
+                                            </div>
+                                        </template>
+                                    </el-menu-item>
                                 </template>
-
-                            </el-menu-item>
-
+                            </el-menu-item-group>
                         </template>
+                        
 
                     </el-sub-menu>
                 </template>
@@ -613,49 +826,75 @@ const handleTemplateChange = (item, subItem) => {
         <div class="code-editor">
             <CodeDisplay ref="codeDisplay" :template="template" @update="handleContentUpdate" />
         </div>
-        <el-drawer v-model="drawVisiable" :direction="direction" @close="handleCloseDrawer">
-
-            <template #header>
-            <h4>添加模板文件</h4>
-            </template>
+        <el-drawer v-model="drawVisiable" title="文件解析" :with-header="false">
             <template #default>
             <div>
-                <el-form label-width="auto" style="max-width: 600px">
-                    <el-form-item label="fileName">
-                        <el-input v-model="filename" placeholder="请输入文件名"  />
-                    </el-form-item>
-                    <el-form-item label="fileType">
-                        <el-select v-model="fileType" placeholder="请选择文件类型"  @change="handleSelectorChange">
-                            <el-option
-                            v-for="item in fileTypes"
-                            :key="item.fileType"
-                            :label="item.fileType"
-                            :value="item.fileType"
-                            />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="classType">
-                        <el-select v-model="classType" placeholder="请选择文件类型" >
-                            <el-option
-                            v-for="item in classTypes"
-                            :key="item.name"
-                            :label="item.name"
-                            :value="item.name"
-                            />
-                        </el-select>
-                    </el-form-item>
-                </el-form>
-                
-                
-            </div>
-            </template>
-            <template #footer>
-            <div style="flex: auto">
-                <el-button type="danger" @click="handleCloseDrawer">取消</el-button>
-                <el-button type="primary" @click="handleAddTemplate">确定</el-button>
+                <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleDrawerTabClick">
+                    <el-tab-pane :label="item.fileType" :name="item.fileType" v-for="(item, index) in parseData" :key="index"></el-tab-pane>
+                </el-tabs>
+                <div class="editor-container">
+                    <MonacoEditor
+                    ref="editorRef"
+                    v-model:value="codeContent"
+                    :options="editorOptions"
+                    class="monaco-editor"
+                    />
+                </div>
             </div>
             </template>
         </el-drawer>
+
+        <!-- 添加模板弹窗 -->
+        <el-dialog v-model="templateFieldDialogVisible" title="选择使用的模板类型" width="500" @close="handleCloseTemplateFieldDialog">
+
+            <el-form label-width="auto" style="max-width: 600px">
+                <el-form-item label="fileName">
+                    <el-input v-model="filename" placeholder="请输入文件名"  />
+                </el-form-item>
+                <el-form-item label="fileType">
+                    <el-select v-model="fileType" placeholder="请选择文件类型"  @change="handleSelectorChange">
+                        <el-option
+                        v-for="item in fileTypes"
+                        :key="item.fileType"
+                        :label="item.fileType"
+                        :value="item.fileType"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="classType">
+                    <el-select v-model="classType" placeholder="请选择文件类型" >
+                        <el-option
+                        v-for="item in classTypes"
+                        :key="item.name"
+                        :label="item.name"
+                        :value="item.name"
+                        />
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="handleCloseTemplateFieldDialog">Cancel</el-button>
+                    <el-button type="primary" @click="handleAddTemplate">
+                    Confirm
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+         <el-dialog v-model="generateDialogVisible" title="选择使用的模板类型" width="500">
+            <el-select v-model="currentTemplateType">
+                <el-option :label="item.name" :value="item.name" v-for="(item, index) in menuItem" :key="index" />
+            </el-select>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="generateDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="handleGenerate">
+                    Confirm
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
 
     </div>
 </template>
@@ -693,6 +932,13 @@ const handleTemplateChange = (item, subItem) => {
     width: 100%;
     padding: 10px 20px;
 
+    .header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     .btn-group {
         display: flex;
         width: 100%;
@@ -708,7 +954,19 @@ const handleTemplateChange = (item, subItem) => {
     align-items: center;
 }
 
+.editor-container {
+  width: 100%;
+  height: 85vh;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
 
+.monaco-editor {
+  width: 100%;
+  height: calc(100% - 80px);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 .title {
     font-size: 18px;
     margin-right: 30px;

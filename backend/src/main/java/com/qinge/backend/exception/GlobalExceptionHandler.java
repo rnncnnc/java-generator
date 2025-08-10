@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 @Hidden
-@RestControllerAdvice
+// @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(value = {Exception.class})
     public Result exceptionHandler(Exception e, HttpServletRequest request) {
-        logger.error("请求错误，请求地址{}，错误信息：{}", request.getRequestURL(), e.getMessage());
+        logger.error("请求错误，请求地址{}，错误信息：{}: {}", request.getRequestURL(), e.getClass(), e.getMessage());
         return Result.error(e.getMessage());
     }
 }

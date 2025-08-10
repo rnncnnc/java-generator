@@ -12,5 +12,5 @@ import com.qinge.backend.dto.BaseInfo;
 public interface BuilderService {
 
     // 构建文件
-    void buildFile(BaseInfo baseInfo) throws Exception;
+    String buildFile(BaseInfo baseInfo) throws Exception;
 }

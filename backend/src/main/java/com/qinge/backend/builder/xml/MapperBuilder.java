@@ -27,6 +27,10 @@ public class MapperBuilder extends XmlBuilder {
     // 构建前 替换关键字
     @Override
     XmlFile beforeWrite(XmlFile xmlFile) throws JsonProcessingException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (table == null) {
+            return xmlFile;
+        }
+
         XmlFile xmlFileCopy = ClassTools.deepCopy(xmlFile);
 
         replaceList(xmlFileCopy.getTags());
@@ -39,7 +43,7 @@ public class MapperBuilder extends XmlBuilder {
      * @param tags
      */
     private void replaceList(List<Tag> tags) throws JsonProcessingException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        if (CollectionUtils.isEmpty(tags)) {
+        if (CollectionUtils.isEmpty(tags) || table == null) {
             return;
         }
 

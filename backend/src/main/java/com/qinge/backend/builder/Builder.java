@@ -19,5 +19,5 @@ public interface Builder {
      * 构建文件
      * @param fileObj
      */
-    void build(FileObject fileObj) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException;
+    String build(FileObject fileObj) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException;
 }

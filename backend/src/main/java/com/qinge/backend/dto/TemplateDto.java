@@ -7,7 +7,7 @@ package com.qinge.backend.dto;
  */
 
 
-public class Template {
+public class TemplateDto {
 
     private String type;
     private String file;

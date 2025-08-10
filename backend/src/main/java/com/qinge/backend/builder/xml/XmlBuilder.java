@@ -33,7 +33,7 @@ public abstract class XmlBuilder extends FileBuilder {
      * @throws IOException
      */
     @Override
-    public void build(FileObject fileObj) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public String build(FileObject fileObj) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         XmlFile xmlFile = (XmlFile) fileObj;
 
         // 构建前
@@ -57,6 +57,8 @@ public abstract class XmlBuilder extends FileBuilder {
         // 写入文件(自动创建文件,若存在则覆盖)
         Files.write(Paths.get(filePath), content.getBytes());
         log.info("写入文件成功: {}", xmlFile.getName());
+
+        return filePath;
     }
 
     /**
