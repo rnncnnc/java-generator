@@ -20,6 +20,7 @@ pipeline {
         stage('通过nodejs构建前端项目') {
             steps {
                 sh '''cd fronted
+                source /etc/profile
                 /var/jenkins_home/nodejs/bin/pnpm install
                 /var/jenkins_home/nodejs/bin/pnpm build
                 '''
