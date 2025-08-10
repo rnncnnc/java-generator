@@ -24,9 +24,6 @@ public class Table {
     // 表注释
     private String TableComment;
 
-    // 基础包名
-    private String BasePackage;
-
     // 字段信息
     private List<Field> Fields;
 
@@ -34,22 +31,6 @@ public class Table {
     private List<Index> Indexs;
 
     public Table() {
-    }
-
-    public String getBasePackage() {
-        return BasePackage;
-    }
-
-    public void setBasePackage(String basePackage) {
-        BasePackage = basePackage;
-    }
-
-    /**
-     * 获取当前时间
-     * @return
-     */
-    public String getDateTime() {
-        return new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date());
     }
 
     public String getTableName() {

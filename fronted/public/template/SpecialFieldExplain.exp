@@ -4,8 +4,6 @@ Table: # 分类
 	LTableName # 首字母小写的表名
 	TableOriginName # 数据库内的原始表名
 	TableComment # 数据库的注释
-	BasePackage	# 生成的类的基础包名
-	DateTime # 当前时间
 Field:
 	FieldName # 字段名
 	FieldColumn # 数据库内的原始字段名
@@ -16,3 +14,6 @@ Index:
 	IndexName # 索引名
 	IndexField # 索引关联的字段名
 	IndexColumn # 索引关联的字段的数据库内的原始名称
+CommonVariables: # 公共变量
+	BasePackage	# 生成的类的基础包名
+	DateTime # 当前时间

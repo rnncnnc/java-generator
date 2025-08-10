@@ -1,7 +1,7 @@
 package com.qinge.backend.builder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.qinge.backend.entity.table.Table;
+import com.qinge.backend.entity.common.CommonVariables;
 import com.qinge.backend.entity.template.object.FileObject;
 import com.qinge.backend.entity.enums.KeywordMethods;
 import com.qinge.backend.utils.JsonTools;
@@ -30,6 +30,9 @@ public abstract class FileBuilder implements Builder {
     // 临时目录
     protected String temPath;
 
+    // 公共变量
+    protected CommonVariables commonVariables;
+
     /**
      * 替换关键字
      * @param obj
@@ -46,7 +49,7 @@ public abstract class FileBuilder implements Builder {
 
         // 将关键字替换为对应的值
         for (String key : keys) {
-            if (!key.contains(sourceType)) {
+            if (!key.contains(sourceType) && !sourceType.equals("CommonVariables")) {
                 continue;
             }
 
@@ -94,5 +97,13 @@ public abstract class FileBuilder implements Builder {
 
     public void setTemPath(String temPath) {
         this.temPath = temPath;
+    }
+
+    public CommonVariables getCommonVariables() {
+        return commonVariables;
+    }
+
+    public void setCommonVariables(CommonVariables commonVariables) {
+        this.commonVariables = commonVariables;
     }
 }

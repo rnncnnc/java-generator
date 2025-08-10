@@ -3,6 +3,7 @@ package com.qinge.backend.service.Impl;
 import com.qinge.backend.builder.FileBuilder;
 import com.qinge.backend.dto.BaseInfo;
 import com.qinge.backend.dto.TemplateDto;
+import com.qinge.backend.entity.common.CommonVariables;
 import com.qinge.backend.entity.common.FileObj;
 import com.qinge.backend.entity.constants.ClassDir;
 import com.qinge.backend.entity.table.Table;
@@ -69,6 +70,9 @@ public class BuilderServiceImpl implements BuilderService {
         // 生成文件的路径，只用于生成单个文件的场景
         String filePath = "";
 
+        CommonVariables commonVariables = new CommonVariables();
+        commonVariables.setBasePackage(baseInfo.getBasePackage());
+
         for (Template template : templateList) {
             // 获取文件类型
             String fileType = template.getFileType();
@@ -92,6 +96,9 @@ public class BuilderServiceImpl implements BuilderService {
             // 设置临时文件夹
             fileBuilder.setTemPath(baseInfo.getTempPath());
 
+            // 设置公共变量
+            fileBuilder.setCommonVariables(commonVariables);
+
             // 只需要构建一个文件
             if (classType.equals("single")) {
                 // 构建文件
@@ -103,8 +110,6 @@ public class BuilderServiceImpl implements BuilderService {
                 } else {
                     // 根据数据库创建多个文件
                     for (Table table : baseInfo.getTableList()) {
-
-                        table.setBasePackage(baseInfo.getBasePackage());
 
                         // 将table赋值给fileBuilder
                         ClassTools.setFieldValue(fileBuilder, "table", table);

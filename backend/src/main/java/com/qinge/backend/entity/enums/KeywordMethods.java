@@ -1,5 +1,6 @@
 package com.qinge.backend.entity.enums;
 
+import com.qinge.backend.entity.common.CommonVariables;
 import com.qinge.backend.entity.table.Field;
 import com.qinge.backend.entity.table.Index;
 import com.qinge.backend.entity.table.Table;
@@ -14,6 +15,26 @@ import java.lang.reflect.Method;
 
 
 public enum KeywordMethods {
+    // 公共变量
+    DATETIME("DateTime", new Object() {
+        Method evaluate() {
+            try {
+                return CommonVariables.class.getMethod("getDateTime");
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }.evaluate()),
+    BASEPACKAGE("BasePackage", new Object() {
+        Method evaluate() {
+            try {
+                return CommonVariables.class.getMethod("getBasePackage");
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }.evaluate()),
+    // 表变量
     TABLENAME("TableName", new Object() {
         Method evaluate() {
             try {
@@ -50,25 +71,7 @@ public enum KeywordMethods {
             }
         }
     }.evaluate()),
-    DATETIME("DateTime", new Object() {
-        Method evaluate() {
-            try {
-                return Table.class.getMethod("getDateTime");
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }.evaluate()),
-    BASEPACKAGE("BasePackage", new Object() {
-        Method evaluate() {
-            try {
-                return Table.class.getMethod("getBasePackage");
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }.evaluate()),
-
+    // 字段变量
     FIELDNAME("FieldName", new Object() {
         Method evaluate() {
             try {
@@ -124,7 +127,7 @@ public enum KeywordMethods {
             }
         }
     }.evaluate()),
-
+    // 索引变量
     INDEXNAME("IndexName", new Object() {
         Method evaluate() {
             try {

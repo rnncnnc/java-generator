@@ -6,6 +6,7 @@ import com.qinge.backend.entity.template.object.FileObject;
 import com.qinge.backend.entity.template.object.xml.Tag;
 import com.qinge.backend.entity.template.object.xml.TagParam;
 import com.qinge.backend.entity.template.object.xml.XmlFile;
+import com.qinge.backend.utils.ClassTools;
 import com.qinge.backend.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
@@ -38,6 +39,10 @@ public abstract class XmlBuilder extends FileBuilder {
 
         // 构建前
         xmlFile = beforeWrite(xmlFile);
+
+        // 替换公共变量
+        XmlFile xmlFileUsed = ClassTools.deepCopy(xmlFile);
+        xmlFile = replaceKeyword(xmlFileUsed, commonVariables);
 
         // 文件路径
         String filePath = temPath + File.separator + xmlFile.getFilePath() + File.separator + xmlFile.getName() + ".xml";

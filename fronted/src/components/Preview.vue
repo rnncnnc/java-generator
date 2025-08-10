@@ -1,6 +1,6 @@
 <script setup>
 import { getTemplateList, getTemplateContent, resetTemplate, addTemplateType, addTemplateFile, deleteTemplateType, updateTemplateType, deleteTemplateFile, updateTemplateName, updateTemplateContent } from '@/api/template'
-import { ref, onMounted, onUnmounted, nextTick, watch, defineProps } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { downloadFiles } from "@/api/database"
 
 import { preview } from '@/api/database'

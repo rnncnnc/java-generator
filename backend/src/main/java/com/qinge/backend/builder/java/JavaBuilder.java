@@ -44,6 +44,11 @@ public abstract class JavaBuilder extends FileBuilder {
             javaClass = beforeWrite(javaClass);
         }
 
+        // 替换公共变量
+        JavaClass javaClassUsed = ClassTools.deepCopy(javaClass);
+        javaClass = replaceKeyword(javaClassUsed, commonVariables);
+
+        // 拼接文件路径
         String filePath = temPath + File.separator + javaClass.getPackageName().replace(".", File.separator) + File.separator + javaClass.getName() + ".java";
 
         File parentDir = new File(filePath).getParentFile();

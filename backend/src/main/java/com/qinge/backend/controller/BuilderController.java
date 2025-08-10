@@ -214,6 +214,9 @@ public class BuilderController {
             if (os != null) {
                 os.close();
             }
+
+            // 删除时文件夹
+            FileTools.deleteDirectory(new File(ClassDir.TEMP_DIR));
         }
     }
 }
