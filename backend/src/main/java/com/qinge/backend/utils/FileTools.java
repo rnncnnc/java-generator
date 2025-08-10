@@ -1,10 +1,12 @@
 package com.qinge.backend.utils;
 
+import com.qinge.backend.entity.common.FileObj;
+
 import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -20,6 +22,251 @@ import java.util.zip.ZipOutputStream;
 
 
 public class FileTools {
+
+    /**
+     * 复制文件夹并修改目标文件夹名称
+     * @param sourceFolder 源文件夹
+     * @param targetFolder 目标文件夹
+     * @return 是否复制成功
+     */
+    public static boolean copyAndRenameFolder(File sourceFolder, File targetFolder) {
+        Path sourcePath = sourceFolder.toPath();
+        Path targetParentPath = targetFolder.getParentFile().toPath();
+        // 构建目标文件夹完整路径（父目录 + 新名称）
+        Path targetPath = targetFolder.toPath();
+
+        // 校验源文件夹是否存在
+        if (!Files.exists(sourcePath) || !Files.isDirectory(sourcePath)) {
+            System.out.println("源文件夹不存在或不是目录：" + sourceFolder.getName());
+            return false;
+        }
+
+        // 校验目标父目录是否存在，不存在则创建
+        try {
+            if (!Files.exists(targetParentPath)) {
+                Files.createDirectories(targetParentPath);
+            }
+        } catch (IOException e) {
+            System.err.println("创建目标父目录失败：" + e.getMessage());
+            return false;
+        }
+
+        // 检查目标文件夹是否已存在
+        if (Files.exists(targetPath)) {
+            System.out.println("目标文件夹已存在：" + targetPath.toAbsolutePath());
+            return false;
+        }
+
+        // 递归复制文件夹内容
+        try {
+            Files.walkFileTree(sourcePath, new SimpleFileVisitor<Path>() {
+                // 访问目录时创建对应的目标目录
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    // 计算相对路径（源目录下的子目录结构）
+                    Path relativePath = sourcePath.relativize(dir);
+                    // 创建目标目录（目标根目录 + 相对路径）
+                    Path targetDir = targetPath.resolve(relativePath);
+                    Files.createDirectories(targetDir);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                // 访问文件时复制文件到目标目录
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    // 计算相对路径
+                    Path relativePath = sourcePath.relativize(file);
+                    // 目标文件路径
+                    Path targetFile = targetPath.resolve(relativePath);
+                    // 复制文件（保持属性）
+                    Files.copy(file, targetFile, StandardCopyOption.COPY_ATTRIBUTES);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+
+            System.out.println("文件夹复制并重命名成功：" + targetPath.toAbsolutePath());
+            return true;
+        } catch (IOException e) {
+            System.err.println("文件夹复制失败：" + e.getMessage());
+            // 清理可能的部分复制结果
+            deleteDirectory(targetPath.toFile());
+            return false;
+        }
+    }
+
+
+    /**
+     * 修改文件名称
+     * @param oldFilePath 原文件完整路径（如 /data/oldFile.txt）
+     * @param newFileName 新文件名称（含扩展名，如 newFile.txt）
+     * @return 是否修改成功
+     */
+    public static boolean renameFile(String oldFilePath, String newFileName) {
+        Path oldPath = Paths.get(oldFilePath);
+        Path parentDir = oldPath.getParent();
+
+        // 校验原文件存在且为文件
+        if (!Files.exists(oldPath) || !Files.isRegularFile(oldPath)) {
+            throw new IllegalArgumentException("原文件不存在或不是文件: " + oldFilePath);
+        }
+
+        // 构建新文件路径
+        Path newPath = parentDir.resolve(newFileName);
+
+        // 检查新文件是否已存在（避免覆盖）
+        if (Files.exists(newPath)) {
+            throw new IllegalArgumentException("新文件已存在，避免覆盖: " + newPath);
+        }
+
+        try {
+            // 仅执行重命名，不涉及任何内容操作
+            Files.move(oldPath, newPath);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("重命名失败: " + e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * 移动文件到目标文件夹
+     * @param sourceFilePath 源文件完整路径（如 /data/file.txt）
+     * @param targetDirPath 目标文件夹路径（如 /backup/）
+     * @return 是否移动成功
+     */
+    public static boolean moveFile(String sourceFilePath, String targetDirPath) {
+        // 构建源文件和目标文件夹的 Path 对象
+        Path sourcePath = Paths.get(sourceFilePath);
+        Path targetDir = Paths.get(targetDirPath);
+
+        // 1. 校验源文件是否存在且是文件
+        if (!Files.exists(sourcePath) || !Files.isRegularFile(sourcePath)) {
+            System.out.println("源文件不存在或不是文件：" + sourceFilePath);
+            return false;
+        }
+
+        // 2. 校验目标文件夹是否存在，不存在则创建
+        try {
+            if (!Files.exists(targetDir)) {
+                Files.createDirectories(targetDir); // 递归创建父目录
+                System.out.println("目标文件夹不存在，已自动创建：" + targetDirPath);
+            }
+        } catch (Exception e) {
+            System.err.println("创建目标文件夹失败：" + e.getMessage());
+            return false;
+        }
+
+        // 3. 构建目标文件路径（目标文件夹 + 源文件名）
+        Path targetPath = targetDir.resolve(sourcePath.getFileName());
+
+        // 4. 检查目标文件是否已存在，存在则覆盖（或根据需求处理）
+        try {
+            // 移动文件：REPLACE_EXISTING 表示覆盖已存在的目标文件
+            Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("文件移动成功：" + sourceFilePath + " -> " + targetPath);
+            return true;
+        } catch (Exception e) {
+            System.err.println("文件移动失败：" + e.getMessage());
+            return false;
+        }
+    }
+
+
+    /**
+     * 创建文件并设置内容
+     * @param file 文件对象
+     * @param content 内容
+     * @return 是否创建成功
+     */
+    public static Boolean createFileAndSetContent(File file, String content) {
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+
+
+    /**
+     * 读取目录下的所有文件和文件夹
+     * @param dir 目录对象
+     * @return 文件对象列表
+     */
+    public static List<FileObj> readDir(File dir) {
+        List<FileObj> result = new ArrayList<>();
+
+
+        if (dir.exists() && dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (files == null) {
+                return result;
+            }
+
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    result.add(new FileObj(file.getName(), readDir(file)));
+                } else {
+                    result.add(new FileObj(file.getName(), null));
+                }
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 使用 NIO 方式修改文件夹名称（推荐）
+     * @param oldFolderPath 原文件夹路径
+     * @param newFolderName 新文件夹名称（仅名称，不含路径）
+     * @return 是否修改成功
+     */
+    public static boolean renameFolder(String oldFolderPath, String newFolderName) {
+        Path oldFolder = Paths.get(oldFolderPath);
+
+        // 校验原文件夹是否存在且为目录
+        if (!Files.exists(oldFolder) || !Files.isDirectory(oldFolder)) {
+            System.out.println("原文件夹不存在或不是目录：" + oldFolderPath);
+            return false;
+        }
+
+        // 构建新文件夹路径
+        Path parentDir = oldFolder.getParent();
+        if (parentDir == null) {
+            System.out.println("无法获取父目录：" + oldFolderPath);
+            return false;
+        }
+        Path newFolder = parentDir.resolve(newFolderName);
+
+        // 检查新文件夹是否已存在
+        if (Files.exists(newFolder)) {
+            System.out.println("新文件夹已存在：" + newFolder.toAbsolutePath());
+            return false;
+        }
+
+        try {
+            // 执行重命名
+            Files.move(oldFolder, newFolder);
+            System.out.println("文件夹重命名成功：" + newFolder.toAbsolutePath());
+            return true;
+        } catch (Exception e) {
+            System.err.println("文件夹重命名失败：" + e.getMessage());
+            return false;
+        }
+    }
+
 
     /**
      * 递归删除文件夹及内部所有内容

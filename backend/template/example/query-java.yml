@@ -1,0 +1,39 @@
+fileType: java
+classType: single
+templateObj:
+  type: class
+  name: Query
+  permission: public
+  packageName: query
+  generics:
+    - name: T
+  variables:
+    - name: page
+      type:
+        className: Page
+        packageName: query
+      permission: private
+      comment:
+        - '/**'
+        - ' * 分页参数'
+        - ' */'
+    - name: sort
+      type:
+        className: Sort
+        packageName: query
+      permission: private
+      comment:
+        - '/**'
+        - ' * 排序字段'
+        - ' */'
+    - name: pojo
+      type:
+        className: T
+        isGeneric: true
+      permission: private
+      comment:
+        - '/**'
+        - ' * 查询条件'
+        - ' */'
+  construct: true
+  getAndSet: true

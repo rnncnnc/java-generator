@@ -1,0 +1,64 @@
+fileType: java
+classType: single
+templateObj:
+  type: class
+  name: Result
+  permission: public
+  packageName: common.response
+  variables:
+    - name: code
+      type:
+        className: Integer
+      permission: private
+      comment:
+        - '/**'
+        - ' * 消息码'
+        - ' */'
+    - name: msg
+      type:
+        className: String
+      permission: private
+      comment:
+        - '/**'
+        - ' * 消息'
+        - ' */'
+    - name: data
+      type:
+        className: Object
+      permission: private
+      comment:
+        - '/**'
+        - ' * 携带数据'
+        - ' */'
+  methods:
+    - name: success
+      returnType:
+        className: Result
+      permission: public static
+      parameters:
+        - name: data
+          type:
+            className: Object
+      bodyInfo:
+        body:
+          - 'return new Result(1, "success", data);'
+    - name: success
+      returnType:
+        className: Result
+      permission: public static
+      bodyInfo:
+        body:
+          - 'return new Result(1, "success", null);'
+    - name: error
+      returnType:
+        className: Result
+      permission: public static
+      parameters:
+        - name: msg
+          type:
+            className: String
+      bodyInfo:
+        body:
+          - 'return new Result(0, msg, null);'
+  construct: true
+  getAndSet: true

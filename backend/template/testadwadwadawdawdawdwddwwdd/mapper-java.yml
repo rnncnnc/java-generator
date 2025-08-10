@@ -1,0 +1,28 @@
+fileType: xml
+classType: mapper
+templateObj:
+  name: $(TableName)Mapper
+  filePath: mapper/xml
+  header:
+    - <?xml version="1.0" encoding="UTF-8" ?>
+    - >-
+      <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+      "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  tags:
+    - name: mapper
+      params:
+        - key: namespace
+          value: $(BasePackage).mapper.$(TableName)Mapper
+      tags:
+        - name: sql
+          params:
+            - key: id
+              value: $(TableName)
+          tags:
+            - name: List
+              params:
+                - value: Field
+              tags:
+                - name: NONE
+                  params:
+                    - value: $(FieldColumn),

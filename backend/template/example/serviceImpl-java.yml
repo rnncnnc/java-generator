@@ -1,0 +1,121 @@
+fileType: java
+classType: serviceImpl
+templateObj:
+  type: class
+  name: $(TableName)ServiceImpl
+  implementsList:
+    - className: $(TableName)Service
+      packageName: service
+      genericParams:
+        - name: $(TableName)Entity
+          packageName: entity
+  permission: public
+  packageName: service.Impl
+  annotations:
+    - name: Service
+  variables:
+    - name: $(LTableName)Mapper
+      type:
+        className: $(TableName)Mapper
+        packageName: mapper
+      permission: private
+      annotations:
+        - name: Resource
+  methods:
+    - name: select
+      returnType:
+        className: List
+        genericParams:
+          - name: $(TableName)Entity
+            packageName: entity
+      permission: public
+      annotations:
+        - name: Override
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: query
+            genericParams:
+              - name: $(TableName)Entity
+                packageName: entity
+      bodyInfo:
+        body:
+          - 'return $(LTableName)Mapper.select(query);'
+      comment:
+        - '/**'
+        - ' * 查找符合类型的所有数据'
+        - ' * @param query'
+        - ' * @return'
+        - ' */'
+    - name: insert
+      returnType:
+        className: void
+      permission: public
+      annotations:
+        - name: Override
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: query
+            genericParams:
+              - name: $(TableName)Entity
+                packageName: entity
+      bodyInfo:
+        body:
+          - '$(LTableName)Mapper.insert(query);'
+      comment:
+        - '/**'
+        - ' * 插入数据'
+        - ' * @param query'
+        - ' */'
+    - name: update
+      returnType:
+        className: void
+      permission: public
+      annotations:
+        - name: Override
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: query
+            genericParams:
+              - name: $(TableName)Entity
+                packageName: entity
+        - name: np
+          type:
+            className: $(TableName)Entity
+            packageName: entity
+      bodyInfo:
+        body:
+          - '$(LTableName)Mapper.update(query, np);'
+      comment:
+        - '/**'
+        - ' * 更新数据'
+        - ' * @param query'
+        - ' * @param np'
+        - ' */'
+    - name: delete
+      returnType:
+        className: void
+      permission: public
+      annotations:
+        - name: Override
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: query
+            genericParams:
+              - name: $(TableName)Entity
+                packageName: entity
+      bodyInfo:
+        body:
+          - '$(LTableName)Mapper.delete(query) ;'
+      comment:
+        - '/**'
+        - ' * 删除数据'
+        - ' * @param query'
+        - ' */'

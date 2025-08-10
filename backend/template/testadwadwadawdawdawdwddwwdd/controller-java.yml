@@ -1,0 +1,144 @@
+fileType: java
+classType: controller
+templateObj:
+  type: class | interface | ...
+  name: $(TableName)Controller
+  packageName: controller
+  permission: public | default(无权限修饰符) | ...
+  getAndSet: true
+  construct: true
+  generics:
+    - name: T
+      type: null
+      packageName: null
+    - name: E
+      type: BaseController
+      packageName: controller
+  extendsClass:
+    className: BaseController | T
+    packageName: controller | null
+    isGeneric: false | true
+    genericParams:
+      - name: T
+        packageName: null
+      - name: UserEntity
+        packageName: entity
+  implementsList:
+    className: BaseController | T
+    packageName: controller | null
+    isGeneric: false | true
+    genericParams:
+      - name: T
+        packageName: null
+      - name: UserEntity
+        packageName: entity
+  exceptions:
+    - className: Exception
+      packageName: exception
+  comment:
+    - /**
+    - '* @Data: $(DateTime)'
+    - '* @Author: Lc'
+    - '* @Description:'
+    - '*/'
+  annotations:
+    - name: Operation
+      params:
+        - key: summary
+          value: ”注册“
+    - name: PostMapping
+      params:
+        - key: null
+          value: /register
+  variables:
+    - name: usersService
+      permission: public | default(无权限修饰符) | ...
+      type: null
+      className: Result
+      packageName: common.response
+      isGeneric: true
+      genericParams:
+        - name: UserEntity
+          packageName: entity
+        - name: T
+          packageName: null
+      comment:
+        - /**
+        - '* @Description: id'
+        - '*/'
+      annotations:
+        - name: Column
+          params:
+            - key: name
+              value: id
+            - key: description
+              value: id
+  methods:
+    - name: select
+      returnType: null
+      className: Result
+      packageName: common.response
+      isGeneric: true
+      genericParams:
+        - name: UserEntity
+          packageName: entity
+        - name: T
+          packageName: null
+      permission: public | default(无权限修饰符) | ...
+      generics:
+        - name: T
+          type: UserEntity
+          packageName: entity
+        - name: E
+          type: null
+          packageName: null
+      exceptions:
+        - className: Exception
+          packageName: null
+        - className: CustomException
+          packageName: exception
+      comment:
+        - /**
+        - '* 获取数据'
+        - '* @param query'
+        - '* @return'
+        - '*/'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 获取数据
+            - key: null
+              value: /select
+      parameters:
+        - name: query
+          type: null
+          className: Query
+          packageName: query
+          isGeneric: true
+          genericParams:
+            - name: UserEntity
+              packageName: entity
+          annotations:
+            - name: RequestHeader
+              params:
+                - key: null
+                  value: query
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
+        body:
+          - Query<$(TableName)Entity> query = new Query<>();
+          - ''
+          - $(TableName)Entity $(LTableName)Entity = new $(TableName)Entity();
+          - ''
+          - $(LTableName)Entity.set$(UFieldName)($(FieldName));
+          - ''
+          - query.setPojo($(LTableName)Entity);
+          - ''
+          - $(LTableName)Service.update(query, np);
+          - ''
+          - return Result.success();

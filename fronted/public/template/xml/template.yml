@@ -1,0 +1,26 @@
+fileType: xml # 文件类型
+classType: mapper # 生成内容类别
+templateObj: # 文件对象
+  name: $(TableName)Mapper # 文件名
+  filePath: mapper/xml # 文件
+  header: # xml头部的额外内容
+    - '<?xml version="1.0" encoding="UTF-8" ?>'
+    - '<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">'
+  tags: # xml标签
+    - name: mapper # 标签名 <mapper></mapper>
+      params: # 标签内部的参数 namespace="$(BasePackage).mapper.$(TableName)Mapper"
+        - key: namespace # 键
+          value: $(BasePackage).mapper.$(TableName)Mapper # 值
+      tags: # 标签内嵌的标签
+        - name: sql
+          params:
+            - key: id
+              value: $(TableName)
+          tags:
+            - name: List # 特殊字段名， List，在下方根据关键字段进行循环
+              params:
+                - value: Field # Field 表的字段名 Table 表 Index 索引
+              tags:
+                - name: NONE # NONE 为纯文本 无标签
+                  params:
+                    - value: $(FieldColumn),

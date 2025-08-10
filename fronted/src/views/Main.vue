@@ -1,35 +1,43 @@
 <script setup>
 import DataBaseForm from '@/components/DataBaseForm.vue'
 import InfoSelect from '@/components/InfoSelect.vue'
+import Preview from '@/components/Preview.vue'
 
 import { ref } from 'vue'
 
 const dataBaseFormRef = ref()
 const infoSelectRef = ref()
 
-const activeTab = ref('1')
+const activeTab = ref(1)
 
+// step 1 填写数据库基本内容 获取数据库信息
 // 获取数据库信息完毕
 const handleFinished = (data) => {
-  activeTab.value = '2'
+  activeTab.value = 2
 
   infoSelectRef.value.setTableList(data)
 }
 
+
+// step 2 选择要生成的表
 // 取消生成
 const handleCancel = () => {
-  activeTab.value = '1'
+  activeTab.value = 1
 }
 
 // 提交生成
 const handleSubmit = () => {
-  activeTab.value = '3'
+  activeTab.value = 3
 }
 
+// step 3 预览
+const ymlParserRef = ref()
 
+
+// step4 生成代码
 // 完成
 const handleOver = () => {
-  activeTab.value = '1'
+  activeTab.value = 1
   infoSelectRef.value.clean()
   dataBaseFormRef.value.clean()
 }
@@ -37,22 +45,18 @@ const handleOver = () => {
 
 <template>
     <div class="main">
-      <div class="processer">
-        <el-steps style="width: 80%" :active="activeTab" finish-status="success">
-          <el-step title="Step 1" />
-          <el-step title="Step 2" />
-          <el-step title="Step 3" />
-        </el-steps>
-      </div>
       <div class="tabs">
         <el-tabs tab-position="left" style="height: auto" :stretch="true" v-model="activeTab">
-          <el-tab-pane label="填写数据库信息" name="1">
+          <el-tab-pane label="填写数据库信息" :name="1">
             <DataBaseForm ref="dataBaseFormRef" @finished="handleFinished" />
           </el-tab-pane>
-          <el-tab-pane label="选择要生成的表" name="2">
+          <el-tab-pane label="选择要生成的表" :name="2">
             <InfoSelect ref="infoSelectRef" @cancel="handleCancel" @submit="handleSubmit" />
           </el-tab-pane>
-          <el-tab-pane label="完成" name="3">
+          <el-tab-pane label="预览" :name="3">
+            <Preview />
+          </el-tab-pane>
+          <el-tab-pane label="完成" :name="4">
               <el-result title="生成成功" sub-title="恭喜您，代码已生成">
                 <template #icon>
                   <el-image
@@ -87,19 +91,11 @@ const handleOver = () => {
   border-radius: 10px;
   box-shadow: 0 0 10px #ccc;
 
-  .processer {
-    width: 100%;
-    height: 10%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
   .tabs {
     overflow: auto;
     overflow-x: hidden;
     width: 100%;
-    height: 80vh;
+    height: 90vh;
   }
 }
 </style>

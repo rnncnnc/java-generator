@@ -2,6 +2,7 @@ package com.qinge.backend.service.Impl;
 
 import com.qinge.backend.builder.FileBuilder;
 import com.qinge.backend.dto.BaseInfo;
+import com.qinge.backend.entity.constants.ClassDir;
 import com.qinge.backend.entity.table.Table;
 import com.qinge.backend.entity.template.Template;
 import com.qinge.backend.entity.template.object.FileObject;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -58,8 +60,9 @@ public class BuilderServiceImpl implements BuilderService {
      */
     private void buildClass(String basePackage, String temPath, List<Table> tableList) throws Exception {
 
+        // TODO 根据分类获取不同类别的模板
         // 解析模板
-        List<Template> templateList = getAllTemplate("template");
+        List<Template> templateList = getAllTemplate(ClassDir.TEMPLATE_DIR + File.separator + "example");
 
         for (Template template : templateList) {
             // 获取文件类型

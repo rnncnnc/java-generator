@@ -183,7 +183,6 @@ public class JavaParser extends ObjectParser {
             variable.setType(parseClassInfo((Map<String, Object>) varMap.get("type")));
             variable.setPermission((String) varMap.get("permission"));
             variable.setComment((List<String>) varMap.get("comment"));
-            variable.setGeneric((Boolean) varMap.get("isGeneric"));
             // 变量注解
             variable.setAnnotations(parseAnnotations((List<Map<String, Object>>) varMap.get("annotations")));
             variables.add(variable);

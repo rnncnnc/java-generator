@@ -65,7 +65,7 @@ public class PostgresqlParser extends DBParser {
                 "    CROSS JOIN LATERAL unnest(i.indkey) AS unnest(attnum) \n" +
                 "    JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = unnest.attnum \n" +
                 "WHERE\n" +
-                "    t.relname = 'chapter'\n" +
+                "    t.relname = '%s'\n" +
                 "    AND t.relkind = 'r'\n" +
                 "ORDER BY\n" +
                 "    index_name, a.attnum;";

@@ -18,9 +18,6 @@ public class Variable implements Serializable {
     // 变量类型
     private ClassInfo type;
 
-    // 是否是泛型变量
-    private Boolean isGeneric;
-
     // 权限
     private String permission;
 
@@ -31,15 +28,6 @@ public class Variable implements Serializable {
     private List<Annotation> annotations;
 
     public Variable() {
-    }
-
-
-    public Boolean getGeneric() {
-        return isGeneric;
-    }
-
-    public void setGeneric(Boolean generic) {
-        isGeneric = generic;
     }
 
     public String getName() {
@@ -87,7 +75,6 @@ public class Variable implements Serializable {
         return "Variable{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
-                ", isGeneric=" + isGeneric +
                 ", permission='" + permission + '\'' +
                 ", comment=" + comment +
                 ", annotations=" + annotations +

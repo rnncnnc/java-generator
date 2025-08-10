@@ -16,7 +16,7 @@ templateObj:
     - name: RequestMapping
       params:
         - key: value
-          value: /$(LTableName)
+          value: $(LTableName)
     - name: Tag
       params:
         - key: name

@@ -1,0 +1,48 @@
+fileType: java
+classType: entity
+templateObj:
+  type: class
+  name: $(TableName)Entity
+  packageName: entity
+  permission: public
+  comment:
+    - '/**'
+    - '* @Data: $(DateTime)'
+    - ' * @Author: Lc'
+    - ' * @Description:'
+    - ' */'
+  annotations:
+    - name: Entity
+    - name: Table
+      params:
+        - key: name
+          value: $(TableName)
+    - name: Schema
+      params:
+        - key: name
+          value: $(TableName)
+        - key: description
+          value: $(TableComment)
+  variables:
+    - name: $(FieldName)
+      type:
+        className: $(FieldDataType)
+        isGeneric: false
+      permission: private
+      comment:
+        - '/**'
+        - '* @Description: $(FieldComment)'
+        - '*/'
+      annotations:
+        - name: Column
+          params:
+            - key: name
+              value: $(FieldColumn)
+        - name: Schema
+          params:
+            - key: name
+              value: $(FieldName)
+            - key: description
+              value: $(FieldComment)
+  getAndSet: true
+  construct: true

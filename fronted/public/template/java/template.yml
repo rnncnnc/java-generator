@@ -1,0 +1,144 @@
+fileType: java  # 文件类型
+classType: controller | service | serviceImpl | mapper | entity | single(单个文件) # 生成的文件类型
+templateObj: # 模板对象属性
+  type: class | interface | ... # 类 或 接口
+  name: $(TableName)Controller # 类名
+  packageName: controller # 包名
+  permission: public | default(无权限修饰符) | ... # 权限修饰符
+  getAndSet: true # 是否需要生成get set 函数
+  construct: true # 是否需要构造方法    
+  generics: # 此类的泛型，如xxxController<T, E extends BaseController>
+    - name: T
+      type: null
+      packageName: null
+    - name: E
+      type: BaseController
+      packageName: controller
+  extendsClass: # 该类继承的类
+    className: BaseController | T # 类名
+    packageName: controller | null # 此类的包名，若是自建类，则填写基础包名(com.xxx.xxx)外的名字，不是则不填
+    isGeneric: false | true # 继承的类中，是否需要带上泛型，如：extends BaseController<T, UserEntity>
+    genericParams: # 此类的泛型
+      - name: T 
+        packageName: null
+      - name: UserEntity # 自建类， 带上包名
+        packageName: entity
+  implementsList: # 该类实现的接口
+    className: BaseController | T # 接口名名
+    packageName: controller | null # 此类的包名，若是自建类，则填写基础包名(com.xxx.xxx)外的名字，不是则不填
+    isGeneric: false | true # 继承的类中，是否需要带上泛型，如：extends BaseController<T, UserEntity>
+    genericParams: # 此类的泛型
+      - name: T 
+        packageName: null
+      - name: UserEntity # 自建类， 带上包名
+        packageName: entity
+  exceptions: # 该类抛出的异常
+    - className: Exception # 异常名
+      packageName: exception # 若是自建类 填写包名
+  comment: # 该类的注释
+    - '/**'
+    - '* @Data: $(DateTime)'
+    - '* @Author: Lc'
+    - '* @Description:'
+    - '*/'
+  annotations: # 该类的注解
+    - name: Operation # 注解名
+      params:
+        - key: summary # 注解的参数名
+          value: ”注册“ # 参数值
+    - name: PostMapping
+      params:
+        - key: null # 可以没有参数名
+          value: "/register" # 参数值
+  variables: # 此类内的变量
+    - name: usersService # 变量名
+      permission: public | default(无权限修饰符) | ... # 权限修饰符
+      type:  # 变量的类型 Result<UserEntity, T> 这里的T一般是从类继承过来的变量
+      className: Result # 类型名
+      packageName: common.response # 自建类的包名
+      isGeneric: true # 是否是泛型
+      genericParams: # 泛型的参数
+        - name: UserEntity # 参数名
+          packageName: entity # 自建类的包名
+        - name: T
+          packageName: null
+      comment: # 变量的注释
+        - '/**'
+        - '* @Description: id'
+        - '*/'
+      annotations: # 变量的注解
+        - name: Column # 注解名
+          params: # 注解的参数
+            - key: name
+              value: id
+            - key: description
+              value: id
+  methods: # 此类内的方法
+    - name: select # 方法名
+      returnType: # 返回值类型 Result<UserEntity, T>
+      className: Result # 类型名
+      packageName: common.response # 自建类的包名
+      isGeneric: true # 是否是泛型
+      genericParams: # 泛型的参数
+        - name: UserEntity # 参数名
+          packageName: entity # 自建类的包名
+        - name: T
+          packageName: null
+      permission: public | default(无权限修饰符) | ... # 权限修饰符
+      generics: # 方法上的泛型列表 <T extends UserEntity, E>
+        - name: T # 泛型名
+          type: UserEntity # 泛型类型
+          packageName: entity # 自建类的包名
+        - name: E # 泛型名
+          type: null
+          packageName: null
+      exceptions: # 方法丢出的异常 throw Exception,CustomException
+        - className: Exception # 异常名
+          packageName: null 
+        - className: CustomException 
+          packageName: exception # 自建异常类的包名
+      comment: # 方法的注释
+        - '/**'
+        - '* 获取数据'
+        - '* @param query'
+        - '* @return'
+        - '*/'
+      annotations: # 方法的注解
+        - name: Operation # 注解名
+          params: # 注解参数
+            - key: summary
+              value: 获取数据
+            - key: null
+              value: /select
+      parameters: # 方法参数列表
+        - name: query # 方法名
+          type: # 方法类型
+          className: Query # 类型名
+          packageName: query # 自建类的包名
+          isGeneric: true # 是否是泛型
+          genericParams: # 类的泛型
+            - name: UserEntity # 泛型名
+              packageName: entity # 自建类的包名
+          annotations: # 方法参数的注解
+            - name: RequestHeader
+              params: # 注解参数
+                - key: null
+                  value: query
+      bodyInfo: # 方法体
+        require: # 方法体中需要额外引入的类型
+          - className: Query # 类型名
+            packageName: query # 自建类的包名
+          - className: $(TableName)Entity
+            packageName: entity
+        body: # 方法体
+          - 'Query<$(TableName)Entity> query = new Query<>();'
+          - ''
+          - '$(TableName)Entity $(LTableName)Entity = new $(TableName)Entity();'
+          - ''
+          - '$(LTableName)Entity.set$(UFieldName)($(FieldName));'
+          - ''
+          - 'query.setPojo($(LTableName)Entity);'
+          - ''
+          - '$(LTableName)Service.update(query, np);'
+          - ''
+          - 'return Result.success();'

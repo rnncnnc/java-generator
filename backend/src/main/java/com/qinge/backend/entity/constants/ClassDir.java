@@ -1,7 +1,6 @@
 package com.qinge.backend.entity.constants;
 
 import java.io.File;
-import java.util.Date;
 
 /**
  * @Data: 2025/5/31 19:51
@@ -13,6 +12,10 @@ import java.util.Date;
 public class ClassDir {
 
     public static final String TEMP_DIR = System.getProperty("user.dir") + File.separator + "temp";
+
+    public static final String TEMPLATE_DIR = System.getProperty("user.dir") + File.separator + "template";
+
+    public static final String BACKUP_DIR = System.getProperty("user.dir") + File.separator + "backup";
 
     public static final String ENTITY_DIR = "entity";
 

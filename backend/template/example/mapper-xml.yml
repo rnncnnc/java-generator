@@ -1,0 +1,265 @@
+fileType: xml
+classType: mapper
+templateObj:
+  name: $(TableName)Mapper
+  filePath: mapper/xml
+  header:
+    - '<?xml version="1.0" encoding="UTF-8" ?>'
+    - '<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">'
+  tags:
+    - name: mapper
+      params:
+        - key: namespace
+          value: $(BasePackage).mapper.$(TableName)Mapper
+      tags:
+        - name: sql
+          params:
+            - key: id
+              value: $(TableName)
+          tags:
+            - name: List
+              params:
+                - value: Field
+              tags:
+                - name: NONE
+                  params:
+                    - value: $(FieldColumn),
+        - name: sql
+          params:
+            - key: id
+              value: $(TableName)Index
+          tags:
+            - name: List
+              params:
+                - value: Index
+              tags:
+                - name: NONE
+                  params:
+                    - value: $(IndexColumn),
+        - name: select
+          comment:
+            - 测试数据是否存在
+          params:
+            - key: id
+              value: selectIndex
+            - key: resultType
+              value: $(BasePackage).entity.$(TableName)Entity
+          tags:
+            - name: NONE
+              params:
+                - value: select
+            - name: trim
+              params:
+                - key: suffixOverrides
+                  value: ','
+              tags:
+                - name: include
+                  params:
+                    - key: refid
+                      value: $(TableName)Index
+            - name: NONE
+              params:
+                - value: from $(TableOriginName)
+            - name: if
+              params:
+                - key: test
+                  value: pojo != null
+              tags:
+                - name: where
+                  tags:
+                    - name: List
+                      params:
+                        - value: Index
+                      tags:
+                        - name: if
+                          params:
+                            - key: test
+                              value: pojo.$(IndexField) != null
+                          tags:
+                            - name: NONE
+                              params:
+                                - value: 'and $(IndexColumn) = #{pojo.$(IndexField)}'
+        - name: select
+          comment:
+            - 批量查询数据
+          params:
+            - key: id
+              value: select
+            - key: resultType
+              value: $(BasePackage).entity.$(TableName)Entity
+          tags:
+            - name: NONE
+              params:
+                - value: select
+            - name: trim
+              params:
+                - key: suffixOverrides
+                  value: ','
+              tags:
+                - name: include
+                  params:
+                    - key: refid
+                      value: $(TableName)
+            - name: NONE
+              params:
+                - value: from $(TableOriginName)
+            - name: if
+              params:
+                - key: test
+                  value: pojo != null
+              tags:
+                - name: where
+                  tags:
+                    - name: List
+                      params:
+                        - value: Index
+                      tags:
+                        - name: if
+                          params:
+                            - key: test
+                              value: pojo.$(IndexField) != null
+                          tags:
+                            - name: NONE
+                              params:
+                                - value: 'and $(IndexColumn) = #{pojo.$(IndexField)}'
+            - name: if
+              params:
+                - key: test
+                  value: page != null
+              tags:
+                - name: NONE
+                  params:
+                    - value: 'limit #{page.pageSize} offset #{page.pageNum}'
+            - name: if
+              params:
+                - key: test
+                  value: sort != null
+              tags:
+                - name: NONE
+                  params:
+                    - value: 'order by #{sort.index} #{sort.order}'
+        - name: insert
+          comment:
+            - 插入数据
+          params:
+            - key: id
+              value: insert
+            - key: parameterType
+              value: $(BasePackage).entity.$(TableName)Entity
+          tags:
+            - name: NONE
+              params:
+                - value: insert into $(TableOriginName)
+            - name: trim
+              params:
+                - key: prefix
+                  value: '('
+                - key: suffix
+                  value: ')'
+                - key: suffixOverrides
+                  value: ','
+              tags:
+                - name: List
+                  params:
+                    - value: Field
+                  tags:
+                    - name: if
+                      params:
+                        - key: test
+                          value: pojo.$(FieldName) != null
+                      tags:
+                        - name: NONE
+                          params:
+                            - value: '$(FieldColumn),'
+            - name: NONE
+              params:
+                - value: values
+            - name: trim
+              params:
+                - key: prefix
+                  value: '('
+                - key: suffix
+                  value: ')'
+                - key: suffixOverrides
+                  value: ','
+              tags:
+                - name: List
+                  params:
+                    - value: Field
+                  tags:
+                    - name: if
+                      params:
+                        - key: test
+                          value: pojo.$(FieldName) != null
+                      tags:
+                        - name: NONE
+                          params:
+                            - value: '#{pojo.$(FieldName)},'
+        - name: update
+          comment:
+            - 更新数据
+          params:
+            - key: id
+              value: update
+            - key: parameterType
+              value: $(BasePackage).entity.$(TableName)Entity
+          tags:
+            - name: NONE
+              params:
+                - value: update $(TableOriginName)
+            - name: set
+              tags:
+                - name: List
+                  params:
+                    - value: Field
+                  tags:
+                    - name: if
+                      params:
+                        - key: test
+                          value: np.$(FieldName) != null
+                      tags:
+                        - name: NONE
+                          params:
+                            - value: '$(FieldColumn) = #{np.$(FieldName)},'
+            - name: where
+              tags:
+                - name: List
+                  params:
+                    - value: Index
+                  tags:
+                    - name: if
+                      params:
+                        - key: test
+                          value: query.pojo.$(IndexField) != null
+                      tags:
+                        - name: NONE
+                          params:
+                            - value: 'and $(IndexColumn) = #{query.pojo.$(IndexField)}'
+        - name: delete
+          comment:
+            - 删除数据
+          params:
+            - key: id
+              value: delete
+            - key: parameterType
+              value: $(BasePackage).entity.$(TableName)Entity
+          tags:
+            - name: NONE
+              params:
+                - value: delete from $(TableOriginName)
+            - name: where
+              tags:
+                - name: List
+                  params:
+                    - value: Index
+                  tags:
+                    - name: if
+                      params:
+                        - key: test
+                          value: pojo.$(IndexField) != null
+                      tags:
+                        - name: NONE
+                          params:
+                            - value: 'and $(IndexColumn) = #{pojo.$(IndexField)}'
+      comment:
+        - 'namespace 需要映射的接口的全类名'

@@ -28,7 +28,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/build")
 public class BuilderController {
 
     @Resource

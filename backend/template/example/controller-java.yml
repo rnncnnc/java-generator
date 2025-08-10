@@ -1,0 +1,214 @@
+fileType: java
+classType: controller
+templateObj:
+  type: class
+  name: $(TableName)Controller
+  packageName: controller
+  permission: public
+  comment:
+    - '/**'
+    - '* @Data: $(DateTime)'
+    - '* @Author: Lc'
+    - '* @Description:'
+    - '*/'
+  annotations:
+    - name: RestController
+    - name: RequestMapping
+      params:
+        - key: value
+          value: $(LTableName)
+    - name: Tag
+      params:
+        - key: name
+          value: $(TableName)接口
+        - key: description
+          value: $(TableComment)
+  variables:
+    - name: $(LTableName)Service
+      type:
+        className: $(TableName)Service
+        packageName: service
+        genericParams:
+          - name: $(TableName)Entity
+            packageName: entity
+      permission: private
+      annotations:
+        - name: Resource
+  methods:
+    - name: select
+      returnType:
+        className: Result
+        packageName: common.response
+      permission: public
+      comment:
+        - '/**'
+        - ' * 获取数据'
+        - ' * @param query'
+        - ' * @return'
+        - ' */'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 获取数据
+            - key: description
+              value: 返回数据
+        - name: GetMapping
+          params:
+            - value: /select
+      parameters:
+        - name: query
+          type:
+            className: Query
+            packageName: query
+            genericParams:
+              - name: $(TableName)Entity
+                packageName: entity
+          annotations:
+            - name: ModelAttribute
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
+          - className: List
+        body:
+          - 'List<$(TableName)Entity> $(LTableName)List = $(LTableName)Service.select(query);'
+          - ''
+          - 'return Result.success($(LTableName)List);'
+    - name: insert
+      returnType:
+        className: Result
+        packageName: common.response
+      comment:
+        - '/**'
+        - ' * 插入数据'
+        - ' * @param entity'
+        - ' * @return'
+        - ' */'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 插入数据
+            - key: description
+              value: 向数据库插入数据
+        - name: PostMapping
+          params:
+            - value: /insert
+      parameters:
+        - name: entity
+          type:
+            className: $(TableName)Entity
+            packageName: entity
+          annotations:
+            - name: RequestBody
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
+        body:
+          - 'Query<$(TableName)Entity> query = new Query<>();'
+          - ''
+          - 'query.setPojo(entity);'
+          - ''
+          - '$(LTableName)Service.insert(query);'
+          - ''
+          - 'return Result.success();'
+    - name: updateBy$(UFieldName)
+      returnType:
+        className: Result
+        packageName: common.response
+      comment:
+        - '/**'
+        - ' * 根据$(FieldName)更新数据'
+        - ' * @param $(FieldName)'
+        - ' * @param np'
+        - ' * @return'
+        - ' */'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 根据$(FieldName)更新数据
+            - key: description
+              value: 根据条件更新数据
+        - name: PutMapping
+          params:
+            - value: /update/$(FieldName)/{$(FieldName)}
+      parameters:
+        - name: $(FieldName)
+          type:
+            className: $(FieldDataType)
+          annotations:
+            - name: PathVariable
+              params:
+                - value: $(FieldName)
+        - name: np
+          type:
+            className: $(TableName)Entity
+            packageName: entity
+          annotations:
+            - name: RequestBody
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
+        body:
+          - 'Query<$(TableName)Entity> query = new Query<>();'
+          - ''
+          - '$(TableName)Entity $(LTableName)Entity = new $(TableName)Entity();'
+          - ''
+          - '$(LTableName)Entity.set$(UFieldName)($(FieldName));'
+          - ''
+          - 'query.setPojo($(LTableName)Entity);'
+          - ''
+          - '$(LTableName)Service.update(query, np);'
+          - ''
+          - 'return Result.success();'
+    - name: delete
+      returnType:
+        className: Result
+        packageName: common.response
+      comment:
+        - '/**'
+        - ' * 删除数据'
+        - ' * @param entity'
+        - ' * @return'
+        - ' */'
+      annotations:
+        - name: Operation
+          params:
+            - key: summary
+              value: 删除数据
+            - key: description
+              value: 根据条件删除数据
+        - name: DeleteMapping
+          params:
+            - value: /delete
+      parameters:
+        - name: entity
+          type:
+            className: $(TableName)Entity
+            packageName: entity
+          annotations:
+            - name: RequestBody
+      bodyInfo:
+        require:
+          - className: Query
+            packageName: query
+          - className: $(TableName)Entity
+            packageName: entity
+        body:
+          - 'Query<$(TableName)Entity> query = new Query<>();'
+          - ''
+          - 'query.setPojo(entity);'
+          - ''
+          - '$(LTableName)Service.delete(query);'
+          - ''
+          - 'return Result.success();'
